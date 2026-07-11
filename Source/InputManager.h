@@ -1,0 +1,30 @@
+﻿/*
+キー入力に関する補助関数
+DXLibに存在しないので自作
+*/
+
+class InputManager
+{
+public:
+	// コンストラクタ
+	InputManager();
+	// デストラクタ
+	~InputManager();
+
+	// 指定されたキーが押された瞬間だけ 1 を返す関数
+	static int CheckDownKey(int KeyCode);
+
+	// 指定されたキーが離された瞬間だけ 1 を返す関数
+	static int CheckUpKey(int KeyCode);
+
+	// 指定されたキーを押し続けている間１を返す関数
+	static int CheckPressKey(int KeyCode);
+
+	// 指定されたマウスボタンが押された瞬間だけ 1 を返す関数
+	static int CheckDownMouseBottan(int MosceBottanCode);
+
+private:
+	static int mDownBuffer[256];	// CheckDownKey用のキーバッファ
+	static int mUpBuffer[256];		// CheckUpKey用のキーバッファ
+	static int mDownMouseBuffer[256]; // CheckDownMouseBottan用のボタンバッファ
+};

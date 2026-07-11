@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\Texture">
+      <UniqueIdentifier>{9f38b71a-854e-4300-b8bc-f267f0494dd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D">
+      <UniqueIdentifier>{c3742e84-3003-4860-a542-aa178a971e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Model">
+      <UniqueIdentifier>{c52dd47e-31b2-4dd6-913f-5bd93e9c97df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D">
+      <UniqueIdentifier>{07bae403-aed2-4c6f-9a92-ba4bc80d7c15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\3Dで使うScene">
+      <UniqueIdentifier>{d4e962ac-0fac-4745-a7a6-0c215deb9dd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Manager">
+      <UniqueIdentifier>{d24b53f4-945d-4260-89fb-fac9f0053379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\3Dで使うScene">
+      <UniqueIdentifier>{0f8ccebc-e1f1-4f2a-8c26-06595b51b702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Manager">
+      <UniqueIdentifier>{4e69be5e-226d-4d45-a72e-16c78e13498a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Model">
+      <UniqueIdentifier>{ce824450-cc78-432a-955e-2e021dd2c05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Item">
+      <UniqueIdentifier>{da835b17-5650-4061-8d02-46fbcfd352ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Item">
+      <UniqueIdentifier>{6154ae6f-742f-416b-ad3b-fa20e6e7c380}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Collision.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model.cpp">
+      <Filter>ソース ファイル\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ModelAnimation.cpp">
+      <Filter>ソース ファイル\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Texture.cpp">
+      <Filter>ソース ファイル\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TextureAnimation.cpp">
+      <Filter>ソース ファイル\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Player3D.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object3D.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AttachmentModel.cpp">
+      <Filter>ソース ファイル\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Wall.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Enemy3D.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stage.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Exitdoor.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SeparateModelAnimation.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SkyBox.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameOverScene.cpp">
+      <Filter>ソース ファイル\3D\3Dで使うScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameRuleScene.cpp">
+      <Filter>ソース ファイル\3D\3Dで使うScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene.cpp">
+      <Filter>ソース ファイル\3D\3Dで使うScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResultScene.cpp">
+      <Filter>ソース ファイル\3D\3Dで使うScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TitleScene.cpp">
+      <Filter>ソース ファイル\3D\3Dで使うScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene3D.cpp">
+      <Filter>ソース ファイル\3D\3Dで使うScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneManager.cpp">
+      <Filter>ソース ファイル\3D\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ObjectManagercpp.cpp">
+      <Filter>ソース ファイル\3D\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputManager.cpp">
+      <Filter>ソース ファイル\3D\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SoundManager.cpp">
+      <Filter>ソース ファイル\3D\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Loading.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EscapeItem.cpp">
+      <Filter>ソース ファイル\3D\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Item.cpp">
+      <Filter>ソース ファイル\3D\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TimeItem.cpp">
+      <Filter>ソース ファイル\3D\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MouseManager.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Button.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\Player.bmp">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Texture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TextureAnimation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Collision.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Master.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object3D.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player3D.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AttachmentModel.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Wall.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Stage.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Exitdoor.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SeparateModelAnimation.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SkyBox.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Loading.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3D.h">
+      <Filter>ヘッダー ファイル\3D\3Dで使うScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ObjectManager.h">
+      <Filter>ヘッダー ファイル\3D\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameRuleScene.h">
+      <Filter>ヘッダー ファイル\3D\3Dで使うScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResultScene.h">
+      <Filter>ヘッダー ファイル\3D\3Dで使うScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneManager.h">
+      <Filter>ヘッダー ファイル\3D\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>ヘッダー ファイル\3D\3Dで使うScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TitleScene.h">
+      <Filter>ヘッダー ファイル\3D\3Dで使うScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy3D.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameOverScene.h">
+      <Filter>ヘッダー ファイル\3D\3Dで使うScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundManagerh.h">
+      <Filter>ヘッダー ファイル\3D\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\InputManager.h">
+      <Filter>ヘッダー ファイル\3D\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model.h">
+      <Filter>ヘッダー ファイル\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelAnimation.h">
+      <Filter>ヘッダー ファイル\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelUtility.h">
+      <Filter>ヘッダー ファイル\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MouseManager.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Item.h">
+      <Filter>ヘッダー ファイル\3D\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EscapeItem.h">
+      <Filter>ヘッダー ファイル\3D\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TimeItem.h">
+      <Filter>ヘッダー ファイル\3D\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Button.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ItemData.h">
+      <Filter>ヘッダー ファイル\3D\Item</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
