@@ -8,7 +8,6 @@
 #include "Player3D.h"
 
 
-// コンストラクタ
 Enemy3D::Enemy3D(std::string filename, VECTOR initPos, int enemytype, bool isSeparateAnim)
 	:Object3D(initPos)
 	, mfAngle(0.0f)
@@ -44,14 +43,12 @@ Enemy3D::Enemy3D(std::string filename, VECTOR initPos, int enemytype, bool isSep
 
 }
 
-// アニメーション追加
 void Enemy3D::AddAnimation(AnimationState state, std::string filename)
 {
 	mpModel->AddAnimation(state, filename);
 }
 
 
-// デストラクタ
 Enemy3D::~Enemy3D()
 {
 	DeleteLightHandle(ScareLight);
@@ -62,7 +59,6 @@ Enemy3D::~Enemy3D()
 	}
 }
 
-// 更新
 void Enemy3D::Update()
 {
 
@@ -86,7 +82,6 @@ void Enemy3D::Update()
 	}
 }
 
-// 描画
 void Enemy3D::Draw()
 {
 
@@ -102,7 +97,6 @@ void Enemy3D::Draw()
 
 
 
-// 移動処理
 void Enemy3D::Move()
 {
 	// ジャンプスケア中は移動処理を全てスキップする
@@ -462,17 +456,7 @@ void Enemy3D::Move()
 							}
 
 
-							// Playerの足跡がたまっているか描画
-							//for (auto& p : PlayerRecord) {
-							//	DrawSphere3D(p, 5.0f, 8, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
-							//}
-
-							// デバッグ表示
-							//DrawFormatString(0, 50, GetColor(0, 255, 0), "target: %f %f %f\n", TargetPos.x, TargetPos.y, TargetPos.z);
-							//DrawFormatString(0, 100, GetColor(0, 255, 0), "enemy : %f %f %f\n", mvPosition.x, mvPosition.y, mvPosition.z);
-
 						}
-						// =========================================================================
 
 					}
 
@@ -488,15 +472,6 @@ void Enemy3D::Move()
 
 
 		}
-
-
-	
-	
-
-
-
-
-
 
 
 		// 移動している状態であれば
@@ -621,7 +596,6 @@ void Enemy3D::Move()
 }
 
 
-// 移動による回転処理
 void Enemy3D::RotationByMove()
 {
 	// 現在の回転値から目標の回転値の差分を求める
@@ -670,7 +644,6 @@ void Enemy3D::RotationByMove()
 }
 
 
-// プレイヤーが敵に当たった時の処理
 void Enemy3D::CollScare()
 {
 	Object3D* pobj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);

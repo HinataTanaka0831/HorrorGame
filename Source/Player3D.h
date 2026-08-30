@@ -11,42 +11,69 @@ class Item;
 class EscapeItem;
 class TimeItem;
 
+// プレイヤーの移動、スタミナ消費、懐中電灯、しゃがみ、アイテムインベントリおよび敵AI追跡用ログを管理するクラス
 class Player3D : public Object3D
 {
 public:
-	Player3D(VECTOR initPos);                     	// コンストラクタ
-	~Player3D() override;                           // デストラクタ
-								                  
-	void Update() override;                         // 更新
-	void Draw() override;                           // 描画
-								                  
-	void MoveEx();                                 // 移動処理（ステージとの当たり判定用）
+	// プレイヤー初期化および懐中電灯モデルのロード
+	// 入力: initPos(初期スポーンワールド座標) / 出力: なし / 副作用: TagPlayer3D設定、MV1LoadModel実行
+	Player3D(VECTOR initPos);                     
+	~Player3D() override;                         
+			
+	// 入力・移動・壁衝突押し出し・ライト同期・足音・スタミナ更新の一括実行
+	// 入力: なし / 出力: なし / 副作用: 座標・スタミナ・ライト状態・SE再生の更新
+	void Update() override;                       
 
-	void PlayerSquat();                          // プレイヤーのしゃがみ状態の変更処理
+	// 懐中電灯3DモデルおよびアイテムHUD枠の描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
+	void Draw() override;                         
+					
+	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
+	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
+	void MoveEx();                                
 
-	void HaveLight();                           // ライトの処理
+	// しゃがみ/直立姿勢の切り替えおよび視線高・移動速度の補正
+	// 入力: なし / 出力: なし / 副作用: isCrouchingフラグおよびplayerHeight/playerSpeedの変更
+	void PlayerSquat();                        
 
-	void ItemCollision();   	                  // アイテムとの当たり判定
+	// 懐中電灯の点灯トグルおよびカメラ視線へのライトモデル・ディレクショナル光源同期
+	// 入力: なし / 出力: なし / 副作用: DXライブラリライト有効無効切り替え
+	void HaveLight();                          
 
+	// 周囲の脱出アイテムおよび時間延長アイテムとの近接インタラクション判定
+	// 入力: なし / 出力: なし / 副作用: Rキー押下時のアイテム取得
+	void ItemCollision();   	               
+
+	// 保持中アイテムの消費実行（時間停止発動または脱出ドア解錠フラグセット）
+	// 入力: なし / 出力: なし / 副作用: インベントリからの消費および各ギミック状態の更新
 	void UseItem();
 
-	void ItemBox();                         	// アイテムボックス
+	// アイテムスロット枠および所持アイテムアイコンのHUD描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへのUI描画
+	void ItemBox();                         	
 
-	bool AddItem(const ItemData item);   	   // アイテムをインベントリに追加（取得処理）
+	// インベントリへのアイテム追加
+	// 入力: item(取得アイテムデータ) / 出力: 格納成功ならtrue / 副作用: items配列へのpush_back
+	bool AddItem(const ItemData item);   	   
 
-	void LoseItem();                           	// アイテムをインベントリから削除（使用処理
+	// インベントリからの先頭アイテム削除
+	// 入力: なし / 出力: なし / 副作用: items配列のpop
+	void LoseItem();                           
 
+	// スタミナゲージバーの画面描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへのHUD描画
 	void DrawStamina();
 
-	bool StaminaUpdate(bool isKeyProssese);      // スタミナゲージの更新処理
+	// ダッシュ入力時のスタミナ消費および非ダッシュ時の自然回復処理
+	// 入力: isKeyProssese(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
+	bool StaminaUpdate(bool isKeyProssese);    
 
-	bool GetCrouching() { return isCrouching; } // しゃがんでいるかどうかを取得
+	bool GetCrouching() { return isCrouching; }
 
-	float GetHeight() { return playerHeight; }  // プレイヤーの高さを取得
+	float GetHeight() { return playerHeight; } 
 
-	void SetFreeze(bool freeze) { isFreeze = freeze; } // フリーズを設定
+	void SetFreeze(bool freeze) { isFreeze = freeze; } 
 
-	// 時間止めアイテムを使用するかを設定
 	void SetUseStopItem(bool stop) { isUseStopItem = stop; }
 
 	bool GetEscapeItem() const { return getEscapeItem; }

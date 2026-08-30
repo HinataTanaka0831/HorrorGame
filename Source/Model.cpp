@@ -1,7 +1,6 @@
 #include "Model.h"
 #include "AttachmentModel.h"
 
-// コンストラクタ
 Model::Model(std::string filename, VECTOR initPos, bool isSeparateAnimation)
 	: mvPosition(initPos)
 	, mvRotation(VGet(0.0f, 0.0f, 0.0f))
@@ -29,7 +28,6 @@ Model::Model(std::string filename, VECTOR initPos, bool isSeparateAnimation)
 
 }
 
-// アニメーション追加
 void Model::AddAnimation(AnimationState state, std::string filename)
 {
 	if (mpSeparateAnimation != nullptr)
@@ -39,7 +37,6 @@ void Model::AddAnimation(AnimationState state, std::string filename)
 }
 
 
-// デストラクタ
 Model::~Model()
 {
 	// アニメーションクラスの破棄
@@ -72,7 +69,6 @@ Model::~Model()
 	MV1DeleteModel(mnHandle);
 }
 
-// 更新
 void Model::Update()
 {
 	// アニメーションの更新
@@ -95,14 +91,12 @@ void Model::Update()
 	MV1SetRotationXYZ(mnHandle, mvRotation);
 }
 
-// 描画
 void Model::Draw()
 {
 	// モデルの描画
 	MV1DrawModel(mnHandle);
 }
 
-// アニメーション切り替え
 void Model::ChangeAnimation(AnimationState state)
 {
 	// Mixamo用処理
@@ -199,7 +193,6 @@ bool Model::IsAnimationLoopFinish()
 }
 
 
-// アタッチメントを追加
 void Model::AddAttachment(std::string filename, std::string attachFrameName)
 {
 	// アタッチ先のフレーム番号を取得
@@ -209,7 +202,6 @@ void Model::AddAttachment(std::string filename, std::string attachFrameName)
 	mpAttachment = new AttachmentModel(filename, mnHandle, frameIndex);
 }
 
-// アタッチモデルの座標取得
 VECTOR Model::GetAttachmentPosition()
 {
 	if (mpAttachment != nullptr)

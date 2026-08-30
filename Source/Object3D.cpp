@@ -3,7 +3,6 @@
 #include "ObjectManager.h"
 #include "Scene.h"
 
-// コンストラクタ
 Object3D::Object3D(VECTOR initPos)
 	:mvPosition(initPos)
 	, mvRotation(VGet(0.0f, 0.0f, 0.0f))
@@ -15,19 +14,16 @@ Object3D::Object3D(VECTOR initPos)
 
 }
 
-// デストラクタ
 Object3D::~Object3D()
 {
 
 }
 
-// 更新
 void Object3D::Update()
 {
 
 }
 
-// 描画
 void Object3D::Draw()
 {
 

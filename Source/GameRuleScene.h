@@ -6,31 +6,38 @@
 
 class Button;
 
+// 操作説明およびキーバインド一覧を表示するルール解説画面クラス
 class GameRuleScene : public Scene
 {
 public:
-	// コンストラクタ
 	GameRuleScene();
-	// デストラクタ
 	~GameRuleScene();
-	// 初期化
+
+	// 操作キーUIグラフィックの読み込みおよび戻るボタンの生成
+	// 入力: なし / 出力: なし / 副作用: キーバインド画像ハンドルのロード、Button生成
 	void Initialize() override;
-	// 更新
+
+	// タイトルへ戻るボタン入力の監視と遷移要求
+	// 入力: なし / 出力: なし / 副作用: SE再生、SceneManagerへの遷移予約
 	void Update() override;
-	// 描画
+
+	// 操作説明画像、対応キーアイコン、解説テキストおよび戻るボタンの描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画およびScreenFlip
 	void Draw() override;
-	// 終了処理
+
+	// ロードした全操作キー画像リソースの解放
+	// 入力: なし / 出力: なし / 副作用: 画像ハンドルの破棄、BGM停止
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> mpBackButton = nullptr;
-	const int StringX = Utility::SCREEN_WIDTH / 2 - 150;
-	const int BackY = 900;
-	int noise;
-	int keyHandle = -1;        // 移動キーハンドル
-	int key_R_Handle = -1;     // Rキーハンドル
-	int key_F_Handle = -1;     // Fキーハンドル
-	int key_E_Handle = -1;     // Eキーハンドル
-	int mouseHandle = -1;      // マウス左クリックハンドル
-	int mouseMoveHandle = -1;  // マウス移動ハンドル
+	std::unique_ptr<Button> mpBackButton = nullptr;      // タイトルへ戻るボタン
+	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150;   // ボタン配置基準X座標
+	const int BackY = 900;                               // 戻るボタンY座標
+	int noise = -1;                                      // 砂嵐背景画像ハンドル
+	int keyHandle = -1;                                  // WASD移動キーアイコン
+	int key_R_Handle = -1;                               // Rキーアイコン（アイテム取得）
+	int key_F_Handle = -1;                               // Fキーアイコン（アイテム使用）
+	int key_E_Handle = -1;                               // Eキーアイコン（しゃがみ）
+	int mouseHandle = -1;                                // マウス左クリックアイコン（ライトON/OFF）
+	int mouseMoveHandle = -1;                            // マウス移動アイコン（視点回転）
 };

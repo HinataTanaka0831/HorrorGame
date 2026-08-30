@@ -9,30 +9,27 @@
 #include <vector>
 #include "ModelUtility.h"
 
+// 外部ファイル群から個別に読み込んだMixamo系モーションの動的アタッチ・ブレンド再生を管理するクラス
 class SeparateModelAnimation
 {
 public:
     SeparateModelAnimation(int modelHandle);   // コンストラクタ
     ~SeparateModelAnimation();  // デストラクタ
 
-    void Update();  // 更新
+    // モーション再生時間の進行および前後モーションのクロスフェードブレンド制御
+    // 入力: なし / 出力: なし / 副作用: アタッチアニメーション再生時間・ブレンド率の更新
+    void Update();  
 
-    // ★New★
-    // note: mixamo でモーションをダウンロードすると、
-    //       0番目のモーションデータはダミーが入っているらしいので、
-    //       デフォルトで適用するインデックスを 1 にしておく
+    // 指定ステートへのモーション変更およびクロスフェード開始
+    // 入力: state(切り替え先ステート), index(アタッチインデックス) / 出力: なし / 副作用: 旧モーションデタッチ予約、新モーションアタッチ
     void ChangeAnimation(AnimationState state, int index = 0); // モーション切り替え処理
 
-    // ★New★
-    // モーションデータの追加
-    // note: 分割されているモーションをデータとして登録する。
+    // 外部モーションファイルのロードとステート登録
+    // 入力: state(ステート), filename(ファイルパス) / 出力: なし / 副作用: MV1LoadModel実行、mAnimationInfoListへの登録
     void AddAnimation(AnimationState state, std::string filename);
 
-    // ★New★
-    // 対応したモーションハンドルの取得
-    // note: vector配列にデータが格納されているため、
-    //       毎回ハンドルを検索する手間が出てきてしまうので、
-    //       それを行うための関数。
+    // 登録済みモーションハンドルの検索取得
+    // 入力: state(ステート) / 出力: モーションモデルハンドル(-1で見つからない) / 副作用: なし
     int GetAnimationHandle(AnimationState state);
 
 

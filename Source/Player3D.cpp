@@ -11,7 +11,6 @@
 #include "TimeItem.h"
 
 
-// コンストラクタ
 Player3D::Player3D(VECTOR initPos)
 	:Object3D(initPos)
 	, isMove(false)
@@ -45,7 +44,6 @@ Player3D::Player3D(VECTOR initPos)
 }
 
 
-// デストラクタ
 Player3D::~Player3D()
 {
 	// 懐中電灯のモデルを削除
@@ -53,7 +51,6 @@ Player3D::~Player3D()
 }
 
 
-// 更新
 void Player3D::Update()
 {
 
@@ -79,7 +76,6 @@ void Player3D::Update()
 }
 
 
-// 描画
 void Player3D::Draw()
 {
 	// 懐中電灯のモデルを描画
@@ -88,7 +84,6 @@ void Player3D::Draw()
 
 
 
-// 移動処理（ステージとの当たり判定用）
 void Player3D::MoveEx()
 {
 	// フリーズさせる
@@ -400,7 +395,6 @@ void Player3D::MoveEx()
 
 
 
-// プレイヤーのしゃがみ状態の変更処理
 void Player3D::PlayerSquat()
 {
 	// Eキーを押した場合
@@ -433,7 +427,6 @@ void Player3D::PlayerSquat()
 
 }
 
-// ライトの処理
 void Player3D::HaveLight()
 {
 
@@ -537,7 +530,6 @@ void Player3D::HaveLight()
 }
 
 
-// アイテムとの当たり判定処理
 void Player3D::ItemCollision()
 {
 	// 脱出アイテムの情報を取得
@@ -713,7 +705,6 @@ void Player3D::UseItem()
 
 }
 
-// アイテムボックスの表示処理
 void Player3D::ItemBox()
 {
 	// アイテムインベントリにアイテムがある場合
@@ -742,7 +733,6 @@ void Player3D::ItemBox()
 }
 
 
-// アイテムをインベントリに追加する処理
 bool Player3D::AddItem(const ItemData item)
 {
 	// アイテムのサイズが最大数より少ない場合構造体に情報を追加する
@@ -762,7 +752,6 @@ bool Player3D::AddItem(const ItemData item)
 
 
 
-// アイテムを削除する処理
 void Player3D::LoseItem()
 {
 	// アイテムのサイズが最大数より小さい場合何もしない
@@ -797,7 +786,6 @@ void Player3D::LoseItem()
 
 }
 
-// スタミナゲージの描画
 void Player3D::DrawStamina()
 {
 	int r = 20, g = 150, b = 20;
@@ -836,7 +824,6 @@ void Player3D::DrawStamina()
 }
 
 
-// スタミナゲージの更新処理
 bool Player3D::StaminaUpdate(bool isKeyProsses)
 {
 	// 現在値に応じたスタミナゲージの幅

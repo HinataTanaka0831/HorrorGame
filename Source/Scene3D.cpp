@@ -9,20 +9,17 @@
 #include "Player3D.h"
 #include "Stage.h"
 
-// コンストラクタ
 Scene3D::Scene3D()
 	: Scene()
 {
 
 }
 
-// デストラクタ
 Scene3D::~Scene3D()
 {
 
 }
 
-// 初期化
 void Scene3D::Initialize()
 {
 
@@ -56,13 +53,11 @@ void Scene3D::Initialize()
 	EscapeItem::NowNeedItem = 0;  // 脱出のために必要なアイテム数を
 }
 
-// 更新
 void Scene3D::Update()
 {
 	Scene::Update();
 }
 
-// 描画
 void Scene3D::Draw()
 {
 	Scene::Draw();
@@ -74,7 +69,7 @@ void Scene3D::Draw()
 	SetWriteZBufferFlag(FALSE);
 
 	// 残りアイテム数の表示
-	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), ItemFontHandle, " 残りアイテム\n  %d / 4", EscapeItem::NowNeedItem);
+	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), mnItemFontHandle, " 残りアイテム\n  %d / 4", EscapeItem::NowNeedItem);
 
 	auto pPlayerObj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
@@ -115,7 +110,6 @@ void Scene3D::Draw()
 
 }
 
-// 終了処理
 void Scene3D::Finalize()
 {
 	// 画像の削除

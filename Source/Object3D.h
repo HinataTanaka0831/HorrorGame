@@ -3,31 +3,36 @@
 #include "DxLib.h"
 #include <string>
 
+// 3Dアクターおよびギミックオブジェクトの共通基底クラス
 class Object3D
 {
 public:
 	// オブジェクトを見分けるためのタグ
 	enum Tag3D
 	{
-		None3D = 0,   // 設定なし
-
-		TagPlayer3D = 2000,
-		TagWall3D = 2100,
-		TagEnemy3D = 2200,
-		TagStage = 2300,
-		TagEscapeItem = 2400,
-		TagTimeItem = 2500,
-		TagExitdoor = 2600,
-
+		None3D = 0,        // 設定なし
+		TagPlayer3D,       // プレイヤー
+		TagEnemy3D,        // 敵キャラクター
+		TagEscapeItem,   // 脱出用アイテム
+		TagTimeItem,       // 制限時間アイテム
+		TagStage,          // ステージマップ
+		TagExitdoor,       // 脱出ドア
 	};
 
 
 public:
-	Object3D(VECTOR initPos);   // コンストラクタ
-	virtual ~Object3D();        // デストラクタ
+	// 座標初期化およびシーンObjectManagerへの自動登録
+	// 入力: initPos(初期3Dワールド座標) / 出力: なし / 副作用: シーンObjectManagerへの登録
+	Object3D(VECTOR initPos); 
+	virtual ~Object3D();      
 
-	virtual void Update();     // 更新
-	virtual void Draw();      // 描画
+	// 毎フレームの状態更新
+	// 入力: なし / 出力: なし / 副作用: 派生クラスによる座標・AI・入力状態等の変更
+	virtual void Update();    
+
+	// 3Dモデル描画
+	// 入力: なし / 出力: なし / 副作用: 派生クラスによるDXライブラリ3D描画
+	virtual void Draw();      
 
 public:  // ゲッター・セッター
 

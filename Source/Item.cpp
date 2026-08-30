@@ -10,26 +10,22 @@
 #include "Enemy3D.h"
 
 
-// コンストラクタ
 Item::Item(VECTOR initPos)
 	:Object3D(initPos)
 {
 
 }
 
-// デストラクタ
 Item::~Item()
 {
 	
 }
 
-// 更新
 void Item::Update()
 {
 
 }
 
-// 描画
 void Item::Draw()
 {
 

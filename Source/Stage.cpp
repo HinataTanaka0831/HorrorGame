@@ -4,7 +4,6 @@
 #include "ObjectManager.h"
 #include "Scene.h"
 
-// コンストラクタ
 Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
 	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // 座標は原点としておく
 {
@@ -21,7 +20,6 @@ Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
 
 }
 
-// デストラクタ
 Stage::~Stage()
 {
 	// 読み込んだモデルデータの破棄
@@ -29,13 +27,11 @@ Stage::~Stage()
 	MV1DeleteModel(mnCollisionHandle);
 }
 
-// 更新
 void Stage::Update()
 {
 
 }
 
-// 描画
 void Stage::Draw()
 {
 
@@ -46,7 +42,6 @@ void Stage::Draw()
 	//MV1DrawModelDebug(mnCollisionHandle, GetColor(255, 255, 255), 1, 10, 1, 0);
 }
 
-// ステージとカプセル型との当たり判定
 bool Stage::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 {
 	// 生成しておいた当たり判定情報をもとに、カプセルとの当たり判定を行う
@@ -93,7 +88,6 @@ bool Stage::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 }
 
 
-// ステージと線分との当たり判定
 VECTOR Stage::CheckHit_Line(VECTOR pos1, VECTOR pos2)
 {
 	VECTOR ret = VGet(0.0f, 0.0f, 0.0f);

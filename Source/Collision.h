@@ -1,19 +1,10 @@
 #pragma once
 #include "DxLib.h"
 
+// 球体・点同士の幾何学的当たり判定を計算する静的ユーティリティクラス
 class Collision
 {
 public:
-	// コンストラクタ
-	Collision() 
-	{
-
-	}
-	//デストラクタ
-	~Collision()
-	{
-
-	}
 
 	// 円と円の当たり判定をしてくれる関数
 	// const VECTOR& centerPosA ... Aの円の中心座標

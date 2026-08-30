@@ -6,35 +6,48 @@
 #include "Object3D.h"
 #include "Model.h"
 
-
+// 徘徊巡回・視界索敵・プレイヤー追跡および捕獲時ジャンプスケア演出を実行する3D敵AIクラス
 class Enemy3D : public Object3D
 {
 public:
-	// コンストラクタ
-	// Mixamo用処理
-	// 分割アニメーションを使用するかの設定を追加（デフォルトはfalse（使用しない））
+	// 敵AIモデルのロード、パトロールルート初期化、ジャンプスケア用光源の生成
+	// 入力: filename(モデルパス), initPos(初期座標), enemytype(巡回ルート番号), isSeparateAnim(外部分割モーションフラグ) / 出力: なし / 副作用: Model生成、ScareLight生成
 	Enemy3D(std::string filename, VECTOR initPos, int enemytype, bool isSeparateAnim = false);
-	// デストラクタ
 	~Enemy3D() override;
 
-	void Update() override; // 更新
-	void Draw() override;   // 描画
+	// 索敵・移動・旋回・ステージ壁押し出し・ジャンプスケア発動の一括更新
+	// 入力: なし / 出力: なし / 副作用: 敵座標mvPosition、アニメーションステートの更新
+	void Update() override;
 
-	void Move();             // 移動処理
-	void RotationByMove();   // 移動による回転処理
-	void CollScare();        // ゲームオーバー処理（ジャンプスケア処理）
+	// 敵3Dモデルの描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
+	void Draw() override;
 
-	void SetEnemyType(int type) { enetype = type; }  // 敵のモデルによって目標地点を変更する
+	// パトロールウェイポイント巡回またはプレイヤー追跡による移動ベクトル算出
+	// 入力: なし / 出力: なし / 副作用: mvPositionの更新およびアニメーション切り替え
+	void Move();             
 
-	bool GetScare() { return isScare; }              // ジャンプスケア処理
+	// 進行方向ベクトルに向けた滑らかなY軸旋回補間
+	// 入力: なし / 出力: なし / 副作用: 敵モデルの回転角度更新
+	void RotationByMove();   
+
+	// プレイヤー捕獲時のカメラ強制注視、赤色ライティング演出およびゲームオーバーシーン遷移
+	// 入力: なし / 出力: なし / 副作用: カメラFreeze・Shake、ScareLight有効化、シーン遷移予約
+	void CollScare();        
+
+	// 巡回パトロールルートの初期設定
+	// 入力: type(ルート番号) / 出力: なし / 副作用: enetypeの更新
+	void SetEnemyType(int type) { enetype = type; } 
+
+
+	bool GetScare() { return isScare; }              
 
 	bool GetfoundPlayer() { return foundPlayer; }
 
 	void SetStopItem(bool stop) { isStopItem = stop; }
 
-	// Mixamo用処理
-	// アニメーション追加
-	// Modelクラスへの橋渡し関数
+	// モーションデータの追加登録
+	// 入力: state(ステート), filename(モーションパス) / 出力: なし / 副作用: mpModelへのモーション追加
 	void AddAnimation(AnimationState state, std::string filename);
 
 

@@ -9,21 +9,30 @@
 // 前方宣言
 class AttachmentModel;
 
-
+// 3Dモデルアセットのロード、トランスフォーム、アニメーション制御、アタッチメントを統括するクラス
 class Model
 {
 public:
 	// Mixamo用処理
 	// note: 分割アニメーションを使うかどうかの設定を追加。
-	Model(std::string filename, VECTOR initPos, bool isSeparateAnimation = false);   // コンストラクタ
-	~Model();  // デストラクタ
 
-	void Update();   // 更新
-	void Draw();     // 描画
+	// 3Dモデルのロードおよび通常/分割アニメーションコントローラの生成
+	// 入力: filename(モデルファイルパス), initPos(初期配置座標), isSeparateAnimation(外部分割アニメーションを使用するか) / 出力: なし / 副作用: MV1LoadModelおよびアニメーションクラス生成
+	Model(std::string filename, VECTOR initPos, bool isSeparateAnimation = false);
+	~Model();
 
-	// アニメーション切り替え
-	void ChangeAnimation(AnimationState state);
-	// ループ設定
+	// アニメーション再生時間の進行および座標・回転の3Dモデルへの反映
+	// 入力: なし / 出力: なし / 副作用: DXライブラリモデル変換行列の更新
+	void Update();
+
+	// 3Dモデル描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへの3D描画
+	void Draw();
+
+	// 指定アニメーションステートへの切り替え
+	// 入力: state(変更先ステート) / 出力: なし / 副作用: アニメーションコントローラのステート変更
+	void ChangeAnimation(AnimationState state);	// ループ設定
+
 	void SetLoop(bool loop);
 	void SetLoopFinishState(AnimationState state);
 	// アニメーションのブレンド設定
@@ -34,10 +43,12 @@ public:
 	// アニメーションのループが終了しているかどうか
 	bool IsAnimationLoopFinish();
 
-	// アタッチモデル関連
-	// アタッチメントを追加
+	// 親モデル特定ボーンへのアタッチメントモデル追加
+	// 入力: filename(追加モデルパス), attachFrameName(ボーンフレーム名) / 出力: なし / 副作用: AttachmentModel生成	
 	void AddAttachment(std::string filename, std::string attachFrameName);
-	// アタッチモデルの座標取得
+
+	// アタッチされたモデルのワールド座標を取得
+	// 入力: なし / 出力: ワールド座標 / 副作用: なし
 	VECTOR GetAttachmentPosition();
 
 
@@ -50,9 +61,8 @@ public:
 	void SetScale(float scale);
 	void SetTexture(std::string filename, int index = 0);
 
-	// Mixamo用
-	// アニメーションデータの追加
-	// note: SeparateModelAnimation クラスへの橋渡し関数
+	// 外部モーションファイルの追加登録（Mixamo分割ファイル用）
+	// 入力: state(紐づけるステート), filename(アニメーションモデルパス) / 出力: なし / 副作用: SeparateModelAnimationへの登録
 	void AddAnimation(AnimationState state, std::string filename);
 
 private:

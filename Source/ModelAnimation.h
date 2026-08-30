@@ -4,6 +4,7 @@
 #include <vector>
 #include "ModelUtility.h"
 
+// 内部アニメーションを持つ単一3Dモデルのアニメーションブレンド・ループ制御クラス
 class ModelAnimation
 {
 public:
@@ -12,11 +13,12 @@ public:
 	ModelAnimation(int modelHandle);     // コンストラクタ
 	~ModelAnimation();    // デストラクタ
 
-	void Update();  // 更新
+	// アニメーション再生時間の進行および前後モーションのクロスフェードブレンド率更新
+	// 入力: なし / 出力: なし / 副作用: モデルのアタッチアニメーション時間・ブレンド率の変更
+	void Update();
 
-	// note: mixamo でダウンロードすると、
-	// 0番目のアニメーションデータはダミーが入っているので、
-	// デフォルトで適用するインデックスを1にしておく
+	// 指定アニメーションステートへの切り替えとブレンド初期化
+	// 入力: state(ステート), index(アニメーションインデックス) / 出力: なし / 副作用: 旧アニメーション保持、新アニメーションのアタッチ
 	void ChangeAnimation(AnimationState state, int index = 0);  // アニメーション切り替え処理
 
 	void SetLoop(bool isLoop) { mbLoop = isLoop; }  // ループ設定

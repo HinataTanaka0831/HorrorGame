@@ -17,7 +17,6 @@ bool TimeItem::isTimerActive     = false; // タイマーが動作中かどう�
 int  TimeItem::timerFontHandle   = -1;    // フォントハンドル（未作成は-1）
 
 
-// コンストラクタ
 TimeItem::TimeItem(std::string filename, VECTOR initPos, bool isSeparateAnim)
     :Item(initPos)
 {
@@ -33,7 +32,6 @@ TimeItem::TimeItem(std::string filename, VECTOR initPos, bool isSeparateAnim)
 	}
 }
 
-// デストラクタ
 TimeItem::~TimeItem()
 {
 	if (mpModel != nullptr)
@@ -42,7 +40,6 @@ TimeItem::~TimeItem()
 	}
 }
 
-// 更新
 void TimeItem::Update()
 {
 	// 敵の動きを止める処理
@@ -56,7 +53,6 @@ void TimeItem::Update()
 
 }
 
-// 描画
 void TimeItem::Draw()
 {
 
@@ -67,9 +63,6 @@ void TimeItem::Draw()
 
 }
 
-// =====================================================
-// 使用したら敵の動きを20秒間停止する処理
-// =====================================================
 void TimeItem::StopTime()
 {
 
@@ -158,9 +151,6 @@ void TimeItem::StopTime()
 	}
 }
 
-// =====================================================
-// 残り時間を画面に表示する処理
-// =====================================================
 void TimeItem::DrawTimer()
 {
 	// タイマーが動いていないなら何も表示しない

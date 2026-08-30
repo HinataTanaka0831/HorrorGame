@@ -1,7 +1,6 @@
 #include "SkyBox.h"
 #include "Model.h"
 
-// コンストラクタ
 SkyBox::SkyBox(std::string filename)
 : Object3D(VGet(0.0f, 0.0f, 0.0f))
 {
@@ -11,7 +10,6 @@ SkyBox::SkyBox(std::string filename)
 	mpModel = new Model(filename, VGet(0.0f, 0.0f, 0.0f));
 }
 
-// デストラクタ
 SkyBox::~SkyBox()
 {
 	// モデルクラスの破棄
@@ -21,7 +19,6 @@ SkyBox::~SkyBox()
 	}
 }
 
-// 更新処理
 void SkyBox::Update()
 {
 	if (mpModel != nullptr)
@@ -30,7 +27,6 @@ void SkyBox::Update()
 	}
 }
 
-// 描画処理
 void SkyBox::Draw()
 {
 	if (mpModel != nullptr)
@@ -44,7 +40,6 @@ void SkyBox::Draw()
 	}
 }
 
-// 拡大値（スケール値）の設定（Modelクラスへの橋渡し）
 void SkyBox::SetScale(float scale)
 {
 	if (mpModel != nullptr)
@@ -53,7 +48,6 @@ void SkyBox::SetScale(float scale)
 	}
 }
 
-// モデルのテクスチャ変更（Modelクラスへの橋渡し）
 void SkyBox::SetModelTexture(std::string filename, int index)
 {
 	if (mpModel != nullptr)

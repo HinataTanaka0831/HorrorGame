@@ -7,7 +7,6 @@
 
 int EscapeItem::NowNeedItem = 0;
 
-// コンストラクタ
 EscapeItem::EscapeItem(std::string filename, VECTOR initPos)
 	:Item(initPos)
 	
@@ -20,7 +19,6 @@ EscapeItem::EscapeItem(std::string filename, VECTOR initPos)
 
 }
 
-// デストラクタ
 EscapeItem::~EscapeItem()
 {
 	if (mpModel != nullptr)
@@ -29,7 +27,6 @@ EscapeItem::~EscapeItem()
 	}
 }
 
-// 更新
 void EscapeItem::Update()
 {
 	if (mpModel != nullptr)
@@ -42,7 +39,6 @@ void EscapeItem::Update()
 
 }
 
-// 描画
 void EscapeItem::Draw()
 {
 	if (mpModel != nullptr)
@@ -52,7 +48,6 @@ void EscapeItem::Draw()
 
 }
 
-// アイテムを脱出口で使用したらゲームクリアする処理
 void EscapeItem::Escape()
 {
 	// 残り必要なアイテムを減らす

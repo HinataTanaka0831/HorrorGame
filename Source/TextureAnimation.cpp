@@ -1,6 +1,5 @@
 #include "TextureAnimation.h"
 
-// コンストラクタ
 TextureAnimation::TextureAnimation(
 	VECTOR position,
 	std::string filename,
@@ -39,7 +38,7 @@ TextureAnimation::TextureAnimation(
 		mnHandleList
 	);
 }
-// デストラクタ
+
 TextureAnimation::~TextureAnimation()
 {
 

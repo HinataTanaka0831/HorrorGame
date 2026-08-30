@@ -7,7 +7,6 @@
 #include "DxLib.h"
 #include "SeparateModelAnimation.h"
 
-// コンストラクタ
 SeparateModelAnimation::SeparateModelAnimation(int modelHandle)
     : mnModelHandle(modelHandle)
     , mfAnimationTime(0.0f)
@@ -34,7 +33,6 @@ SeparateModelAnimation::SeparateModelAnimation(int modelHandle)
     ChangeAnimation(AnimationState::ANIMATION_NEUTRAL);
 }
 
-// デストラクタ
 SeparateModelAnimation::~SeparateModelAnimation()
 {
     // 追加読み込みしたモーションの削除
@@ -53,7 +51,6 @@ SeparateModelAnimation::~SeparateModelAnimation()
     }
 }
 
-// 更新
 void SeparateModelAnimation::Update()
 {
     // モーションのブレンド率を進める
@@ -132,7 +129,6 @@ void SeparateModelAnimation::Update()
     }
 }
 
-// モーション切り替え
 void SeparateModelAnimation::ChangeAnimation(AnimationState state, int index)
 {
     // 切り替えようとしているモーションがすでに設定されている場合
@@ -172,7 +168,6 @@ void SeparateModelAnimation::ChangeAnimation(AnimationState state, int index)
     mfAnimBlendRate = (mnOldAnimationIndex == -1 ? 1.0f : 0.0f);
 }
 
-// モーションのブレンド設定
 void SeparateModelAnimation::SetAnimationBlend(bool isBlend)
 {
     if (isBlend)    // ブレンドする場合
@@ -194,7 +189,6 @@ void SeparateModelAnimation::SetAnimationBlend(bool isBlend)
     }
 }
 
-// モーション追加
 void SeparateModelAnimation::AddAnimation(AnimationState state, std::string filename)
 {
     // モーションモデル読み込み
@@ -219,7 +213,6 @@ void SeparateModelAnimation::AddAnimation(AnimationState state, std::string file
     }
 }
 
-// 対応したモーションハンドルの取得
 int SeparateModelAnimation::GetAnimationHandle(AnimationState state)
 {
     // そもそも空っぽの場合は探さない

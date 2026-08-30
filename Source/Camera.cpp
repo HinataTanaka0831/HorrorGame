@@ -6,7 +6,6 @@
 #include "Player3D.h"
 #include "Enemy3D.h"
 
-// コンストラクタ
 Camera::Camera()
 	: mfHorizontalAngle(DX_PI_F / 1.2f)
 	, mfVerticalAngle(0.0f)
@@ -18,13 +17,11 @@ Camera::Camera()
 
 }
 
-// デストラクタ
 Camera::~Camera()
 {
 
 }
 
-// 初期化
 void Camera::Initialize()
 {
 	this->mvPosition = VGet(mvPosition.x, mvPosition.y, mvPosition.z);
@@ -43,7 +40,6 @@ void Camera::Initialize()
 	Update();
 }
 
-// 更新
 void Camera::Update()
 {
 
@@ -97,7 +93,6 @@ void Camera::Update()
 		
 }
 
-// マウス操作での視点回転
 void Camera::UpdateRotation()
 {
 
@@ -137,7 +132,6 @@ void Camera::UpdateRotation()
 	//DrawFormatString(10, 110, GetColor(255, 255, 255), "CENTER_Y: %d", CENTER_Y);
 }
 
-// 画面揺れ
 void Camera::Shake()
 {
 	if (mfShakeTimeCounter < mfShakeTime)
@@ -161,7 +155,6 @@ void Camera::Shake()
 	}
 }
 
-// 画面揺れ設定
 void Camera::SetUpShake(float time, float width, float anglespeed, float stepTime)
 {
 	mfShakeTimeCounter = 0.0f;

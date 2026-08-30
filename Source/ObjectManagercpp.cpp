@@ -2,19 +2,16 @@
 #include "Item.h"
 #include "Master.h"
 
-// コンストラクタ
 ObjectManager::ObjectManager()
 {
 
 }
 
-// デストラクタ
 ObjectManager::~ObjectManager()
 {
 
 }
 
-// 更新
 void ObjectManager::Update()
 {
 	// 2Dオブジェクトの更新
@@ -37,7 +34,6 @@ void ObjectManager::Update()
 
 }
 
-// 描画
 void ObjectManager::Draw()
 {
 
@@ -56,13 +52,11 @@ void ObjectManager::Draw()
 
 }
 
-// 2Dオブジェクトの追加
 void ObjectManager::AddObject(Object2D* object2D)
 {
 	mObject2DList.push_back(object2D);
 }
 
-// 2Dオブジェクトの全削除
 void ObjectManager::DeleteAll2D()
 {
 	for (auto itr = mObject2DList.begin(); itr != mObject2DList.end(); /*ここは空っぽなので注意*/)
@@ -79,7 +73,6 @@ void ObjectManager::DeleteAll2D()
 }
 
 
-// 削除する必要のあるオブジェクトがあれば削除する
 void ObjectManager::DeleteAll2DIfNeeded()
 {
 	for (auto itr = mObject2DList.begin(); itr != mObject2DList.end(); /*ここは空っぽなので注意*/)
@@ -106,7 +99,6 @@ void ObjectManager::DeleteAll2DIfNeeded()
 
 }
 
-// 指定したタグの2Dオブジェクトを取得
 Object2D* ObjectManager::GetObject2DByTag(Object2D::Tag tag)
 {
 	// std::find を利用して対象のオブジェクトを探す
@@ -131,7 +123,6 @@ Object2D* ObjectManager::GetObject2DByTag(Object2D::Tag tag)
 }
 
 
-// 指定したタグの2Dオブジェクトのリストを取得
 std::vector<Object2D*> ObjectManager::GetObject2DListByTag(Object2D::Tag tag)
 {
 	std::vector<Object2D*> ret;
@@ -152,7 +143,6 @@ std::vector<Object2D*> ObjectManager::GetObject2DListByTag(Object2D::Tag tag)
 
 // ---------3D---------- ///
 
-// 3Dオブジェクトの追加
 void ObjectManager::AddObject(Object3D* object3D)
 {
 	mObject3DList.push_back(object3D);
@@ -175,7 +165,6 @@ void ObjectManager::DeleteAll3D()
 }
 
 
-// 削除する必要のあるオブジェクトがあれば削除する
 void ObjectManager::DeleteAll3DIfNeeded()
 {
 	for (auto itr = mObject3DList.begin(); itr != mObject3DList.end(); /*ここは空っぽなので注意*/)
@@ -202,7 +191,6 @@ void ObjectManager::DeleteAll3DIfNeeded()
 
 }
 
-// 指定したタグの3Dオブジェクトを取得
 Object3D* ObjectManager::GetObject3DByTag(Object3D::Tag3D tag)
 {
 	// std::find を利用して対象のオブジェクトを探す
@@ -227,7 +215,6 @@ Object3D* ObjectManager::GetObject3DByTag(Object3D::Tag3D tag)
 }
 
 
-// 指定したタグの3Dオブジェクトのリストを取得
 std::vector<Object3D*> ObjectManager::GetObject3DListByTag(Object3D::Tag3D tag)
 {
 	std::vector<Object3D*> ret;

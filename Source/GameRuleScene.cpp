@@ -6,20 +6,17 @@
 #include "Master.h"
 #include "Button.h"
 
-// コンストラクタ
 GameRuleScene::GameRuleScene()
 	:Scene()
 {
 
 }
 
-// デストラクタ
 GameRuleScene::~GameRuleScene()
 {
 
 }
 
-// 初期化
 void GameRuleScene::Initialize()
 {
 	// 画像を生成
@@ -32,7 +29,7 @@ void GameRuleScene::Initialize()
 
 	if (mpBackButton == nullptr)
 	{
-		mpBackButton = std::make_unique<Button>(StringX, BackY - 10, StringX + 250, BackY + 60, "戻る", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpBackButton = std::make_unique<Button>(DrawX, BackY - 10, DrawX + 250, BackY + 60, "戻る", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 
@@ -40,7 +37,6 @@ void GameRuleScene::Initialize()
 
 }
 
-// 更新
 void GameRuleScene::Update()
 {
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
@@ -60,7 +56,6 @@ void GameRuleScene::Update()
 	Scene::Update();
 }
 
-// 描画
 void GameRuleScene::Draw()
 {
 	for (int i = 1; i < 7; i++)
@@ -106,7 +101,6 @@ void GameRuleScene::Draw()
 
 		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 + 205, 920, "視点移動", GetColor(255, 255, 255), fontSize50);
 
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 80, 1000, "マウス左クリックでタイトルへ戻る", GetColor(255, 255, 255), fontSize50);
 
 		if (mpBackButton)
 		{
@@ -122,7 +116,6 @@ void GameRuleScene::Draw()
 	Scene::Draw();
 }
 
-// 終了処理
 void GameRuleScene::Finalize()
 {
 	// 画像を削除

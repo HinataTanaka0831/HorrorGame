@@ -8,30 +8,27 @@
 #include "Button.h"
 
 
-// コンストラクタ
 GameOverScene::GameOverScene()
 	: Scene()     // 基底クラスのコンストラクタを呼び出す
 {
 
 }
 
-// デストラクタ
 GameOverScene::~GameOverScene()
 {
 
 }
 
-// 初期化
 void GameOverScene::Initialize()
 {
 	if (mpRetoryButton == nullptr)
 	{
-		mpRetoryButton = std::make_unique<Button>(StringX, RetoryY - 10, StringX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpRetoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 	if (mpTitleButton == nullptr)
 	{
-		mpTitleButton = std::make_unique<Button>(StringX, TitleY - 10, StringX + 250, TitleY + 60, "タイトルへ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpTitleButton = std::make_unique<Button>(DrawX, TitleY - 10, DrawX + 250, TitleY + 60, "タイトルへ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 	// Mouseのロックを解除
@@ -39,7 +36,6 @@ void GameOverScene::Initialize()
 
 }
 
-// 更新
 void GameOverScene::Update()
 {
 	// BGMの再生
@@ -77,7 +73,6 @@ void GameOverScene::Update()
 
 }
 
-// 描画
 void GameOverScene::Draw()
 {
 	for (int i = 1; i < 7; i++)
@@ -87,16 +82,16 @@ void GameOverScene::Draw()
 
 		char Buf[256];
 		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
-		Noise = LoadGraph(Buf);
+		noise = LoadGraph(Buf);
 
 		// 背景の色を設定
 		SetBackgroundColor(0, 0, 0);
 
 		// 背景の表示
-		DrawGraph(0, 0, Noise, true);
+		DrawGraph(0, 0, noise, true);
 
 		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 150, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), fontSize90);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), fontSize140);
 
 		// ボタンの表示
 		if (mpRetoryButton)
@@ -118,11 +113,10 @@ void GameOverScene::Draw()
 
 }
 
-// 終了処理
 void GameOverScene::Finalize()
 {
 	// 画像を削除
-	DeleteGraph(Noise);
+	DeleteGraph(noise);
 
 	// BGM停止
 	Master::mpSoundManager->StopBGM();

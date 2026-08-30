@@ -102,6 +102,7 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// 描画
 		Master::mpSceneManager->Draw();
 		
+		// ゲームループの終了フラグがtrueならループを抜ける
 		if (Master::mpSceneManager->IsQuitRequest())
 		{
 			break;
