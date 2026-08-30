@@ -1,22 +1,27 @@
-ï»¿#include "SkyBox.h"
+#include "SkyBox.h"
 #include "Model.h"
 
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 SkyBox::SkyBox(std::string filename)
-	: Object3D(VGet(0.0f, 0.0f, 0.0f))
-	, mpModel(nullptr)
+: Object3D(VGet(0.0f, 0.0f, 0.0f))
 {
+	// ƒXƒJƒCƒ{ƒbƒNƒXƒ‚ƒfƒ‹‚Ì¶¬
+	// note: ƒXƒJƒCƒ{ƒbƒNƒX‚ÌÀ•W‚ÍAŠî–{“I‚É‚ÍŒ´“_B
+	//       ‚à‚Ì‚É‚æ‚Á‚Ä‚ÍAÀ•W‚ğí‚ÉƒvƒŒƒCƒ„[‚ÌÀ•W‚É‚·‚é‚±‚Æ‚ÅA‹ó‚ªŒ©Ø‚ê‚È‚¢‚æ‚¤‚É‚·‚é‚±‚Æ‚à‚ ‚éB
 	mpModel = new Model(filename, VGet(0.0f, 0.0f, 0.0f));
 }
 
+// ƒfƒXƒgƒ‰ƒNƒ^
 SkyBox::~SkyBox()
 {
+	// ƒ‚ƒfƒ‹ƒNƒ‰ƒX‚Ì”jŠü
 	if (mpModel != nullptr)
 	{
 		delete mpModel;
-		mpModel = nullptr;
 	}
 }
 
+// XVˆ—
 void SkyBox::Update()
 {
 	if (mpModel != nullptr)
@@ -25,19 +30,21 @@ void SkyBox::Update()
 	}
 }
 
-// ãƒ©ã‚¤ãƒˆè¨ˆç®—ã‚’ä¸€æ™‚çš„ã«ç„¡åŠ¹åŒ–ã—ã¦ã‚¹ã‚«ã‚¤ãƒœãƒƒã‚¯ã‚¹ã‚’æç”»ï¼ˆé™°å½±ã«ã‚ˆã‚‹é»’ãšã¿é˜²æ­¢ï¼‰
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡æç”»ã€SetUseLightingãƒ•ãƒ©ã‚°å¤‰æ›´
+// •`‰æˆ—
 void SkyBox::Draw()
 {
 	if (mpModel != nullptr)
 	{
-		// èƒŒæ™¯ç©ºãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒç’°å¢ƒå…‰ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ã‚·ãƒ§ãƒŠãƒ«ãƒ©ã‚¤ãƒˆã®å½±ã§æš—åŒ–ã—ãªã„ã‚ˆã†ä¸€æ™‚OFF
+		// ˆê“I‚Éƒ‰ƒCƒg‚Ì‰e‹¿‚ğOFF‚É‚µ‚Ä•`‰æ‚·‚é
+		// note: ‰e‹¿‚·‚é‚Æ‰e‚ªo—ˆ‚ÄˆÃ‚­‚È‚Á‚Ä‚µ‚Ü‚¤ê‡‚ª‚ ‚é‚½‚ßB
+		//       ‹t‚É‰e‚ğ•t‚¯‚½‚è‚µ‚½‚¢ê‡‚Í‚±‚Ìˆ—‚ÍŠO‚µ‚Ä‚à‚æ‚¢B
 		SetUseLighting(FALSE);
 		mpModel->Draw();
 		SetUseLighting(TRUE);
 	}
 }
 
+// Šg‘å’liƒXƒP[ƒ‹’lj‚Ìİ’èiModelƒNƒ‰ƒX‚Ö‚Ì‹´“n‚µj
 void SkyBox::SetScale(float scale)
 {
 	if (mpModel != nullptr)
@@ -46,6 +53,7 @@ void SkyBox::SetScale(float scale)
 	}
 }
 
+// ƒ‚ƒfƒ‹‚ÌƒeƒNƒXƒ`ƒƒ•ÏXiModelƒNƒ‰ƒX‚Ö‚Ì‹´“n‚µj
 void SkyBox::SetModelTexture(std::string filename, int index)
 {
 	if (mpModel != nullptr)

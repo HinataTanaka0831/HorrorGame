@@ -1,24 +1,37 @@
-ï»¿#pragma once
+#pragma once
 
-// 3Dã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¹ãƒ†ãƒ¼ãƒˆå®šç¾©
+// 
+// šNewš
+// V‹K’Ç‰Áƒtƒ@ƒCƒ‹
+//
+
+
+// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌØ‚è‘Ö‚¦”Ô†
 enum AnimationState
 {
-    ANIMATION_NEUTRAL = 0,  // å¾…æ©Ÿãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
-    ANIMATION_RUN,          // èµ°è¡Œãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
-    ANIMATION_JUMP_IN,      // ã‚¸ãƒ£ãƒ³ãƒ—é–‹å§‹äºˆå‚™å‹•ä½œ
-    ANIMATION_JUMP_LOOP,    // æ»žç©ºä¸­ãƒ«ãƒ¼ãƒ—å‹•ä½œ
-    ANIMATION_JUMP_OUT,     // ç€åœ°ç¡¬ç›´å‹•ä½œ
-    ANIMATION_ATTACK,       // æ”»æ’ƒã‚¢ã‚¯ã‚·ãƒ§ãƒ³
-    ANIMATION_WALKING,      // å¾˜å¾Šãƒ»æ­©è¡Œå‹•ä½œ
-    ANIMATION_DYING,        // æ­»äº¡ãƒ»ãƒ€ã‚¦ãƒ³å‹•ä½œ
-    ANIMATION_DROP_KICK,    // ç‰¹æ®Šæ”»æ’ƒå‹•ä½œ
-    ANIMATION_LEFT_TURN,    // å·¦æ—‹å›ž
-    ANIMATION_RIGHT_TURN,   // å³æ—‹å›ž
+    ANIMATION_NEUTRAL = 0,  // ‘Ò‹@
+    ANIMATION_RUN,          // ‘–‚è
+    ANIMATION_JUMP_IN,      // ƒWƒƒƒ“ƒvŠJŽn
+    ANIMATION_JUMP_LOOP,    // ƒWƒƒƒ“ƒv’†
+    ANIMATION_JUMP_OUT,     // ’…’nŽž
+    ANIMATION_ATTACK,       // UŒ‚
+    // note: ª‚±‚±‚©‚çã‚É‚Í’Ç‰Á‚µ‚È‚¢B
+    //       Hero.mv1 ‚ª‚±‚Ì‡”Ô‚¶‚á‚È‚¢‚Æ‹@”\‚µ‚È‚¢‚Ì‚ÅˆÛŽ‚µ‚Ä‚¨‚­B
+    //       ‚½‚¾‚µASeparateModelAnimation ‚Ì•û‚ÅŽg‚Á‚Ä‚Í‚¢‚¯‚È‚¢–ó‚Å‚Í‚È‚¢‚Ì‚Å’ˆÓB
+
+    // šNewš
+    // ã‚É‚ ‚é’è‹`ˆÈŠO‚ÅŽg‚¢‚½‚¢ƒ‚[ƒVƒ‡ƒ“‚ª‚ ‚ê‚ÎA‚±‚Ì‚æ‚¤‚É‰º‚É’Ç‰Á‚µ‚Ä‚¢‚¯‚ÎOKB
+    ANIMATION_WALKING,      // •à‚«
+    ANIMATION_DYING,        // Ž€–SŽž
+    ANIMATION_DROP_KICK,    // ƒhƒƒbƒvƒLƒbƒN
+    ANIMATION_LEFT_TURN,    // ¶‰ñ“]
+    ANIMATION_RIGHT_TURN,   // ‰E‰ñ“]
 
     ANIMATION_MAX
 };
 
-// å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€‹åˆ¥èª­ã¿è¾¼ã¿ã•ã‚ŒãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒãƒ³ãƒ‰ãƒ«ã¨ã‚¹ãƒ†ãƒ¼ãƒˆã®å¯¾å¿œæ§‹é€ ä½“
+// šNewš
+// •ªŠ„‚³‚ê‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒf[ƒ^
 struct AnimationInfo
 {
     AnimationState mState;

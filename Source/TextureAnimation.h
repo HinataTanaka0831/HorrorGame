@@ -1,13 +1,11 @@
-ï»¿#pragma once
+#pragma once
 #include "DxLib.h"
 #include <string>
 
-// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚·ãƒ¼ãƒˆã‹ã‚‰åˆ†å‰²èª­ã¿è¾¼ã¿ã—ãŸé€£ç•ªãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åˆ¶å¾¡ã‚¯ãƒ©ã‚¹
 class TextureAnimation
 {
 public:
-	// åˆ†å‰²ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ä¸€æ‹¬èª­ã¿è¾¼ã¿ãŠã‚ˆã³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿åˆæœŸåŒ–
-	// å…¥åŠ›: position(è¡¨ç¤ºåº§æ¨™), filename(ç”»åƒãƒ‘ã‚¹), allNum(ç·ã‚³ãƒæ•°), xNum(æ¨ªåˆ†å‰²), yNum(ç¸¦åˆ†å‰²), interval(ã‚³ãƒé€ã‚Šé–“éš”ãƒ•ãƒ¬ãƒ¼ãƒ ) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: LoadDivGraphå®Ÿè¡Œ
+	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 	TextureAnimation(
 		VECTOR position,
 		std::string filename,
@@ -15,22 +13,18 @@ public:
 		int xNum,
 		int yNum,
 		int interval
-	);
-	~TextureAnimation();
+	);  
+	// ƒfƒXƒgƒ‰ƒNƒ^
+	~TextureAnimation(); 
 
-	// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«çµŒéã«ã‚ˆã‚‹ã‚³ãƒé€ã‚Šæ›´æ–°
-	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: mnCurrentNumãŠã‚ˆã³mnCounterã®æ›´æ–°
-	void Update();
-
-	// ç¾åœ¨ã®ã‚³ãƒç”»åƒæç”»
-	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
-	void Draw();
+	void Update();  // XV
+	void Draw();   // •`‰æ
 
 private:
-	VECTOR mvPosition;
-	int mnCounter;
-	int mnInterval;
-	int mnCurrentNum;
-	int* mnHandleList;
-	int mnAllNum;
+	VECTOR mvPosition;  // ƒ|ƒWƒVƒ‡ƒ“
+	int mnCounter;      // ƒAƒjƒ[ƒVƒ‡ƒ“ƒJƒEƒ“ƒ^
+	int mnInterval;     // ƒeƒNƒXƒ`ƒƒØ‚è‘Ö‚¦‚ÌƒtƒŒ[ƒ€”
+	int mnCurrentNum;   // ‰½”Ô–Ú‚ÌƒeƒNƒXƒ`ƒƒ‚ğ•\¦‚·‚é‚©
+	int* mnHandleList;  // •ªŠ„‚³‚ê‚½ƒeƒNƒXƒ`ƒƒ‚Ìƒnƒ“ƒhƒ‹ƒŠƒXƒg
+	int mnAllNum;       // ƒeƒNƒXƒ`ƒƒ•ªŠ„”
 };

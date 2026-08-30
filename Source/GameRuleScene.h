@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Scene.h"
 #include "Utility.h"
@@ -6,38 +6,31 @@
 
 class Button;
 
-// 操作説明およびキーバインド一覧を表示するルール解説画面クラス
 class GameRuleScene : public Scene
 {
 public:
+	// �R���X�g���N�^
 	GameRuleScene();
+	// �f�X�g���N�^
 	~GameRuleScene();
-
-	// 操作キーUIグラフィックの読み込みおよび戻るボタンの生成
-	// 入力: なし / 出力: なし / 副作用: キーバインド画像ハンドルのロード、Button生成
+	// ������
 	void Initialize() override;
-
-	// タイトルへ戻るボタン入力の監視と遷移要求
-	// 入力: なし / 出力: なし / 副作用: SE再生、SceneManagerへの遷移予約
+	// �X�V
 	void Update() override;
-
-	// 操作説明画像、対応キーアイコン、解説テキストおよび戻るボタンの描画
-	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画およびScreenFlip
+	// �`��
 	void Draw() override;
-
-	// ロードした全操作キー画像リソースの解放
-	// 入力: なし / 出力: なし / 副作用: 画像ハンドルの破棄、BGM停止
+	// �I������
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> mpBackButton = nullptr;      // タイトルへ戻るボタン
-	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150;   // ボタン配置基準X座標
-	const int BackY = 900;                               // 戻るボタンY座標
-	int noise = -1;                                      // 砂嵐背景画像ハンドル
-	int keyHandle = -1;                                  // WASD移動キーアイコン
-	int key_R_Handle = -1;                               // Rキーアイコン（アイテム取得）
-	int key_F_Handle = -1;                               // Fキーアイコン（アイテム使用）
-	int key_E_Handle = -1;                               // Eキーアイコン（しゃがみ）
-	int mouseHandle = -1;                                // マウス左クリックアイコン（ライトON/OFF）
-	int mouseMoveHandle = -1;                            // マウス移動アイコン（視点回転）
+	std::unique_ptr<Button> mpBackButton = nullptr;
+	const int StringX = Utility::SCREEN_WIDTH / 2 - 150;
+	const int BackY = 900;
+	int noise;
+	int keyHandle = -1;        // �ړ��L�[�n���h��
+	int key_R_Handle = -1;     // R�L�[�n���h��
+	int key_F_Handle = -1;     // F�L�[�n���h��
+	int key_E_Handle = -1;     // E�L�[�n���h��
+	int mouseHandle = -1;      // �}�E�X���N���b�N�n���h��
+	int mouseMoveHandle = -1;  // �}�E�X�ړ��n���h��
 };

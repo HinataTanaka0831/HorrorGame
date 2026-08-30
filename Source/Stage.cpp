@@ -1,79 +1,120 @@
-ï»¿#include "Stage.h"
+#include "Stage.h"
+#include "Player3D.h"
+#include "Master.h"
+#include "ObjectManager.h"
+#include "Scene.h"
 
-Stage::Stage(std::string filename, std::string collisionFilename)
-	: Object3D(VGet(0.0f, 0.0f, 0.0f))
-	, normal(VGet(0.0f, 0.0f, 0.0f))
-	, hitpos(VGet(0.0f, 0.0f, 0.0f))
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
+	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // À•W‚ÍŒ´“_‚Æ‚µ‚Ä‚¨‚­
 {
-	SetTag(Tag3D::TagStage);
+	SetTag(Object3D::TagStage);
 
-	mnModelHandle = MV1LoadModel(filename.c_str());
-	mnCollisionHandle = MV1LoadModel(collisionFilename.c_str());
+	// ƒXƒe[ƒWƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	mnModelHandle = MV1LoadModel(stageModelName.c_str());
+	
+	// ƒRƒŠƒWƒ‡ƒ“ƒ‚ƒfƒ‹i“–‚½‚è”»’è—pƒ‚ƒfƒ‹j‚Ì“Ç‚İ‚İ
+	mnCollisionHandle = MV1LoadModel(stageCollisionModelName.c_str());
 
-	// é«˜é€Ÿãªãƒãƒªã‚´ãƒ³äº¤å·®åˆ¤å®šã®ãŸã‚ã‚³ãƒªã‚¸ãƒ§ãƒ³æƒ…å ±ãƒ„ãƒªãƒ¼ã‚’æ§‹ç¯‰
+	// “–‚½‚è”»’èî•ñ‚Ìì¬
 	MV1SetupCollInfo(mnCollisionHandle);
+
 }
 
+// ƒfƒXƒgƒ‰ƒNƒ^
 Stage::~Stage()
 {
+	// “Ç‚İ‚ñ‚¾ƒ‚ƒfƒ‹ƒf[ƒ^‚Ì”jŠü
 	MV1DeleteModel(mnModelHandle);
 	MV1DeleteModel(mnCollisionHandle);
 }
 
+// XV
 void Stage::Update()
 {
+
 }
 
-// ã‚¹ãƒ†ãƒ¼ã‚¸3Dãƒ¢ãƒ‡ãƒ«ã®æç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
+// •`‰æ
 void Stage::Draw()
 {
+
+	// ƒXƒe[ƒW‚Ì•`‰æ
 	MV1DrawModel(mnModelHandle);
+
+	// ƒRƒŠƒWƒ‡ƒ“ƒ‚ƒfƒ‹‚Ì•`‰æiƒƒCƒ„[ƒtƒŒ[ƒ€‚İ‚½‚¢‚ÈŠ´‚¶‚Å•`‰æj
+	//MV1DrawModelDebug(mnCollisionHandle, GetColor(255, 255, 255), 1, 10, 1, 0);
 }
 
-// ã‚«ãƒ—ã‚»ãƒ«å½¢çŠ¶ï¼ˆã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ï¼‰ã¨ã‚¹ãƒ†ãƒ¼ã‚¸å£ãƒ»åºŠãƒãƒªã‚´ãƒ³ã¨ã®è¡çªåˆ¤å®š
-// å…¥åŠ›: pos1(ã‚«ãƒ—ã‚»ãƒ«å§‹ç‚¹), pos2(ã‚«ãƒ—ã‚»ãƒ«çµ‚ç‚¹), r(åŠå¾„) / å‡ºåŠ›: è¡çªã—ã¦ã„ã‚Œã°true / å‰¯ä½œç”¨: normal(æ³•ç·š), hitpos(è¡çªç‚¹)ã®æ›´æ–°
+// ƒXƒe[ƒW‚ÆƒJƒvƒZƒ‹Œ^‚Æ‚Ì“–‚½‚è”»’è
 bool Stage::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 {
+	// ¶¬‚µ‚Ä‚¨‚¢‚½“–‚½‚è”»’èî•ñ‚ğ‚à‚Æ‚ÉAƒJƒvƒZƒ‹‚Æ‚Ì“–‚½‚è”»’è‚ğs‚¤
 	MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Capsule(mnCollisionHandle, -1, pos1, pos2, r);
 
+	// ƒ|ƒŠƒSƒ“‚É1‚ÂˆÈã“–‚½‚Á‚Ä‚¢‚éê‡
 	if (result.HitNum >= 1)
 	{
 		float minDist = 1e9f;
 		VECTOR bestNormal = VGet(0, 0, 0);
 		VECTOR bestHitPos = VGet(0, 0, 0);
 
-		// æœ€ã‚‚è¿‘æ¥ã—ã¦ã„ã‚‹ãƒãƒªã‚´ãƒ³ã®æ³•ç·šã¨è¡çªç‚¹ã‚’æ¢ç´¢
-		for (int i = 0; i < result.HitNum; ++i)
+		for (int i = 0; i < result.HitNum; i++)
 		{
 			float dist = VSize(VSub(result.Dim[i].HitPosition, pos1));
+
 			if (dist < minDist)
 			{
 				minDist = dist;
 				bestNormal = result.Dim[i].Normal;
 				bestHitPos = result.Dim[i].HitPosition;
 			}
+
+			//DrawTriangle3D(
+			//	result.Dim[i].Position[0],
+			//	result.Dim[i].Position[1],
+			//	result.Dim[i].Position[2],
+			//	GetColor(255, 0, 0),
+			//	0
+			//);
+
 		}
 
 		normal = bestNormal;
 		hitpos = bestHitPos;
+
+
 	}
 
+	// “–‚½‚è”»’èî•ñ‚ÌŒã•Ğ•t‚¯
 	MV1CollResultPolyDimTerminate(result);
+
 	return (result.HitNum >= 1);
 }
 
-// ç·šåˆ†ï¼ˆè¦–ç·šãƒ»ãƒ¬ã‚¤ã‚­ãƒ£ã‚¹ãƒˆï¼‰ã¨ã‚¹ãƒ†ãƒ¼ã‚¸ã‚¸ã‚ªãƒ¡ãƒˆãƒªã¨ã®äº¤å·®åˆ¤å®š
-// å…¥åŠ›: pos1(å§‹ç‚¹), pos2(çµ‚ç‚¹) / å‡ºåŠ›: äº¤å·®åº§æ¨™ï¼ˆäº¤å·®ã—ãªã‘ã‚Œã°åŸç‚¹ï¼‰ / å‰¯ä½œç”¨: ãªã—
+
+// ƒXƒe[ƒW‚Æü•ª‚Æ‚Ì“–‚½‚è”»’è
 VECTOR Stage::CheckHit_Line(VECTOR pos1, VECTOR pos2)
 {
 	VECTOR ret = VGet(0.0f, 0.0f, 0.0f);
+
+	// “–‚½‚è”»’èî•ñ‚Æü•ª‚Æ‚Ì“–‚½‚è”»’è‚ğs‚¤
+	//MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_LineDim(mnCollisionHandle, -1, pos1, pos2);
 	auto result = MV1CollCheck_Line(mnCollisionHandle, -1, pos1, pos2);
 
+
+	// “–‚½‚Á‚Ä‚¢‚½ê‡
 	if (result.HitFlag)
-	{
+	{		
+
+		// “–‚½‚Á‚½ŒÂŠ‚Ìƒ|ƒWƒVƒ‡ƒ“‚ğ return ‚·‚é‚æ‚¤‚Éæ“¾‚·‚é
 		ret = result.HitPosition;
+
 	}
 
+	// “–‚½‚è”»’èî•ñ‚ÌŒã•Ğ•t‚¯
+	//MV1CollResultPolyDimTerminate(result);
+	
 	return ret;
 }
+

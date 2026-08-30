@@ -1,38 +1,42 @@
-﻿#pragma once
+#pragma once
 
 #include "Scene.h"
 #include "Utility.h"
 #include <memory>
 
-class Button;
+class Button; // �O���錾
 
-// ゲームクリア時に祝福メッセージおよび次アクション（再プレイ/タイトル戻り）を提示するリザルト画面クラス
 class ResultScene : public Scene
 {
 public:
+	enum {
+		select_None,
+		select_Retory,
+		select_Title,
+
+		select_Now4,
+	};
+
+
+public:
+	// �R���X�g���N�^
 	ResultScene();
+	// �f�X�g���N�^
 	~ResultScene();
 
-	// リトライボタン・タイトルボタンの生成およびマウスロック解除
-	// 入力: なし / 出力: なし / 副作用: Buttonインスタンスの生成
+	// ������
 	void Initialize() override;
-
-	// ボタン入力検知とシーン遷移要求
-	// 入力: なし / 出力: なし / 副作用: SE再生、SceneManagerへの遷移予約
+	// �X�V
 	void Update() override;
-
-	// クリアメッセージおよびUIボタンの描画
-	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
+	// �`��
 	void Draw() override;
-
-	// リザルト画面の終了処理
-	// 入力: なし / 出力: なし / 副作用: なし
+	// �I������
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> mpRetoryButton = nullptr;  // 再プレイボタン
-	std::unique_ptr<Button> mpTitleButton = nullptr;   // タイトル画面へ戻るボタン
-	int DrawX = Utility::SCREEN_WIDTH / 2 - 150;       // ボタン配置基準X座標
-	static const int RetoryY = 600;                    // リトライボタンY座標
-	static const int TitleY = 750;                     // タイトルボタンY座標
+	std::unique_ptr<Button> mpRetoryButton = nullptr;  // ���g���C�{�^��
+	std::unique_ptr<Button> mpTitleButton = nullptr;   // �^�C�g���{�^��
+	int StringX = Utility::SCREEN_WIDTH / 2 - 150;	   // �������X���W
+	static const int RetoryY = 600;                 //���g���C�{�^���̍���
+	static const int TitleY = 750;                  // �^�C�g���{�^���̍���
 };

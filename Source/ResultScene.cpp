@@ -1,50 +1,56 @@
-ï»¿#include "ResultScene.h"
+#include "ResultScene.h"
 #include "DxLib.h"
 #include "Utility.h"
 #include "Master.h"
 #include "InputManager.h"
 #include "Button.h"
 
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 ResultScene::ResultScene()
-	: Scene()
+	: Scene()     // Šî’êƒNƒ‰ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğŒÄ‚Ño‚·
 {
+
 }
 
+// ƒfƒXƒgƒ‰ƒNƒ^
 ResultScene::~ResultScene()
 {
+
 }
 
-// ãƒªãƒˆãƒ©ã‚¤ãƒœã‚¿ãƒ³ãƒ»ã‚¿ã‚¤ãƒˆãƒ«ãƒœã‚¿ãƒ³ã®ç”ŸæˆãŠã‚ˆã³ãƒã‚¦ã‚¹ãƒ­ãƒƒã‚¯è§£é™¤
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: Buttonã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
+// ‰Šú‰»
 void ResultScene::Initialize()
 {
+	// ƒ{ƒ^ƒ“‚Ì¶¬
 	if (mpRetoryButton == nullptr)
 	{
-		mpRetoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "ãƒªãƒˆãƒ©ã‚¤", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpRetoryButton = std::make_unique<Button>(StringX, RetoryY - 10, StringX + 250, RetoryY + 60, "ƒŠƒgƒ‰ƒC", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 	if (mpTitleButton == nullptr)
 	{
-		mpTitleButton = std::make_unique<Button>(DrawX, TitleY - 10, DrawX + 250, TitleY + 60, "ã‚¿ã‚¤ãƒˆãƒ«ã¸", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpTitleButton = std::make_unique<Button>(StringX, TitleY - 10, StringX + 250, TitleY + 60, "ƒ^ƒCƒgƒ‹‚Ö", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
-	// UIãƒœã‚¿ãƒ³æ“ä½œã®ãŸã‚ãƒã‚¦ã‚¹ãƒ­ãƒƒã‚¯ã‚’è§£é™¤
+	// Mouse‚ÌƒƒbƒN‚ğ‰ğœ
 	InputManager::GetInstance().EnableMouseLock(false);
 }
 
-// ãƒœã‚¿ãƒ³å…¥åŠ›æ¤œçŸ¥ã¨ã‚·ãƒ¼ãƒ³é·ç§»è¦æ±‚
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: SEå†ç”Ÿã€SceneManagerã¸ã®é·ç§»äºˆç´„
+// XV
 void ResultScene::Update()
 {
+	// ƒ{ƒ^ƒ“‚ÌXVˆ—‚ğŒÄ‚Ô
 	if (mpRetoryButton)
 	{
 		mpRetoryButton->Update();
 
 		if (mpRetoryButton->IsClick())
 		{
+			// SEÄ¶
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_3D);
 		}
+
 	}
 
 	if (mpTitleButton)
@@ -53,22 +59,27 @@ void ResultScene::Update()
 
 		if (mpTitleButton->IsClick())
 		{
+			// SEÄ¶
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TITLE);
 		}
 	}
 
+	// Šî’êƒNƒ‰ƒX‚ÌXVˆ—‚ğŒÄ‚Ño‚·
 	Scene::Update();
+
 }
 
-// ã‚¯ãƒªã‚¢ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŠã‚ˆã³UIãƒœã‚¿ãƒ³ã®æç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
+// •`‰æ
 void ResultScene::Draw()
 {
+	// ”wŒi‚Ì•\¦
 	SetBackgroundColor(255, 255, 255);
 
+	// •¶š—ñ‚Ì•\¦ //
 	DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 150, Utility::SCREEN_HEIGHT / 2 - 140, "Game Clear", GetColor(255, 255, 255), fontSize90);
 
+	// ƒ{ƒ^ƒ“‚Ì•\¦
 	if (mpRetoryButton)
 	{
 		mpRetoryButton->Draw();
@@ -79,9 +90,13 @@ void ResultScene::Draw()
 		mpTitleButton->Draw();
 	}
 
+	// Šî’êƒNƒ‰ƒX‚Ì•`‰æˆ—‚ğŒÄ‚Ño‚·
 	Scene::Draw();
+
 }
 
+// I—¹ˆ—
 void ResultScene::Finalize()
 {
+
 }

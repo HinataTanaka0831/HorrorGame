@@ -1,25 +1,28 @@
-ï»¿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include "GameRuleScene.h"
 #include "DxLib.h"
-#include "Utility.h"
-#include "Master.h"
+#include "GameRuleScene.h"
 #include "InputManager.h"
+#include "Master.h"
 #include "Button.h"
 
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 GameRuleScene::GameRuleScene()
-	: Scene()
+	:Scene()
 {
+
 }
 
+// ƒfƒXƒgƒ‰ƒNƒ^
 GameRuleScene::~GameRuleScene()
 {
+
 }
 
-// æ“ä½œã‚­ãƒ¼UIã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã®èª­ã¿è¾¼ã¿ãŠã‚ˆã³æˆ»ã‚‹ãƒœã‚¿ãƒ³ã®ç”Ÿæˆ
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ã‚­ãƒ¼ãƒã‚¤ãƒ³ãƒ‰ç”»åƒãƒãƒ³ãƒ‰ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ã€Buttonç”Ÿæˆ
+// ‰Šú‰»
 void GameRuleScene::Initialize()
 {
+	// ‰æ‘œ‚ğ¶¬
 	if (keyHandle == -1) keyHandle = LoadGraph("Resource/3D_UI/playRule_Key_UI.png");
 	if (key_R_Handle == -1) key_R_Handle = LoadGraph("Resource/3D_UI/playRule_Key_R_UI.png");
 	if (key_F_Handle == -1) key_F_Handle = LoadGraph("Resource/3D_UI/playRule_Key_F_UI.png");
@@ -29,15 +32,15 @@ void GameRuleScene::Initialize()
 
 	if (mpBackButton == nullptr)
 	{
-		mpBackButton = std::make_unique<Button>(DrawX, BackY - 10, DrawX + 250, BackY + 60, "æˆ»ã‚‹", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpBackButton = std::make_unique<Button>(StringX, BackY - 10, StringX + 250, BackY + 60, "–ß‚é", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
-	// UIãƒœã‚¿ãƒ³é¸æŠã®ãŸã‚ãƒã‚¦ã‚¹ãƒ­ãƒƒã‚¯ã‚’è§£é™¤
+
 	InputManager::GetInstance().EnableMouseLock(false);
+
 }
 
-// ã‚¿ã‚¤ãƒˆãƒ«ã¸æˆ»ã‚‹ãƒœã‚¿ãƒ³å…¥åŠ›ã®ç›£è¦–ã¨é·ç§»è¦æ±‚
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: SEå†ç”Ÿã€SceneManagerã¸ã®é·ç§»äºˆç´„
+// XV
 void GameRuleScene::Update()
 {
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
@@ -49,65 +52,89 @@ void GameRuleScene::Update()
 		if (mpBackButton->IsClick())
 		{
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TITLE);
+			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TYPE::SCENE_TITLE);
 		}
 	}
 
+	// Šî’êƒNƒ‰ƒX‚ÌXVˆ—‚ğŒÄ‚Ño‚·
 	Scene::Update();
 }
 
-// æ“ä½œèª¬æ˜ç”»åƒã€å¯¾å¿œã‚­ãƒ¼ã‚¢ã‚¤ã‚³ãƒ³ã€è§£èª¬ãƒ†ã‚­ã‚¹ãƒˆãŠã‚ˆã³æˆ»ã‚‹ãƒœã‚¿ãƒ³ã®æç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»ãŠã‚ˆã³ScreenFlip
+// •`‰æ
 void GameRuleScene::Draw()
 {
-	// ç ‚åµã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®é€£ç¶šæç”»
-	for (int i = 1; i < 7; ++i)
+	for (int i = 1; i < 7; i++)
 	{
+		// ‰æ–Ê‚ğƒNƒŠƒA
 		ClearDrawScreen();
 
 		char Buf[256];
 		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
 		noise = LoadGraph(Buf);
 
+		// ”wŒi‚ÌF‚ğİ’è
 		SetBackgroundColor(0, 0, 0);
+
+		// ”wŒi‚Ì•\¦
 		DrawGraph(0, 0, noise, true);
 
-		DrawGraph(Utility::SCREEN_WIDTH / 3 - 280, Utility::SCREEN_HEIGHT / 3 - 200, keyHandle, true);
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 240, Utility::SCREEN_HEIGHT / 3, "ç§»å‹•", GetColor(255, 255, 255), fontSize50);
+
+
+		// lŠpŒ`‚Ì•\¦
+		DrawBox(Utility::SCREEN_WIDTH / 4 - 300, 30, Utility::SCREEN_WIDTH / 2 + 780, 1060, GetColor(255, 255, 255), false);
+		// •¶š—ñ‚Ì•\¦
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 240, Utility::SCREEN_HEIGHT / 3 - 260, "`` ‘€ì•û–@ ``", GetColor(255, 255, 255), fontSize50);
+
+		// ‰æ‘œ‚Ì•\¦
+		DrawGraph(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 3 - 180, keyHandle, true);
 
 		DrawGraph(Utility::SCREEN_WIDTH / 3 + 140, Utility::SCREEN_HEIGHT / 3 - 160, key_R_Handle, true);
+
 		DrawGraph(Utility::SCREEN_WIDTH / 2 + 225, Utility::SCREEN_HEIGHT / 3 - 160, key_F_Handle, true);
+
 		DrawGraph(Utility::SCREEN_WIDTH / 2 + 575, Utility::SCREEN_HEIGHT / 3 - 160, key_E_Handle, true);
 
 		DrawGraph(Utility::SCREEN_WIDTH / 3 - 240, Utility::SCREEN_HEIGHT / 2 + 60, mouseHandle, true);
+
 		DrawGraph(Utility::SCREEN_WIDTH / 2 + 135, Utility::SCREEN_HEIGHT / 2, mouseMoveHandle, true);
 
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 + 50, Utility::SCREEN_HEIGHT / 3, "ã‚¢ã‚¤ãƒ†ãƒ å–å¾—ã€€  ã‚¢ã‚¤ãƒ†ãƒ ä½¿ç”¨ã€€  ã—ã‚ƒãŒã¿", GetColor(255, 255, 255), fontSize50);
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 290, 920, "ãƒ©ã‚¤ãƒˆã®ON/OFF", GetColor(255, 255, 255), fontSize50);
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 + 205, 920, "è¦–ç‚¹ç§»å‹•", GetColor(255, 255, 255), fontSize50);
+
+		// •¶š—ñ‚Ì•\¦
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 + 50, Utility::SCREEN_HEIGHT / 3, "ƒAƒCƒeƒ€æ“¾@  ƒAƒCƒeƒ€g—p@  ‚µ‚á‚ª‚İ", GetColor(255, 255, 255), fontSize50);
+
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 290, 920, "ƒ‰ƒCƒg‚ÌON/OFF", GetColor(255, 255, 255), fontSize50);
+
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 + 205, 920, "‹“_ˆÚ“®", GetColor(255, 255, 255), fontSize50);
+
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 80, 1000, "ƒ}ƒEƒX¶ƒNƒŠƒbƒN‚Åƒ^ƒCƒgƒ‹‚Ö–ß‚é", GetColor(255, 255, 255), fontSize50);
 
 		if (mpBackButton)
 		{
 			mpBackButton->Draw();
 		}
 
+
+		// — ‰æ–Ê‚Ì“à—e‚ğ•\‰æ–Ê‚É‰f‚·
 		ScreenFlip();
-		DeleteGraph(noise);
 	}
 
+	// Šî’êƒNƒ‰ƒX‚Ì•`‰æˆ—‚ğŒÄ‚Ño‚·
 	Scene::Draw();
 }
 
-// ãƒ­ãƒ¼ãƒ‰ã—ãŸå…¨æ“ä½œã‚­ãƒ¼ç”»åƒãƒªã‚½ãƒ¼ã‚¹ã®è§£æ”¾
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ç”»åƒãƒãƒ³ãƒ‰ãƒ«ã®ç ´æ£„ã€BGMåœæ­¢
+// I—¹ˆ—
 void GameRuleScene::Finalize()
 {
-	if (keyHandle != -1) { DeleteGraph(keyHandle); keyHandle = -1; }
-	if (key_R_Handle != -1) { DeleteGraph(key_R_Handle); key_R_Handle = -1; }
-	if (key_F_Handle != -1) { DeleteGraph(key_F_Handle); key_F_Handle = -1; }
-	if (key_E_Handle != -1) { DeleteGraph(key_E_Handle); key_E_Handle = -1; }
-	if (mouseHandle != -1) { DeleteGraph(mouseHandle); mouseHandle = -1; }
-	if (mouseMoveHandle != -1) { DeleteGraph(mouseMoveHandle); mouseMoveHandle = -1; }
+	// ‰æ‘œ‚ğíœ
+	if (keyHandle != -1) DeleteGraph(keyHandle);
+	if (key_R_Handle != -1) DeleteGraph(key_R_Handle);
+	if (key_F_Handle != -1) DeleteGraph(key_F_Handle);
+	if (key_E_Handle != -1) DeleteGraph(key_E_Handle);
+	if (mouseHandle != -1) DeleteGraph(mouseHandle);
+	if (mouseMoveHandle != -1) DeleteGraph(mouseMoveHandle);
+	DeleteGraph(noise);
 
+	// BGM’â~
 	Master::mpSoundManager->StopBGM();
 }
+

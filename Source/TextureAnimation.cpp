@@ -1,5 +1,6 @@
-ï»¿#include "TextureAnimation.h"
+#include "TextureAnimation.h"
 
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 TextureAnimation::TextureAnimation(
 	VECTOR position,
 	std::string filename,
@@ -8,7 +9,7 @@ TextureAnimation::TextureAnimation(
 	int yNum,
 	int interval
 )
-	: mvPosition(position)
+	: mvPosition()
 	, mnCounter(0)
 	, mnInterval(interval)
 	, mnCurrentNum(0)
@@ -16,17 +17,19 @@ TextureAnimation::TextureAnimation(
 {
 	mnHandleList = new int[allNum];
 
+	// ‰æ‘œƒtƒ@ƒCƒ‹“Ç‚İ‚İ
 	int handle = LoadGraph(filename.c_str());
 	if (handle == -1)
 	{
-		return;
+		return;   // “Ç‚İ‚İ¸”s‚µ‚Ä‚¢‚½‚çˆÈ~‚Íˆ—‚µ‚È‚¢
 	}
 
+	// ƒTƒCƒYæ“¾
 	int sizeX, sizeY;
 	GetGraphSize(handle, &sizeX, &sizeY);
-	DeleteGraph(handle);
 
-	LoadDivGraph(
+	// ƒeƒNƒXƒ`ƒƒ‚Ì•ªŠ„“Ç‚İ‚İ
+	int success = LoadDivGraph(
 		filename.c_str(),
 		allNum,
 		xNum,
@@ -36,38 +39,28 @@ TextureAnimation::TextureAnimation(
 		mnHandleList
 	);
 }
-
+// ƒfƒXƒgƒ‰ƒNƒ^
 TextureAnimation::~TextureAnimation()
 {
-	if (mnHandleList != nullptr)
-	{
-		for (int i = 0; i < mnAllNum; ++i)
-		{
-			DeleteGraph(mnHandleList[i]);
-		}
-		delete[] mnHandleList;
-		mnHandleList = nullptr;
-	}
+
 }
 
-// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«çµŒéã«ã‚ˆã‚‹ã‚³ãƒé€ã‚Šæ›´æ–°
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: mnCurrentNumãŠã‚ˆã³mnCounterã®æ›´æ–°
 void TextureAnimation::Update()
 {
+	// ƒJƒEƒ“ƒ^‚ğƒCƒ“ƒNƒŠƒƒ“ƒg
 	mnCounter++;
 	if (mnCounter % mnInterval == 0)
 	{
-		mnCounter = 0;
-		mnCurrentNum = (mnCurrentNum + 1) % mnAllNum;
+		mnCounter = 0;   // ƒJƒEƒ“ƒ^‚ğ–ß‚·
+		mnCurrentNum++;  // ƒeƒNƒXƒ`ƒƒ”Ô†‚ği‚ß‚é
+		if (mnCurrentNum >= mnAllNum)  // •ªŠ„”‚ğ’´‚¦‚é‚È‚çƒ‹[ƒv‚³‚¹‚é
+		{
+			mnCurrentNum = 0;   // ƒ‹[ƒv‚³‚¹‚é
+		}
 	}
 }
 
-// ç¾åœ¨ã®ã‚³ãƒç”»åƒæç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 void TextureAnimation::Draw()
 {
-	if (mnHandleList != nullptr)
-	{
-		DrawGraph((int)mvPosition.x, (int)mvPosition.y, mnHandleList[mnCurrentNum], true);
-	}
+	DrawGraph((int)mvPosition.x, (int)mvPosition.y, mnHandleList[mnCurrentNum], true);
 }

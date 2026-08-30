@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 
 #include "SelectScene.h"
 
@@ -8,18 +8,18 @@ class GameScene : public SelectScene
 
 
 public:
-	// ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
+	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 	GameScene();
-	// ï¿½fï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
+	// ƒfƒXƒgƒ‰ƒNƒ^
 	virtual~GameScene();
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ‰Šú‰»
 	virtual void Initialize() override;
-	// ï¿½Xï¿½V
+	// XV
 	virtual void Update() override;
-	// ï¿½`ï¿½ï¿½
+	// •`‰æ
 	virtual void Draw() override;
-	// ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// I—¹ˆ—
 	virtual void Finalize() override;
 
 

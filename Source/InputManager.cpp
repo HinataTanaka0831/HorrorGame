@@ -1,5 +1,23 @@
-﻿#include "InputManager.h"
+﻿/*
+
+キー入力に関する補助関数
+DXLibに存在しないので自作
+
+*/
+
+#include "InputManager.h"
 #include "DxLib.h"
+
+// 静的メンバ変数の初期化
+//int InputManager::mDownBuffer[256] = { 0 };
+//int InputManager::mUpBuffer[256] = { 0 };
+//
+//float InputManager::MouseX = 0.0f;
+//float InputManager::MouseY = 0.0f;
+//float InputManager::DeltaX = 0.0f;
+//float InputManager::DeltaY = 0.0f;
+//int InputManager::PreviousMouseInput = 0;
+//int InputManager::CurrentMouseInput = 0;
 
 InputManager& InputManager::GetInstance()
 {
@@ -7,42 +25,57 @@ InputManager& InputManager::GetInstance()
 	return instance;
 }
 
+
+// コンストラクタ
 InputManager::InputManager()
 {
 }
 
+// デストラクタ
 InputManager::~InputManager()
 {
+
 }
+
 
 int InputManager::CheckDownKey(int KeyCode)
 {
+	// 戻り値用の変数を用意
 	int result = 0;
+
+	// 指定キーの現在の状態を取得
 	int keyState = CheckHitKey(KeyCode);
 
-	// 前フレームで非押下かつ現フレームで押下の場合のみトリガー成立
-	if (mDownBuffer[KeyCode] == 0 && keyState == 1)
+	// 前回キーが押されておらず、かつ、現在キーが押されていたら「キーを押した瞬間」とする
+	if(mDownBuffer[KeyCode] == 0 && keyState == 1)
 	{
 		result = 1;
 	}
 
+	// 現在のキー状態をバッファに格納
 	mDownBuffer[KeyCode] = keyState;
+
 	return result;
 }
 
 // 指定されたキーが離された瞬間だけ 1 を返す関数
 int InputManager::CheckUpKey(int KeyCode)
 {
+	// 戻り値用の変数を用意
 	int result = 0;
+
+	// 指定キーの現在の状態を取得
 	int keyState = CheckHitKey(KeyCode);
 
-	// 前フレームで押下中かつ現フレームで非押下の場合のみリリーストリガー成立
-	if (mUpBuffer[KeyCode] == 1 && keyState == 0)
+	// 前回キーが押されており、かつ、現在キーが押されていなかったら「キーを離した瞬間」とする
+	if(mUpBuffer[KeyCode] == 1 && keyState == 0)
 	{
 		result = 1;
 	}
 
+	// 現在のキー状態をバッファに格納
 	mUpBuffer[KeyCode] = keyState;
+
 	return result;
 }
 
@@ -52,29 +85,29 @@ int InputManager::CheckPressKey(int KeyCode)
 	return CheckHitKey(KeyCode);
 }
 
-// FPS視点操作用のマウスカーソル固定および表示状態の切り替え
-// 入力: enable(trueで固定/非表示、falseで解除/表示) / 出力: なし / 副作用: OSカーソル表示設定および画面中央への強制移動
+
+
+
 void InputManager::EnableMouseLock(bool enable)
 {
 	m_isLocked = enable;
 	if (enable) {
-		// 画面外へのカーソル脱出とUI誤操作を防ぐため非表示かつ中央配置
-		SetMouseDispFlag(FALSE);
-		SetMousePoint(m_centerX, m_centerY);
+		// カーソル非表示 & 中央へ移動
+		SetMouseDispFlag(FALSE);          // DXLib: カーソル非表示
+		SetMousePoint(m_centerX, m_centerY); // 現在位置をセンターに合わせる
 	}
 	else {
-		SetMouseDispFlag(TRUE);
+		SetMouseDispFlag(TRUE);           // カーソル表示
 	}
 }
 
-
-// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置
-// 入力: なし / 出力: なし / 副作用: OSマウスカーソル座標の変更
 void InputManager::RecenterCursor()
 {
 	if (!m_isLocked) return;
+	// 画面中心へ強制移動 (DXLib の SetMousePoint が即座に反映される)
 	SetMousePoint(m_centerX, m_centerY);
 }
+
 
 // 毎フレームのマウス座標および入力状態のサンプリング
 // 入力: なし / 出力: なし / 副作用: 内部の座標・入力ビットフラグを更新
@@ -90,22 +123,26 @@ void InputManager::MouseUpdate()
 	CurrentMouseInput = GetMouseInput();
 }
 
-// マウスの相対移動量（デルタ）の算出およびFPS用中央復帰
-// 入力: なし / 出力: なし / 副作用: DeltaX/DeltaYの更新およびカーソル再中央配置
 void InputManager::MouseRotationUpdate()
 {
-	DeltaX = DeltaY = 0.0f;
+	// 前フレームの差分をリセット
+	DeltaX = DeltaY = 0.0;
 
-	int mouseX, mouseY;
-	GetMousePoint(&mouseX, &mouseY);
+	// マウス座標取得 (ロック中は常にセンター付近になるはず)
+	int MouseX, MouseY;
+	GetMousePoint(&MouseX, &MouseY);
 
-	// 中央座標からの差分を変位量（デルタ）として算出
-	int dx = mouseX - m_centerX;
-	int dy = mouseY - m_centerY;
+	// デルタ計算 (センターからのオフセット)
+	int dx = MouseX - m_centerX;
+	int dy = MouseY - m_centerY;
 
+
+	// 感度を掛けて格納 (ピクセル → ラジアン等は Camera 側で変換)
 	DeltaX = dx * MouseSensitivity;
 	DeltaY = dy * MouseSensitivity;
 
+
+	// FPS 方式なら毎フレームセンターへ戻す
 	if (m_isLocked) {
 		RecenterCursor();
 	}
@@ -115,19 +152,40 @@ void InputManager::MouseRotationUpdate()
 // 入力: mouseCode(マウスコード) / 出力: 押下中ならtrue、それ以外はfalse / 副作用: なし
 bool InputManager::CheckPressMouseClick(int mouseCode)
 {
-	return (CurrentMouseInput & mouseCode) != 0;
+	bool result = false;
+
+	if (CurrentMouseInput & mouseCode)
+	{
+		result = true;
+	}
+
+	return result;
 }
 
 // 指定されたマウスが押された瞬間かどうかを判定
 // 入力: mouseCode(マウスコード) / 出力: 押下瞬間ならtrue、それ以外はfalse / 副作用: なし
 bool InputManager::CheckTriggerMouseClick(int mouseCode)
 {
-	return ((CurrentMouseInput & mouseCode) && !(PreviousMouseInput & mouseCode));
+	bool result = false;
+
+	if ((CurrentMouseInput & mouseCode) && !(PreviousMouseInput & mouseCode))
+	{
+		result = true;
+	}
+
+	return result;
 }
 
 // 指定されたマウスが離された瞬間かどうかを判定
 // 入力: mouseCode(マウスコード) / 出力: 離された瞬間ならtrue、それ以外はfalse / 副作用: なし
 bool InputManager::CheckReleaseMouseClick(int mouseCode)
 {
-	return (!(CurrentMouseInput & mouseCode) && (PreviousMouseInput & mouseCode));
+	bool result = false;
+
+	if (!(CurrentMouseInput & mouseCode) && (PreviousMouseInput & mouseCode))
+	{
+		result = true;
+	}
+
+	return result;
 }

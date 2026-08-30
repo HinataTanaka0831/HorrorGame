@@ -1,53 +1,60 @@
-﻿#pragma once
+#pragma once
 
 #include "DxLib.h"
 #include <string>
 
-// 3Dアクターおよびギミックオブジェクトの共通基底クラス
 class Object3D
 {
 public:
+	// �I�u�W�F�N�g���������邽�߂̃^�O
 	enum Tag3D
 	{
-		None3D = 0,
-		TagPlayer3D,       // プレイヤー
-		TagEnemy3D,        // 敵キャラクター
-		TagItem3D,         // 一般アイテム
-		TagEscapeItem3D,   // 脱出用アイテム
-		TagTimeItem,       // 制限時間アイテム
-		TagStage,          // ステージマップ
-		TagExitdoor,       // 脱出ドア
+		None3D = 0,   // �ݒ�Ȃ�
+
+		TagPlayer3D = 2000,
+		TagWall3D = 2100,
+		TagEnemy3D = 2200,
+		TagStage = 2300,
+		TagEscapeItem = 2400,
+		TagTimeItem = 2500,
+		TagExitdoor = 2600,
+
 	};
 
+
 public:
-	// 座標初期化およびシーンObjectManagerへの自動登録
-	// 入力: initPos(初期3Dワールド座標) / 出力: なし / 副作用: シーンObjectManagerへの登録
-	Object3D(VECTOR initPos);
-	virtual ~Object3D();
+	Object3D(VECTOR initPos);   // �R���X�g���N�^
+	virtual ~Object3D();        // �f�X�g���N�^
 
-	// 毎フレームの状態更新
-	// 入力: なし / 出力: なし / 副作用: 派生クラスによる座標・AI・入力状態等の変更
-	virtual void Update();
+	virtual void Update();     // �X�V
+	virtual void Draw();      // �`��
 
-	// 3Dモデル描画
-	// 入力: なし / 出力: なし / 副作用: 派生クラスによるDXライブラリ3D描画
-	virtual void Draw();
+public:  // �Q�b�^�[�E�Z�b�^�[
 
-	Tag3D GetTag() const { return mnTag; }
-	void SetTag(Tag3D tag) { mnTag = tag; }
-
-	VECTOR GetPosition() const { return mvPosition; }
+	// ���W
 	void SetPosition(VECTOR pos) { mvPosition = pos; }
+	VECTOR GetPosition() { return mvPosition; }
 
-	VECTOR GetRotation() const { return mvRotation; }
+	// ��]
 	void SetRotation(VECTOR rot) { mvRotation = rot; }
+	VECTOR GetRotation() { return mvRotation; }
 
-	bool IsDeleteFlag() const { return mbDeleteFlag; }
-	void SetDeleteFlag(bool f) { mbDeleteFlag = f; }
+	// �폜�t���O
+	void SetDeleteFlag(bool flag) { mbDeleteFlag = flag; }
+	bool IsDeleteFlag() { return mbDeleteFlag; }
+
+	// �^�O
+	void SetTag(Tag3D tag) { mnTag = tag; }
+	Tag3D GetTag() { return mnTag; }
+
 
 protected:
-	VECTOR mvPosition;
-	VECTOR mvRotation;
-	bool mbDeleteFlag;
-	Tag3D mnTag;
+	VECTOR mvPosition;   // ���W
+	VECTOR mvRotation;   // ��]
+
+
+private:
+	bool mbDeleteFlag;   // �폜�t���O
+	Tag3D mnTag;         // �^�O
+	float mfCurrentCameraDistance;     // ���݂̃J�����Ƃ̋���
 };

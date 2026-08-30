@@ -1,62 +1,62 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <vector>
 
-// BGM/SEリソースのロード、重複管理、ループ再生および停止を統括する音声管理クラス
 class SoundManager
 {
-public:
+public:          // enum, struct �Ȃǂ̒�`
+	// BGM �̎��
 	enum SOUND_BGM
 	{
-		BGM_TITLE = 0,  // タイトル画面BGM
-		BGM_GAME,       // 探索・ホラー演出用BGM（ジャンプスケア等）
-		BGM_RESULT,     // リザルト画面BGM
+		BGM_TITLE = 0,  // �^�C�g�����
+		BGM_GAME,      // �Q�[�����
+		BGM_RESULT,   // ���U���g���
 	};
 
+	// SE �̎��
 	enum SOUND_SE
 	{
-		SE_DECIDE = 0,  // UI決定音
-		SE_Walk = 1,    // プレイヤー歩行・足音
+		SE_DECIDE = 0,  // ���艹
+		SE_Walk = 1,  // ���s��
 	};
 
 public:
+	// �R���X�g���N�^
 	SoundManager();
+	// �f�X�g���N�^
 	~SoundManager();
 
-	// ゲーム内で使用する全BGM/SEの事前ロード
-	// 入力: なし / 出力: なし / 副作用: 各種音声ファイルのメモリ読み込み
+	// ������
 	void Initialize();
-
-	// 確保済み音声メモリリソースの全解放
-	// 入力: なし / 出力: なし / 副作用: サウンドハンドルの削除
+	// �I������
 	void Finalize();
 
-public:
-	// 指定BGMのループ再生開始
-	// 入力: bgm(再生するBGM種別), isTop(先頭から再生し直すか) / 出力: なし / 副作用: 音声再生および再生中BGM状態の更新
+public:        // �T�E���h�Đ��n
+
+	// BGM �Đ�
+	// bgm ... �炵����BGM�̎��
+	// isTop ... �ŏ�����Đ����邩�ǂ���
+	// bool isTop = true -> �f�t�H���g�����ƌĂ΂�邩�������B�֐����Ăяo���ۂɓn���Ȃ��Ă��F�������
 	void PlayBGM(SOUND_BGM bgm, bool isTop = true);
 
-	// 指定SEのバックグラウンド単発再生
-	// 入力: se(再生するSE種別) / 出力: なし / 副作用: 効果音再生
+	// SE�Đ�
+	// se ... �炵����SE�̎��
 	void PlaySE(SOUND_SE se);
 
-	// BGMファイルのメモリ読み込み（二重登録ガード付き）
-	// 入力: bgm(BGM種別), filename(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
+	// BGM�̓ǂݍ���
 	void LoadBGM(SOUND_BGM bgm, std::string filename);
 
-	// SEファイルのメモリ読み込み（二重登録ガード付き）
-	// 入力: se(SE種別), filename(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
+	// SE�̓ǂݍ���
 	void LoadSE(SOUND_SE se, std::string filename);
 
-	// 現在再生中のBGMを停止
-	// 入力: なし / 出力: なし / 副作用: BGM再生の停止
+	// BGM�̒�~
 	void StopBGM();
 
-private:
-	SOUND_BGM mnNowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
-	SOUND_SE mnNowPlayingSe;         // 直近に再生されたSE種別
+private:    // �����o�ϐ�
+	SOUND_BGM mnNowPlayingBgm;       // ���ݍĐ�����Ă���BGM�̎��
+	SOUND_SE mnNowPlayingSe;         // ���ݍĐ�����Ă���SE�̎��
 
-	std::vector<std::pair<SOUND_BGM, int>> mnBgmHandleList;  // BGM種別とDXライブラリハンドルの対応表
-	std::vector<std::pair<SOUND_SE, int>> mnSeHandleList;    // SE種別とDXライブラリハンドルの対応表
+	std::vector <std::pair<SOUND_BGM, int>> mnBgmHandleList;  // �ǂݍ���BGM�n���h���̃��X�g
+	std::vector <std::pair<SOUND_SE, int>> mnSeHandleList;   // �ǂݍ���SE�n���h���̃��X�g
 };

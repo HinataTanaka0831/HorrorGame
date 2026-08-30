@@ -1,62 +1,53 @@
-﻿#pragma once
+#pragma once
 
 #include "DxLib.h"
 #include "Utility.h"
 
 class Object3D;
 
-// FPS視点の追従カメラ、マウス入力による水平/垂直回転、ジャンプスケア時画面揺れを制御するクラス
 class Camera
 {
 public:
-	Camera();
-	~Camera();
+	Camera();   // �R���X�g���N�^
+	~Camera();  // �f�X�g���N�^
 
-	// カメラクリップ距離・背景色・初期注視点の初期設定
-	// 入力: なし / 出力: なし / 副作用: SetCameraNearFar, SetBackgroundColor実行
-	void Initialize();
+	void Initialize();      // ������
 
-	// 追従ターゲット（プレイヤー）座標の取得、しゃがみ時の視線高調整、注視点算出およびDXライブラリカメラへの反映
-	// 入力: なし / 出力: なし / 副作用: SetCameraPositionAndTarget_UpVecY実行
-	void Update();
+	void Update();          // �X�V
 
-	// マウス変位量に応じた視点回転角の加算およびピッチ角（上下見渡し）の上下90度制限
-	// 入力: なし / 出力: なし / 副作用: mfHorizontalAngle/mfVerticalAngleの更新
-	void UpdateRotation();
+	void UpdateRotation();  // ��]����
 
-	// ジャンプスケア時等の視点操作固定フラグ設定
-	// 入力: f(固定フラグ) / 出力: なし / 副作用: isFreezeの更新
-	void SetFreeze(bool f) { isFreeze = f; }
+	void SetFreeze(bool f) { isFreeze = f; }        // �J�����𓮂����Ȃ��Ȃ�悤�ɐݒ�
 
-	// 正弦波衰減関数による画面振動オフセットの計算
-	// 入力: なし / 出力: なし / 副作用: mvShakePositionの更新
-	void Shake();
+	void Shake();                                   // ��ʗh��̏���
 
-	// 画面揺れ演出パラメータ（継続時間・振幅・周期速度）の設定
-	// 入力: time(継続秒), width(振幅), anglespeed(角速度), stepTime(更新刻み) / 出力: なし / 副作用: 揺れカウンタのリセット
-	void SetUpShake(float time, float width, float anglespeed, float stepTime = 1.0f);
+	void SetUpShake(float time, float width, float anglespeed, float stepTime = 1.0f);  // ��ʗh���ݒ�
 
-	VECTOR GetPosition() const { return mvPosition; }
-	VECTOR GetLookAtPosition() const { return mvLookAtPosition; }
-	void SetMousePointFlag(bool MP) { NoSetMouse = MP; }
+	VECTOR GetPosition() { return mvPosition; }  // ���W�擾
+	VECTOR GetLookAtPosition() { return mvLookAtPosition; }  // �����_�擾
+
+	void SetMousePointFlag(bool MP) { NoSetMouse = MP; }    // �}�E�X���W�𒆉��ɖ߂����ǂ�����ݒ�
+
 
 private:
-	float mfHorizontalAngle;  // ヨー角（水平回転角度・ラジアン）
-	float mfVerticalAngle;    // ピッチ角（垂直見渡し角度・ラジアン）
+	float mfHorizontalAngle;  // ���������A���O��
+	float mfVerticalAngle;    // ���������A���O��
 
-	float mfShakeAngle;        // 画面揺れ正弦波用アングル
-	float mfShakeTimeCounter;  // 画面揺れ経過時間
-	float mfShakeTime;         // 画面揺れ総継続時間
-	float mfShakeWidth;        // 画面揺れ振幅
-	float mfShakeAngleSpeed;   // 画面揺れ振動周波数
-	float mfStepTime;
+	//�� ��ʗh��Ŏg�p����ϐ�
+	float mfShakeAngle;        // ��ʂ�h�炷���߂̃A���O��
+	float mfShakeTimeCounter;  // ��ʗh��̎��ԃJ�E���g
+	float mfShakeTime;         // ��ʗh��̎���
+	float mfShakeWidth;        // ��ʗh��̕�
+	float mfShakeAngleSpeed;   // ��ʗh��̃X�s�[�h
+	float mfStepTime;          // ��ʗh��̎��Ԃ��o�߂�����
 
-	bool isFreeze;             // 視点操作拘束フラグ
-	bool NoSetMouse;
+	bool isFreeze;            // �W�����v�X�P�A���N������~�߂�
+	bool NoSetMouse;          // �}�E�X���W�𒆉��ɖ߂����ǂ���
 
-	VECTOR mvPosition;         // カメラワールド座標
-	VECTOR mvLookAtPosition;   // カメラ注視点ワールド座標
-	VECTOR mvShakePosition;    // 画面揺れによる加算オフセット
+	VECTOR mvPosition;        // �J�������W
+	VECTOR mvLookAtPosition;  // �J�����̒����_���W
+	VECTOR mvShakePosition;
 
-	Object3D* mpTarget;        // 追従対象（プレイヤーオブジェクト）
+	Object3D* mpTarget;      // �J������������Ώ�
+
 };

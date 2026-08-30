@@ -1,40 +1,58 @@
-ï»¿#include "Collision.h"
+#include "Collision.h"
 
-// 2ã¤ã®3Dçƒä½“åŒå£«ã®åŒ…å«ãƒ»äº¤å·®åˆ¤å®šï¼ˆä¸‰å¹³æ–¹ã®å®šç†ã«ã‚ˆã‚‹è·é›¢æ¯”è¼ƒï¼‰
-// å…¥åŠ›: centerPosA(ä¸­å¿ƒA), radiusA(åŠå¾„A), centerPosB(ä¸­å¿ƒB), radiusB(åŠå¾„B) / å‡ºåŠ›: æ¥è§¦ã—ã¦ã„ã‚Œã°true / å‰¯ä½œç”¨: ãªã—
 bool Collision::CheckCircleToCircle(
 	const VECTOR& centerPosA,
 	const float& radiusA,
 	const VECTOR& centerPosB,
 	const float& radiusB)
 {
+	// “–‚½‚è”»’è‚ğ‘‚­@O•½•û‚Ì’è—(a^2 + b^2 = c^2)
+
+	// X²‚Ì‹——£i—Î‚Ì‰¡üj
 	float distanceX = centerPosA.x - centerPosB.x;
+	// Y²‚Ì‹——£i—Î‚Ìcüj
 	float distanceY = centerPosA.y - centerPosB.y;
+	// Z²‚Ì‹——£i—Î‚Ì‰œ‚Ìüj
 	float distanceZ = centerPosA.z - centerPosB.z;
 
-	// å¹³æ–¹æ ¹è¨ˆç®—ï¼ˆsqrtfï¼‰ã®è² è·ã‚’å›é¿ã™ã‚‹ãŸã‚2ä¹—è·é›¢ã§æ¯”è¼ƒ
-	float distSq = distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ;
-	float radiusSum = radiusA + radiusB;
-	float radiusSq = radiusSum * radiusSum;
+	// ğŒ
+	float powX = distanceX * distanceX; // ‰¡ü‚Ì2æ
+	float powY = distanceY * distanceY; // cü‚Ì‚Qæ
+	float powZ = distanceZ * distanceZ; // ‰œ‚Ìü‚Ì2æ
+	float powR = (radiusA + radiusB) * (radiusA + radiusB);  // ‚»‚ê‚¼‚ê‚Ì”¼Œa‚ğ‘«‚µ‚½‚à‚Ì‚Ì‚Qæ
+	if ((powX + powY + powZ) <= powR)
+	{
+		return true;       // ¬Œ÷
+	}
 
-	return distSq <= radiusSq;
+	// ğŒ‚ğ–‚½‚³‚È‚¢‚Ì‚Å‚ ‚ê‚Î¸”s
+	return false;
 }
 
-// 3Dåº§æ¨™ç‚¹ã¨çƒä½“ã®åŒ…å«åˆ¤å®š
-// å…¥åŠ›: pointPos(ç‚¹ã®åº§æ¨™), centerPos(çƒä½“ä¸­å¿ƒ), radius(çƒä½“åŠå¾„) / å‡ºåŠ›: ç‚¹ãŒçƒä½“å†…ãªã‚‰true / å‰¯ä½œç”¨: ãªã—
 bool Collision::CheckPointToCircle(
 	const VECTOR& pointPos,
 	const VECTOR& centerPos,
 	const float& radius
 )
 {
+	// X²‚Ì‹——£
 	float distanceX = centerPos.x - pointPos.x;
+	// Y²‚Ì‹——£
 	float distanceY = centerPos.y - pointPos.y;
+	// Z²‚Ì‹——£
 	float distanceZ = centerPos.z - pointPos.z;
 
-	// å¹³æ–¹æ ¹è¨ˆç®—ï¼ˆsqrtfï¼‰ã®è² è·ã‚’å›é¿ã™ã‚‹ãŸã‚2ä¹—è·é›¢ã§æ¯”è¼ƒ
-	float distSq = distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ;
-	float radiusSq = radius * radius;
+	// ”»’è
+	float powX = distanceX * distanceX;   // ‰¡ü‚Ì‚Qæ
+	float powY = distanceY * distanceY;   // cü‚Ì‚Qæ
+	float powZ = distanceZ * distanceZ;   // ‰œ‚Ìü‚Ì2æ
+	float powR = radius * radius;         // ”¼Œa‚Ì‚Qæ
 
-	return distSq <= radiusSq;
+	if ((powX + powY + powZ) <= powR)
+	{
+		return true;    // “–‚½‚Á‚Ä‚¢‚é
+	}
+
+	// ğŒ‚ğ–‚½‚³‚È‚¢‚Ì‚Å‚ ‚ê‚Î¸”s
+	return false;
 }

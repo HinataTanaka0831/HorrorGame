@@ -1,34 +1,38 @@
-ï»¿#pragma once
-
+#pragma once
+// #ifndef _TEXTURE_H_
+// #define _TEXTURE_H_
 #include <string>
 #include "DxLib.h"
 
-// 2Dãƒ†ã‚¯ã‚¹ãƒãƒ£ç”»åƒã®ãƒ­ãƒ¼ãƒ‰ã€åº§æ¨™ç®¡ç†ã€é€éæç”»ã‚’è¡Œã†ãƒ©ãƒƒãƒ‘ãƒ¼ã‚¯ãƒ©ã‚¹
 class Texture
 {
 public:
-	// ç”»åƒèª­ã¿è¾¼ã¿ã¨ã‚µã‚¤ã‚ºãƒ»å½“ãŸã‚Šåˆ¤å®šåŠå¾„ã®ç®—å‡º
-	// å…¥åŠ›: filename(ç”»åƒãƒ‘ã‚¹), centerPosition(ä¸­å¿ƒåº§æ¨™), transFlag(é€éãƒ•ãƒ©ã‚°) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: LoadGraphå®Ÿè¡Œ
-	Texture(std::string filename, VECTOR centerPosition, int transFlag);
-	~Texture();
+	Texture(std::string filename, VECTOR centerPosition, int transFlag);      // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 
-	// 2Dç”»åƒã®ä¸­å¿ƒåŸºæº–æç”»
-	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
-	void Draw();
+	~Texture();     // ƒfƒXƒgƒ‰ƒNƒ^
 
-	void Update();
+	void Draw();    // •`‰æ
+	void Update();  // XV
 
+	// ƒZƒbƒ^[ŠÖ” //
+	// ƒ|ƒWƒVƒ‡ƒ“İ’è
 	void SetPosition(VECTOR centerPosition) { mvPosition = centerPosition; }
-	VECTOR GetPosition() const { return mvPosition; }
-	int GetSizeX() const { return mnSizeX; }
-	int GetSizeY() const { return mnSizeY; }
-	float GetRadius() const { return mfRadius; }
 
+	// ƒQƒbƒ^[ŠÖ”
+	// ƒ|ƒWƒVƒ‡ƒ“æ“¾
+	VECTOR GetPosition() { return mvPosition; }
+	// ƒTƒCƒYæ“¾
+	int GetSizeX() { return mnSizeX; }
+	int GetSizeY() { return mnSizeY; }
+	float GetRadius() { return mfRadius; }
+	
 private:
-	int mnHandle;
-	VECTOR mvPosition;
-	int mnSizeX;
-	int mnSizeY;
-	int mnTransFlag;
-	float mfRadius;
+	int mnHandle;      // “Ç‚İ‚ñ‚¾‰æ‘œ‚Ìƒnƒ“ƒhƒ‹
+	VECTOR mvPosition; // ƒ|ƒWƒVƒ‡ƒ“
+	int mnSizeX;       // ‰æ‘œ‚Ì•
+	int mnSizeY;       // ‰æ‘œ‚Ì‚‚³
+	int mnTransFlag;  // ‰æ‘œ‚Ì“§‰ß‚ğ—LŒø‚É‚·‚é‚©
+	float mfRadius;   // ”¼Œa
+	
+
 };

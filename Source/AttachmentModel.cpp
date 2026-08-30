@@ -1,29 +1,31 @@
-ï»¿#include "AttachmentModel.h"
+#include "AttachmentModel.h"
 
 AttachmentModel::AttachmentModel(std::string filename, int parentModelHandle, int parentFrameIndex)
-	: Object3D(VGet(0.0f, 0.0f, 0.0f))
+	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // À•W‚ÍƒAƒ^ƒbƒ`æ‚É‚æ‚Á‚Ä•Ï‚í‚é‚Ì‚Å‰Šú’l‚Í(0,0,0)‚É‚µ‚Ä‚¨‚­
 	, mnParentHandle(parentModelHandle)
 	, mnParentFrameIndex(parentFrameIndex)
 {
+	// 3Dƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
 	mnHandle = MV1LoadModel(filename.c_str());
 }
 
 AttachmentModel::~AttachmentModel()
 {
+	// ƒ‚ƒfƒ‹‚Ì”jŠü
 	MV1DeleteModel(mnHandle);
 }
 
-// è¦ªãƒ¢ãƒ‡ãƒ«ãƒœãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›è¡Œåˆ—ã‚’å–å¾—ã—è‡ªèº«ã«åæ˜ 
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: è‡ªèº«ã®æç”»è¡Œåˆ—ã®åŒæœŸ
 void AttachmentModel::Update()
 {
+	// ƒAƒ^ƒbƒ`æ‚Ìƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñî•ñ‚ğæ“¾
 	MATRIX matrix = MV1GetFrameLocalWorldMatrix(mnParentHandle, mnParentFrameIndex);
+
+	// ã‚Åæ“¾‚µ‚½s—ñî•ñ‚ğ©g‚Éİ’è‚·‚é
 	MV1SetMatrix(mnHandle, matrix);
 }
 
-// ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãƒ¢ãƒ‡ãƒ«æç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 void AttachmentModel::Draw()
 {
+	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	MV1DrawModel(mnHandle);
 }

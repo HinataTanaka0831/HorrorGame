@@ -1,56 +1,79 @@
-ï»¿#pragma once
+#pragma once
 
 #include "DxLib.h"
 #include <string>
 
+
+// ƒNƒ‰ƒX‚Ì‘O•ûéŒ¾
 class Texture;
 
-// 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åŸºåº•ã‚¯ãƒ©ã‚¹
-class Object2D
+
+
+//
+// 2DƒIƒuƒWƒFƒNƒg‚ÌŠî’êƒNƒ‰ƒX
+// 2D‚ÌƒIƒuƒWƒFƒNƒgiƒvƒŒƒCƒ„[“G‚È‚Çj‚ğ‰½‚©ì‚éÛ‚ÍA
+// •K‚¸‚±‚ê‚ğŒp³‚µ‚Äì¬‚·‚é
+
+class Object2D 
 {
-public:
+public:     // enum, struct, ’è”‚Ì’è‹`
+	// ƒIƒuƒWƒFƒNƒg‚ğŒ©•ª‚¯‚é‚½‚ß‚Ìƒ^ƒO
 	enum Tag
 	{
-		None2D = 0,
-		Player2D,
-		Enemy2D,
-		Bullet2D,
+		// TitleƒV[ƒ“‚Åg‚í‚ê‚éƒ^ƒOi1000`j
+		
+		
+		// GameƒV[ƒ“‚Åg‚í‚ê‚éƒ^ƒOi2000`j
+		Player2D = 2000,
+		Enemy2D = 2100,
+		BossEnemy2D = 2101,
+		Bullet2D = 2200,
+		EnemyBullet2D = 2201,
+		HomingBullet2D = 2201,
+
+		// ResultƒV[ƒ“‚Åg‚í‚ê‚éƒ^ƒOi3000`j
 	};
 
+
 public:
-	// 2Dãƒ†ã‚¯ã‚¹ãƒãƒ£ç”ŸæˆãŠã‚ˆã³ObjectManagerã¸ã®è‡ªå‹•ç™»éŒ²
-	// å…¥åŠ›: filename(ç”»åƒãƒ‘ã‚¹), initPos(åˆæœŸåº§æ¨™) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: Textureç”Ÿæˆã€ã‚·ãƒ¼ãƒ³ObjectManagerã¸ã®ç™»éŒ²
+	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 	Object2D(std::string filename, VECTOR initPos);
+	// ƒfƒXƒgƒ‰ƒNƒ^
 	virtual ~Object2D();
 
-	// åº§æ¨™åŒæœŸãŠã‚ˆã³ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ›´æ–°
-	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: å†…éƒ¨Textureåº§æ¨™ã®æ›´æ–°
+
+
+	// XV
 	virtual void Update();
 
-	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
-	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
+	// •`‰æ
 	virtual void Draw();
 
-	Tag GetTag() const { return mnTag; }
-	void SetTag(Tag tag) { mnTag = tag; }
 
-	VECTOR GetPosition() const { return mvPosition; }
-	void SetPosition(VECTOR pos) { mvPosition = pos; }
 
-	float GetRadius();
+public:      // ƒQƒbƒ^[EƒZƒbƒ^[
+	void SetPosition(VECTOR pos) { mvPosition = pos; }  // À•Wİ’è
+	VECTOR GetPosition() { return mvPosition; }         // À•Wæ“¾
 
-	bool IsDeleteFlag() const { return mbDeleteFlag; }
-	void SetDeleteFlag(bool f) { mbDeleteFlag = f; }
+	void SetDeleteFlag(bool flag) { mbDeleteFlag = flag; }  // íœƒtƒ‰ƒOİ’è
+	bool IsDeleteFlag() { return mbDeleteFlag; }         // íœƒtƒ‰ƒOæ“¾
+
+	void SetTag(Tag tag) { mnTag = tag; }   // ƒ^ƒOİ’è
+	Tag GetTag() { return mnTag; }          // ƒ^ƒOæ“¾
+
+	float GetRadius();   // ”¼Œa‚Ìæ“¾
+
 
 protected:
-	Texture* mpTexture;
-	VECTOR mvPosition;
-	bool mbDeleteFlag;
-	float mfAngle;
-	float mfspeed;
-	VECTOR mvDirection;
-	Tag mnTag;
+	Texture* mpTexture;     // ‰æ‘œ
+	VECTOR mvPosition;      // À•W
+	VECTOR mvDirection;  // ˆÚ“®•ûŒü
+	float mfAngle;       // Œ»İ‚Ì–Ú•WŠp“x
+	float mfspeed;       // ‘¬“x
+	static int score;    // ƒXƒRƒA
 
-public:
-	static int score;
+
+private:
+	bool mbDeleteFlag;     // íœƒtƒ‰ƒOi‚±‚ê‚ªtrue‚É‚È‚Á‚Ä‚¢‚é‚Æ©“®“I‚Éíœ‚³‚ê‚éi‚æ‚¤‚Éì‚éjj
+	Tag mnTag;             // ƒIƒuƒWƒFƒNƒg‚ğŒ©•ª‚¯‚é—p‚Ìƒ^ƒO
 };

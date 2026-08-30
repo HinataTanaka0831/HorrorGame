@@ -1,4 +1,4 @@
-ï»¿#include "SceneManager.h"
+#include "SceneManager.h"
 #include "Scene.h"
 #include "TitleScene.h"
 #include "ResultScene.h"
@@ -6,58 +6,70 @@
 #include "GameOverScene.h"
 #include "Scene3D.h"
 
+
 SceneManager::SceneManager()
-	: mnSceneType(SCENE_TYPE::SCENE_NONE)
-	, mnNextSceneType(SCENE_TYPE::SCENE_NONE)
+: mnSceneType(SCENE_TYPE::SCENE_NONE)
+, mnNextSceneType(SCENE_TYPE::SCENE_NONE)
 {
+
 }
 
 SceneManager::~SceneManager()
 {
+
 }
 
 void SceneManager::Initialize()
 {
+	 // ‰ŠúƒV[ƒ“‚ÌÝ’è
 	mnNextSceneType = SCENE_TYPE::SCENE_TITLE;
+
+	// ƒV[ƒ“‘JˆÚ‚ð‚³‚¹‚é
 	ChangeSceneIfNeeded();
 }
 
 void SceneManager::Update()
 {
-	if (mpCurrentScene != nullptr)
-	{
-		mpCurrentScene->Update();
-	}
+	// ƒV[ƒ“‚ÌXV
+	mpCurrentScene->Update();
 }
 
 void SceneManager::Draw()
 {
-	if (mpCurrentScene != nullptr)
-	{
-		mpCurrentScene->Draw();
-	}
+	// ƒV[ƒ“‚Ì•`‰æ
+	mpCurrentScene->Draw();
 }
 
 void SceneManager::Finalize()
 {
+
 }
 
 void SceneManager::ChangeSceneIfNeeded()
 {
+
+	// Œ»ÝƒV[ƒ“‚ÆŽŸƒV[ƒ“‚ªˆê‚Å‚ ‚ê‚Î‰½‚à‚µ‚È‚¢
 	if (mnSceneType == mnNextSceneType)
 	{
 		return;
 	}
+	
 
 	if (mpCurrentScene != nullptr)
 	{
+		// Œ»ÝƒV[ƒ“‚ÌI—¹ˆ—‚ð‚·‚é
 		mpCurrentScene->Finalize();
+
+		// ˆê’UƒV[ƒ“Ž©‘Ì‚à”jŠü‚µ‚Ä‚¨‚­
 		delete mpCurrentScene;
 		mpCurrentScene = nullptr;
 	}
 
+
+	// ŽŸƒV[ƒ“‚É‚·‚é‚½‚ßƒV[ƒ“ƒ^ƒCƒv‚ðXV
 	mnSceneType = mnNextSceneType;
 
+	// mnSceneType ‚É‰ž‚¶‚ÄƒV[ƒ“‚ð¶¬‚·‚é
 	switch (mnSceneType)
 	{
 	case SCENE_TYPE::SCENE_TITLE:
@@ -84,10 +96,13 @@ void SceneManager::ChangeSceneIfNeeded()
 		break;
 	}
 
+
+	// ƒV[ƒ“‚Ì¶¬‚ª‚³‚ê‚Ä‚¢‚é‚Í‚¸‚È‚Ì‚ÅA‰Šú‰»ˆ—‚ð“Ç‚ñ‚Å‚¨‚­
 	if (mpCurrentScene != nullptr)
 	{
 		mpCurrentScene->Initialize();
 	}
+
 }
 
 void SceneManager::RequestQuit()

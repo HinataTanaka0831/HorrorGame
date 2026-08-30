@@ -1,15 +1,25 @@
-ï»¿#pragma once
+#pragma once
 #include "DxLib.h"
 
-// çƒä½“ãƒ»ç‚¹åŒå£«ã®å¹¾ä½•å­¦çš„å½“ãŸã‚Šåˆ¤å®šã‚’è¨ˆç®—ã™ã‚‹é™çš„ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£ã‚¯ãƒ©ã‚¹
 class Collision
 {
 public:
-	Collision() {}
-	~Collision() {}
+	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	Collision() 
+	{
 
-	// 2ã¤ã®3Dçƒä½“åŒå£«ã®åŒ…å«ãƒ»äº¤å·®åˆ¤å®šï¼ˆä¸‰å¹³æ–¹ã®å®šç†ã«ã‚ˆã‚‹è·é›¢æ¯”è¼ƒï¼‰
-	// å…¥åŠ›: centerPosA(ä¸­å¿ƒA), radiusA(åŠå¾„A), centerPosB(ä¸­å¿ƒB), radiusB(åŠå¾„B) / å‡ºåŠ›: æ¥è§¦ã—ã¦ã„ã‚Œã°true / å‰¯ä½œç”¨: ãªã—
+	}
+	//ƒfƒXƒgƒ‰ƒNƒ^
+	~Collision()
+	{
+
+	}
+
+	// ‰~‚Æ‰~‚Ì“–‚½‚è”»’è‚ğ‚µ‚Ä‚­‚ê‚éŠÖ”
+	// const VECTOR& centerPosA ... A‚Ì‰~‚Ì’†SÀ•W
+	// const float& radiusA ... A‚Ì‰~‚Ì”¼Œa
+	// const VECTOR& centerPosB ... B‚Ì‰~‚Ì’†SÀ•W
+	// const float& radiusB ... B‚Ì‰~‚Ì”¼Œa
 	static bool CheckCircleToCircle(
 		const VECTOR& centerPosA,
 		const float& radiusA,
@@ -17,8 +27,11 @@ public:
 		const float& radiusB
 	);
 
-	// 3Dåº§æ¨™ç‚¹ã¨çƒä½“ã®åŒ…å«åˆ¤å®š
-	// å…¥åŠ›: pointPos(ç‚¹ã®åº§æ¨™), centerPos(çƒä½“ä¸­å¿ƒ), radius(çƒä½“åŠå¾„) / å‡ºåŠ›: ç‚¹ãŒçƒä½“å†…ãªã‚‰true / å‰¯ä½œç”¨: ãªã—
+
+	// “_‚Æ‰~‚Ì“–‚½‚è”»’è
+	// const VECTOR& pointPos ... “_‚Ì’†SÀ•W
+	// const VECTOR& centerPos ... ‰~‚Ì’†SÀ•W
+	// const float& radius ... ‰~‚Ì”¼Œa
 	static bool CheckPointToCircle(
 		const VECTOR& pointPos,
 		const VECTOR& centerPos,

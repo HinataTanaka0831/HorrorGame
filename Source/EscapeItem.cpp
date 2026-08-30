@@ -1,4 +1,4 @@
-ï»¿#include "EscapeItem.h"
+#include "EscapeItem.h"
 #include "Model.h"
 #include "Master.h"
 #include "Scene.h"
@@ -7,25 +7,29 @@
 
 int EscapeItem::NowNeedItem = 0;
 
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 EscapeItem::EscapeItem(std::string filename, VECTOR initPos)
-	: Item(initPos)
-	, mpModel(nullptr)
+	:Item(initPos)
+	
 {
-	SetTag(Object3D::TagEscapeItem3D);
+	// ƒ^ƒO‚ÌÝ’è
+	SetTag(Object3D::TagEscapeItem);
+
+	// ƒ‚ƒfƒ‹ƒNƒ‰ƒX‚ð¶¬
 	mpModel = new Model(filename, initPos);
+
 }
 
+// ƒfƒXƒgƒ‰ƒNƒ^
 EscapeItem::~EscapeItem()
 {
 	if (mpModel != nullptr)
 	{
 		delete mpModel;
-		mpModel = nullptr;
 	}
 }
 
-// ã‚¢ã‚¤ãƒ†ãƒ ã®æµ®éŠå›žè»¢ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ›´æ–°
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: 3Dãƒ¢ãƒ‡ãƒ«ã®å›žè»¢ãƒ»åº§æ¨™æ›´æ–°
+// XV
 void EscapeItem::Update()
 {
 	if (mpModel != nullptr)
@@ -34,25 +38,30 @@ void EscapeItem::Update()
 		mpModel->SetPosition(mvPosition);
 		mpModel->Update();
 	}
+
+
 }
 
-// ã‚¢ã‚¤ãƒ†ãƒ 3Dãƒ¢ãƒ‡ãƒ«æç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
+// •`‰æ
 void EscapeItem::Draw()
 {
 	if (mpModel != nullptr)
 	{
 		mpModel->Draw();
 	}
+
 }
 
-// åŽé›†æ•°ã®ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆãŠã‚ˆã³4å€‹é”æˆæ™‚ã®ã‚¯ãƒªã‚¢ã‚·ãƒ¼ãƒ³é·ç§»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: NowNeedItemã®åŠ ç®—ã€ã‚¯ãƒªã‚¢æ™‚ã®SceneManageré·ç§»äºˆç´„
+// ƒAƒCƒeƒ€‚ð’EoŒû‚ÅŽg—p‚µ‚½‚çƒQ[ƒ€ƒNƒŠƒA‚·‚éˆ—
 void EscapeItem::Escape()
 {
+	// Žc‚è•K—v‚ÈƒAƒCƒeƒ€‚ðŒ¸‚ç‚·
 	NowNeedItem++;
+
+	// ‚à‚µŽc‚è•K—v‚ÈƒAƒCƒeƒ€”‚ª0‚É‚È‚Á‚½‚çƒQ[ƒ€ƒNƒŠƒA‚·‚é
 	if (NowNeedItem == 4)
 	{
-		Master::mpSceneManager->SetNextScene(SceneManager::SCENE_RESULT);
+		Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TYPE::SCENE_RESULT);
 	}
+
 }

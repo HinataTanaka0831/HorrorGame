@@ -1,35 +1,36 @@
-ï»¿#include "Texture.h"
+#include "Texture.h"
 #include "DxLib.h"
 
 Texture::Texture(std::string filename, VECTOR centerPosition, int transFlag)
-	: mnHandle(-1)
-	, mvPosition(centerPosition)
-	, mnSizeX(0)
-	, mnSizeY(0)
-	, mnTransFlag(transFlag)
+    : mnHandle(-1)
+    , mvPosition(centerPosition)
+    , mnSizeX(0)
+    , mnSizeY(0)
+    , mnTransFlag(transFlag)
 {
-	mnHandle = LoadGraph(filename.c_str());
-	GetGraphSize(mnHandle, &mnSizeX, &mnSizeY);
-	// å††å½¢å½“ãŸã‚Šåˆ¤å®šç”¨ã«ç”»åƒã®æ¨ªå¹…åŠåˆ†ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåŠå¾„ã«è¨­å®š
-	mfRadius = (float)mnSizeX / 2.0f;
+    // ‰æ‘œ‚Ì“Ç‚İ‚İ
+    mnHandle = LoadGraph(filename.c_str());
+
+    // ‰æ‘œ‚ÌƒTƒCƒY‚ğæ“¾‚·‚é
+    GetGraphSize(mnHandle, &mnSizeX, &mnSizeY);
+
+    // ”¼Œa‚ğİ’èi‚Æ‚è‚ ‚¦‚¸‹¤’Ê‚Å•‚Ì”¼•ª‚ğ”¼Œa‚Æ‚µ‚Ä‚¨‚­j
+    mfRadius = (float)mnSizeX / 2.0f;
 }
 
 Texture::~Texture()
 {
-	if (mnHandle != -1)
-	{
-		DeleteGraph(mnHandle);
-		mnHandle = -1;
-	}
+    // “Ç‚İ‚ñ‚¾‰æ‘œ‚Ì”jŠü
+    DeleteGraph(mnHandle);
 }
 
-// 2Dç”»åƒã®ä¸­å¿ƒåŸºæº–æç”»
-// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 void Texture::Draw()
 {
-	DrawGraph((int)mvPosition.x - (mnSizeX / 2), (int)mvPosition.y - (mnSizeY / 2), mnHandle, mnTransFlag);
+    // ‰æ‘œ‚Ì•\¦
+    DrawGraph((int)mvPosition.x - (mnSizeX / 2), (int)mvPosition.y - (mnSizeY / 2), mnHandle, mnTransFlag);
 }
 
 void Texture::Update()
 {
+    
 }

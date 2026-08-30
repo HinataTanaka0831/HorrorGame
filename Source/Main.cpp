@@ -11,65 +11,95 @@
 #include <math.h>
 #include "Button.h"
 
-// 各種グローバル管理インスタンスの生成と保持
+/* @note リファレンス https://dxlib.xsrv.jp/dxfunc.html
+*/
+
+// Master クラスの静的メンバ変数定義
 SceneManager* Master::mpSceneManager = new SceneManager();
 SoundManager* Master::mpSoundManager = new SoundManager();
 Camera* Master::mpCamera = new Camera();
 InputManager& input = InputManager::GetInstance();
 
-// アプリケーションのエントリポイントおよびメインゲームループの制御
-// 入力: hInstance, hPrevInstance, lpCmdLine, nCmdShow / 出力: 0(正常終了), -1(初期化失敗) / 副作用: ウィンドウ生成、DXライブラリ駆動、各マネージャー初期化・破棄
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+/**
+* @fn WinMain
+* @brief Main関数
+* @param[in] HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow
+* @return int 0 正常終了／-1 エラー
+* @details Main関数
+*/
+int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
-	// 没入感向上のためフルスクリーンモードで起動
+	// ウインドウモードで起動
 	ChangeWindowMode(false);
 
+	// 画面サイズ調整
 	SetGraphMode(Utility::SCREEN_WIDTH, Utility::SCREEN_HEIGHT, 32);
 
-	// 3Dホラー演出の陰影品質向上のためピクセルライティングを有効化
-	SetUsePixelLighting(true);
+	SetUsePixelLighting(true); // ピクセル単位でのライティングを有効にする
 
-	if (DxLib_Init() == -1)
+	// DXライブラリ初期化
+	if(DxLib_Init() == -1)
 	{
 		return -1;
 	}
 
-	// 画面チラつき（ティアリング）防止のため裏画面描画を設定
+
+
+	// 描画先画面を裏画面に設定する
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	// 起動時負荷の分散および初期化順序担保のためタスクキューで初期化
+
+	// ローディングマネージャーの作成
 	LoadingManager loader;
+
+	// タスクを追加
 	loader.AddTask(std::make_unique<InitializeSoundManagerTask>());
 	loader.AddTask(std::make_unique<InitializeSceneManagerTask>());
 	loader.AddTask(std::make_unique<InitializeCameraTask>());
+
+
+	// ローディング実行
 	loader.ExecuteAll();
 
-	// 3Dモデル描画時の深度関係を正しく判定するためZバッファを有効化
+
+	// Zバッファに書き込む準備
 	SetUseZBufferFlag(true);
 	SetWriteZBufferFlag(true);
 
-	SetUseLighting(TRUE);
 
-	// ホラー演出の暗闇を表現するため環境光を低輝度に設定
+	// --------------------
+	// ライト設定
+	// --------------------
+	SetUseLighting(TRUE);  // ライト処理ON
+
+	// アンビエント（環境光）は少し暗め
 	SetGlobalAmbientLight(GetColorF(0.2f, 0.2f, 0.2f, 0.0f));
+	
 
+
+	// ゲームのメインループ
+	// ProcessMessage() == 0 -> ウィンドウの×ボタンを押されていないかどうか
+	// CheckHitKey(KEY_INPUT_ESCAPE) == 0 -> エスケープキーが押されていないかどうか
 	int animationCounter = 0;
 	int textureCurrentNum = 0;
-
-	// OSメッセージ処理失敗またはESCキー押下でゲームループを終了
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 		int time = GetNowCount();
 
+		// 画面を初期化する
 		ClearDrawScreen();
 
+		// カメラの更新
 		Master::mpCamera->Update();
+
+		// 更新
 		Master::mpSceneManager->Update();
 
-		// 毎フレームのクリック・トリガー判定を正確に取得するため更新
+		// 毎フレームのクリック・リリース状態を検知するため入力状態を更新
 		input.MouseUpdate();
 
+		// 描画
 		Master::mpSceneManager->Draw();
 		
 		if (Master::mpSceneManager->IsQuitRequest())
@@ -77,32 +107,50 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			break;
 		}
 
-		// デバッグ・記録用スクリーンショット保存機能 (F1キー)
+		// ゲーム画面のスクリーンショットを撮影する処理
 		if (input.CheckDownKey(KEY_INPUT_F1))
 		{
 			SaveDrawScreen(0, 0, Utility::SCREEN_WIDTH, Utility::SCREEN_HEIGHT, "screenshot.bmp");
 		}
 
+
+		// 裏画面の内容を表画面に映す
 		ScreenFlip();
 
-		// 60FPS（約16.6ms/フレーム）の描画レート維持およびCPU過負荷防止のための待機
+
+		// 17ミリ秒（秒間約60フレームだった場合の1フレーム当たりの経過時間）
+		// 経過するまでここで待つ
 		while (GetNowCount() - time < 17)
 		{
+			// 待つだけなのでここでは何も処理はしない
 		}
 
-		// 参照中の不正アクセスを防ぐためフレーム末尾で不要オブジェクト削除とシーン遷移を実行
+
+
+		// 削除する必要のあるオブジェクトがあれば削除する
 		Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll2DIfNeeded();
 		Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll3DIfNeeded();
+
+		// ループする直前にシーン遷移チェックを入れておく
 		Master::mpSceneManager->ChangeSceneIfNeeded();
+
 	}
 
-	// 各マネージャーの動的メモリ解放
+
+
+
+	// 終了処理
+	//Finalize();
 	Master::mpSceneManager->Finalize();
 	delete Master::mpSceneManager;
 	Master::mpSoundManager->Finalize();
 	delete Master::mpSoundManager;
 
+
+	// DXライブラリ使用の終了
 	DxLib_End();
+
+	// ソフトの終了
 	return 0;
 }
 

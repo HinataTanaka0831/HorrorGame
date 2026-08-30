@@ -1,4 +1,4 @@
-ï»¿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include "GameOverScene.h"
 #include "DxLib.h"
@@ -7,44 +7,56 @@
 #include "EscapeItem.h"
 #include "Button.h"
 
+
+// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 GameOverScene::GameOverScene()
-	: Scene()
+	: Scene()     // Šî’êƒNƒ‰ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğŒÄ‚Ño‚·
 {
+
 }
 
+// ƒfƒXƒgƒ‰ƒNƒ^
 GameOverScene::~GameOverScene()
 {
+
 }
 
+// ‰Šú‰»
 void GameOverScene::Initialize()
 {
 	if (mpRetoryButton == nullptr)
 	{
-		mpRetoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "ãƒªãƒˆãƒ©ã‚¤", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpRetoryButton = std::make_unique<Button>(StringX, RetoryY - 10, StringX + 250, RetoryY + 60, "ƒŠƒgƒ‰ƒC", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 	if (mpTitleButton == nullptr)
 	{
-		mpTitleButton = std::make_unique<Button>(DrawX, TitleY - 10, DrawX + 250, TitleY + 60, "ã‚¿ã‚¤ãƒˆãƒ«ã¸", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpTitleButton = std::make_unique<Button>(StringX, TitleY - 10, StringX + 250, TitleY + 60, "ƒ^ƒCƒgƒ‹‚Ö", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
-	// UIãƒœã‚¿ãƒ³æ“ä½œã®ãŸã‚ãƒã‚¦ã‚¹ãƒ­ãƒƒã‚¯ã‚’è§£é™¤
+	// Mouse‚ÌƒƒbƒN‚ğ‰ğœ
 	InputManager::GetInstance().EnableMouseLock(false);
+
 }
 
+// XV
 void GameOverScene::Update()
 {
+	// BGM‚ÌÄ¶
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_RESULT);
 
+	// ƒ{ƒ^ƒ“‚ÌXVˆ—‚ğŒÄ‚Ô
 	if (mpRetoryButton)
 	{
 		mpRetoryButton->Update();
 
 		if (mpRetoryButton->IsClick())
 		{
+			// SEÄ¶
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_3D);
 		}
+
 	}
 
 	if (mpTitleButton)
@@ -53,29 +65,40 @@ void GameOverScene::Update()
 
 		if (mpTitleButton->IsClick())
 		{
+			// SEÄ¶
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TITLE);
 		}
 	}
 
+
+	// Šî’êƒNƒ‰ƒX‚ÌXVˆ—‚ğŒÄ‚Ño‚·
 	Scene::Update();
+
 }
 
+// •`‰æ
 void GameOverScene::Draw()
 {
-	for (int i = 1; i < 7; ++i)
+	for (int i = 1; i < 7; i++)
 	{
+		// ‰æ–Ê‚ğƒNƒŠƒA
 		ClearDrawScreen();
 
 		char Buf[256];
 		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
 		Noise = LoadGraph(Buf);
 
+		// ”wŒi‚ÌF‚ğİ’è
 		SetBackgroundColor(0, 0, 0);
+
+		// ”wŒi‚Ì•\¦
 		DrawGraph(0, 0, Noise, true);
 
+		// •¶š—ñ‚Ì•\¦
 		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 150, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), fontSize90);
 
+		// ƒ{ƒ^ƒ“‚Ì•\¦
 		if (mpRetoryButton)
 		{
 			mpRetoryButton->Draw();
@@ -86,14 +109,21 @@ void GameOverScene::Draw()
 			mpTitleButton->Draw();
 		}
 
+		// — ‰æ–Ê‚Ì“à—e‚ğ•\‰æ–Ê‚É‰f‚·
 		ScreenFlip();
-		DeleteGraph(Noise);
 	}
 
+	// Šî’êƒNƒ‰ƒX‚Ì•`‰æˆ—‚ğŒÄ‚Ño‚·
 	Scene::Draw();
+
 }
 
+// I—¹ˆ—
 void GameOverScene::Finalize()
 {
+	// ‰æ‘œ‚ğíœ
+	DeleteGraph(Noise);
+
+	// BGM’â~
 	Master::mpSoundManager->StopBGM();
 }

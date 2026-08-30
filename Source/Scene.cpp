@@ -1,36 +1,40 @@
-﻿#include "Scene.h"
+#include "Scene.h"
 #include "ObjectManager.h"
 
+// �R���X�g���N�^
 Scene::Scene()
 {
+	// �I�u�W�F�N�g�}�l�[�W���[�̐���
 	mpObjectManager = new ObjectManager();
 }
 
+// �f�X�g���N�^
 Scene::~Scene()
 {
 	if (mpObjectManager != nullptr)
 	{
 		delete mpObjectManager;
-		mpObjectManager = nullptr;
 	}
 }
 
-// 登録オブジェクトのUpdate一括実行
-// 入力: なし / 出力: なし / 副作用: 登録された2D/3Dオブジェクトの状態更新
+// �X�V
 void Scene::Update()
 {
 	if (mpObjectManager != nullptr)
 	{
 		mpObjectManager->Update();
 	}
+
 }
 
-// 登録オブジェクトのDraw一括実行
-// 入力: なし / 出力: なし / 副作用: 登録された2D/3Dオブジェクトの画面描画
+// �`��
 void Scene::Draw()
 {
 	if (mpObjectManager != nullptr)
 	{
 		mpObjectManager->Draw();
 	}
+
 }
+
+
