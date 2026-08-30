@@ -1,4 +1,4 @@
-#include "TitleScene.h"
+ï»¿#include "TitleScene.h"
 #include "DxLib.h"
 #include "Utility.h"
 #include "Master.h"
@@ -7,7 +7,7 @@
 
 
 TitleScene::TitleScene() 
-: Scene()     // Šî’êƒNƒ‰ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ðŒÄ‚Ño‚·
+: Scene()     // ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Xï¿½ÌƒRï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 {
 
 }
@@ -19,101 +19,101 @@ TitleScene::~TitleScene()
 
 void TitleScene::Initialize()
 {
-	// ƒ^ƒCƒgƒ‹ƒƒS‚ÌƒNƒ‰ƒX‚Ìì¬
-	// ƒvƒŒƒCƒ„[‚Ì¶¬
-	// ‚È‚Ç‚ð‚±‚±‚Ås‚¤
-	// ->ƒ^ƒCƒgƒ‹‰æ–Ê‚Å•K—v‚ÈƒIƒuƒWƒFƒNƒg‚ð‚±‚±‚Å¶¬‚·‚é
+	// ï¿½^ï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Sï¿½ÌƒNï¿½ï¿½ï¿½Xï¿½Ìì¬
+	// ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìï¿½ï¿½ï¿½
+	// ï¿½È‚Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½Åsï¿½ï¿½
+	// ->ï¿½^ï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½Ê‚Å•Kï¿½vï¿½ÈƒIï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	// BGMÄ¶
+	// BGMï¿½Äï¿½
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
 
 }
 
 void TitleScene::Update()
 {
-	// SƒL[‚ª‰Ÿ‚³‚ê‚½‚ç‰º‚É‰º‚ª‚é
+	// Sï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ç‰ºï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (InputManager::CheckDownKey(KEY_INPUT_S))
 	{
-		// SEÄ¶
+		// SEï¿½Äï¿½
 		 Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 
 		NowSelect = (NowSelect + 1) % select_Now;
 	}
-	// WƒL[‚ª‰Ÿ‚³‚ê‚½‚çã‚Éã‚ª‚é
+	// Wï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½Éã‚ªï¿½ï¿½
 	if (InputManager::CheckDownKey(KEY_INPUT_W))
 	{
-		// SEÄ¶
+		// SEï¿½Äï¿½
 		Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 
 		NowSelect = (NowSelect + (select_Now - 1)) % select_Now;
 	}
-	// ƒGƒ“ƒ^[ƒL[‚ª‰Ÿ‚³‚ê‚½‚ç‰æ–Ê‚ÌØ‚è‘Ö‚¦ˆ—
+	// ï¿½Gï¿½ï¿½ï¿½^ï¿½[ï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½Ê‚ÌØ‚ï¿½Ö‚ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (InputManager::CheckDownKey(KEY_INPUT_RETURN))
 	{
-		// SEÄ¶
+		// SEï¿½Äï¿½
 		Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 
 		switch (NowSelect)
 		{
-		case select_Play:  // ƒvƒŒƒC‰æ–Ê‚Ö
+		case select_Play:  // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½Ê‚ï¿½
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_SELECT);
 			break;
 
-		case select_PlayRule:  // —V‚Ñ•û‚Ö
+		case select_PlayRule:  // ï¿½Vï¿½Ñ•ï¿½ï¿½ï¿½
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_GAMERULE);
 			break;
 		}
 
 	}
 
-	// Šî’êƒNƒ‰ƒX‚ÌXVˆ—‚ðŒÄ‚Ño‚·
+	// ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Xï¿½ÌXï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 	Scene::Update();
 }
 
 void TitleScene::Draw()
 {
-	// ”wŒi‚Ì•\Ž¦
+	// ï¿½wï¿½iï¿½Ì•\ï¿½ï¿½
 	DrawGraph(0, 0, grHandle, false);
-	// •¶Žš‚ÌƒtƒHƒ“ƒgƒTƒCƒY•ÏX
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒtï¿½Hï¿½ï¿½ï¿½gï¿½Tï¿½Cï¿½Yï¿½ÏX
 	SetFontSize(40);
-	// •¶Žš—ñ‚Ì•\Ž¦
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì•\ï¿½ï¿½
 	DrawString(Utility::SCREEN_WIDTH / 2 - 120, Utility::SCREEN_HEIGHT / 2 - 100, "2D shooting", GetColor(255, 255, 255));
 
 	SetFontSize(20);
 
-	DrawString(Utility::SCREEN_WIDTH / 2 - 100, 200, "W:ã@S:‰º@ENTER:Œˆ’è", GetColor(255, 255, 255));
+	DrawString(Utility::SCREEN_WIDTH / 2 - 100, 200, "W:ï¿½ï¿½@S:ï¿½ï¿½ï¿½@ENTER:ï¿½ï¿½ï¿½ï¿½", GetColor(255, 255, 255));
 
-	DrawString(Utility::SCREEN_WIDTH / 2 - 60, Play_Y, "@ƒvƒŒƒC@", GetColor(255, 255, 255));
+	DrawString(Utility::SCREEN_WIDTH / 2 - 60, Play_Y, "ï¿½@ï¿½vï¿½ï¿½ï¿½Cï¿½@", GetColor(255, 255, 255));
 
-	DrawString(Utility::SCREEN_WIDTH / 2 - 60, PlayRule_Y, "@—V‚Ñ•û@", GetColor(255, 255, 255));
+	DrawString(Utility::SCREEN_WIDTH / 2 - 60, PlayRule_Y, "ï¿½@ï¿½Vï¿½Ñ•ï¿½ï¿½@", GetColor(255, 255, 255));
 
 
 	switch (NowSelect)
 	{
-	case select_Play:  // ‘I‘ðŽˆiƒvƒŒƒCj‚ª‘I‘ð‚³‚ê‚Ä‚¢‚éê‡‚ÍƒvƒŒƒC‚ÌYÀ•W‚ðÝ’è‚·‚é
+	case select_Play:  // ï¿½Iï¿½ï¿½ï¿½ï¿½iï¿½vï¿½ï¿½ï¿½Cï¿½jï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ê‡ï¿½Íƒvï¿½ï¿½ï¿½Cï¿½ï¿½Yï¿½ï¿½ï¿½Wï¿½ï¿½Ý’è‚·ï¿½ï¿½
 		y = Play_Y;
 		break;
 
-	case select_PlayRule:  // ‘I‘ðŽˆi—V‚Ñ•ûj‚ª‘I‘ð‚³‚ê‚Ä‚¢‚éê‡‚É‚Í—V‚Ñ•û‚ÌYÀ•W‚ðÝ’è‚·‚é
+	case select_PlayRule:  // ï¿½Iï¿½ï¿½ï¿½ï¿½iï¿½Vï¿½Ñ•ï¿½ï¿½jï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ê‡ï¿½É‚Í—Vï¿½Ñ•ï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½Wï¿½ï¿½Ý’è‚·ï¿½ï¿½
 		y = PlayRule_Y;
 		break;
 	}
 
-	// ‰æ‘œ‚Ì•\Ž¦
+	// ï¿½æ‘œï¿½Ì•\ï¿½ï¿½
 	DrawGraph(Utility::SCREEN_WIDTH / 2 - 70, y, icHandle, false);
 
-	// Šî’êƒNƒ‰ƒX‚Ì•`‰æˆ—‚ðŒÄ‚Ño‚·
+	// ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Xï¿½Ì•`ï¿½æˆï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 	Scene::Draw();
 }
 
 void TitleScene::Finalize()
 {
-	// BGM’âŽ~
+	// BGMï¿½ï¿½~
 	Master::mpSoundManager->StopBGM();
 }
 
 
-		// SEÄ¶
+		// SEï¿½Äï¿½
 //Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 //
 //Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TYPE::SCENE_SELECT);

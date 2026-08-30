@@ -1,50 +1,40 @@
 ﻿#pragma once
 #include "DxLib.h"
-#include <string>
 #include "Item.h"
-#include "Model.h"
-#include "ItemData.h"
+#include <string>
 
+class Model;
 
+// 使用時に全敵AIの活動を20秒間停止させる砂時計アイテムクラス
 class TimeItem : public Item
 {
 public:
-	ItemData stoptime = { 2, LoadGraph("Resource/3D_UI/TimeItem.png"), "時間停止" }; // TimeItem のデータ
-
-public:
-	// コンストラクタ
+	// 時間停止アイテム3DモデルのロードおよびHUDフォント初期化
+	// 入力: filename(モデルパス), initPos(配置座標), isSeparateAnim(分割モーションフラグ) / 出力: なし / 副作用: Model生成、TagTimeItem設定
 	TimeItem(std::string filename, VECTOR initPos, bool isSeparateAnim = false);
-	
-	// デストラクタ
 	~TimeItem() override;
 
-	// 更新
+	// タイマー経過による敵AI停止制御およびモデル更新
+	// 入力: なし / 出力: なし / 副作用: StopTime実行、3Dモデル更新
 	void Update() override;
 
-	// 描画
+	// アイテム3Dモデル描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw() override;
 
-	// 使用したら敵の動きを停止する処理
+	// プレイヤーのアイテム使用を検知し全敵AIの停止フラグを20秒間制御
+	// 入力: なし / 出力: なし / 副作用: 全Enemy3DのisStopItem切り替え
 	void StopTime();
 
-	// 残り時間を画面に表示する処理
+	// 敵停止効果の残り秒数カウントダウンHUD描画
+	// 入力: なし / 出力: なし / 副作用: バックバッファへのUI描画
 	void DrawTimer();
 
 private:
 	Model* mpModel;
 
-	// =====================================================
-	// static変数（全てのTimeItemインスタンスで共有する）
-	// → TimeItemが複数あっても、タイマーは1つだけ動く
-	// =====================================================
-	static int waitTimer;           // 停止タイマー（フレーム単位でカウントアップ）
-	static bool isTimerActive;      // タイマーが動作中かどうか
-	static int lastProcessedFrame;  // 最後に処理したフレーム番号（1フレーム1回処理用）
-
-	// 20秒間 × 60FPS = 1200フレーム
-	static const int WaitFrame = 1200;
-
-	// 残り時間表示用のフォントハンドル
+	static int waitTimer;
+	static bool isTimerActive;
 	static int timerFontHandle;
-
+	static const int WaitFrame = 1200;  // 20秒間（60FPS × 20秒）
 };

@@ -1,6 +1,5 @@
-#include "TextureAnimation.h"
+ï»¿#include "TextureAnimation.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 TextureAnimation::TextureAnimation(
 	VECTOR position,
 	std::string filename,
@@ -9,7 +8,7 @@ TextureAnimation::TextureAnimation(
 	int yNum,
 	int interval
 )
-	: mvPosition()
+	: mvPosition(position)
 	, mnCounter(0)
 	, mnInterval(interval)
 	, mnCurrentNum(0)
@@ -17,19 +16,17 @@ TextureAnimation::TextureAnimation(
 {
 	mnHandleList = new int[allNum];
 
-	// ‰æ‘œƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý
 	int handle = LoadGraph(filename.c_str());
 	if (handle == -1)
 	{
-		return;   // “Ç‚Ýž‚ÝŽ¸”s‚µ‚Ä‚¢‚½‚çˆÈ~‚Íˆ—‚µ‚È‚¢
+		return;
 	}
 
-	// ƒTƒCƒYŽæ“¾
 	int sizeX, sizeY;
 	GetGraphSize(handle, &sizeX, &sizeY);
+	DeleteGraph(handle);
 
-	// ƒeƒNƒXƒ`ƒƒ‚Ì•ªŠ„“Ç‚Ýž‚Ý
-	int success = LoadDivGraph(
+	LoadDivGraph(
 		filename.c_str(),
 		allNum,
 		xNum,
@@ -39,28 +36,38 @@ TextureAnimation::TextureAnimation(
 		mnHandleList
 	);
 }
-// ƒfƒXƒgƒ‰ƒNƒ^
+
 TextureAnimation::~TextureAnimation()
 {
-
-}
-
-void TextureAnimation::Update()
-{
-	// ƒJƒEƒ“ƒ^‚ðƒCƒ“ƒNƒŠƒƒ“ƒg
-	mnCounter++;
-	if (mnCounter % mnInterval == 0)
+	if (mnHandleList != nullptr)
 	{
-		mnCounter = 0;   // ƒJƒEƒ“ƒ^‚ð–ß‚·
-		mnCurrentNum++;  // ƒeƒNƒXƒ`ƒƒ”Ô†‚ði‚ß‚é
-		if (mnCurrentNum >= mnAllNum)  // •ªŠ„”‚ð’´‚¦‚é‚È‚çƒ‹[ƒv‚³‚¹‚é
+		for (int i = 0; i < mnAllNum; ++i)
 		{
-			mnCurrentNum = 0;   // ƒ‹[ƒv‚³‚¹‚é
+			DeleteGraph(mnHandleList[i]);
 		}
+		delete[] mnHandleList;
+		mnHandleList = nullptr;
 	}
 }
 
+// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«çµŒéŽã«ã‚ˆã‚‹ã‚³ãƒžé€ã‚Šæ›´æ–°
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: mnCurrentNumãŠã‚ˆã³mnCounterã®æ›´æ–°
+void TextureAnimation::Update()
+{
+	mnCounter++;
+	if (mnCounter % mnInterval == 0)
+	{
+		mnCounter = 0;
+		mnCurrentNum = (mnCurrentNum + 1) % mnAllNum;
+	}
+}
+
+// ç¾åœ¨ã®ã‚³ãƒžç”»åƒæç”»
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 void TextureAnimation::Draw()
 {
-	DrawGraph((int)mvPosition.x, (int)mvPosition.y, mnHandleList[mnCurrentNum], true);
+	if (mnHandleList != nullptr)
+	{
+		DrawGraph((int)mvPosition.x, (int)mvPosition.y, mnHandleList[mnCurrentNum], true);
+	}
 }

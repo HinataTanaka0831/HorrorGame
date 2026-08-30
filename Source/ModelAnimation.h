@@ -1,45 +1,40 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <vector>
 #include "ModelUtility.h"
 
+// å†…éƒ¨ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’æŒã¤å˜ä¸€3Dãƒ¢ãƒ‡ãƒ«ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ»ãƒ«ãƒ¼ãƒ—åˆ¶å¾¡ã‚¯ãƒ©ã‚¹
 class ModelAnimation
 {
 public:
-	// Mixamo‚Ìƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“‚ğg—p‚·‚é‚½‚ß‚±‚±‚É‚ ‚Á‚½’è‹`‚ğ ModelUtility ‚ÖˆÚ“®‚·‚é
-public:
-	ModelAnimation(int modelHandle);     // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	~ModelAnimation();    // ƒfƒXƒgƒ‰ƒNƒ^
+	ModelAnimation(int modelHandle);
+	~ModelAnimation();
 
-	void Update();  // XV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿæ™‚é–“ã®é€²è¡ŒãŠã‚ˆã³å‰å¾Œãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¯ãƒ­ã‚¹ãƒ•ã‚§ãƒ¼ãƒ‰ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡æ›´æ–°
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒ¢ãƒ‡ãƒ«ã®ã‚¢ã‚¿ãƒƒãƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ™‚é–“ãƒ»ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã®å¤‰æ›´
+	void Update();
 
-	// note: mixamo ‚Åƒ_ƒEƒ“ƒ[ƒh‚·‚é‚ÆA
-	// 0”Ô–Ú‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚Íƒ_ƒ~[‚ª“ü‚Á‚Ä‚¢‚é‚Ì‚ÅA
-	// ƒfƒtƒHƒ‹ƒg‚Å“K—p‚·‚éƒCƒ“ƒfƒbƒNƒX‚ğ1‚É‚µ‚Ä‚¨‚­
-	void ChangeAnimation(AnimationState state, int index = 0);  // ƒAƒjƒ[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦ˆ—
+	// æŒ‡å®šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã¸ã®åˆ‡ã‚Šæ›¿ãˆã¨ãƒ–ãƒ¬ãƒ³ãƒ‰åˆæœŸåŒ–
+	// å…¥åŠ›: state(ã‚¹ãƒ†ãƒ¼ãƒˆ), index(ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: æ—§ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ä¿æŒã€æ–°ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ã‚¿ãƒƒãƒ
+	void ChangeAnimation(AnimationState state, int index = 0);
 
-	void SetLoop(bool isLoop) { mbLoop = isLoop; }  // ƒ‹[ƒvİ’è
-	void SetLoopFinishState(AnimationState state) { mnLoopFinishState = state; }  // ƒ‹[ƒvI—¹‚ÉÄ¶‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“
-	void SetAnimationBlend(bool isBlend);     // ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒhİ’è
+	void SetLoop(bool isLoop) { mbLoop = isLoop; }
+	void SetLoopFinishState(AnimationState state) { mnLoopFinishState = state; }
+	void SetAnimationBlend(bool isBlend);
 
-	AnimationState GetNowState() { return mnState; }     // Œ»İÄ¶‚³‚ê‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Ìæ“¾
-	bool IsLoopFinish() { return mbLoopFinish; }         // ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ‹[ƒv‚ªI—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
+	AnimationState GetNowState() const { return mnState; }
+	bool IsLoopFinish() const { return mbLoopFinish; }
 
 private:
-	int mnModelHandle;      // ƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
-
-	float mfAnimationTime;  // Ä¶‚µ‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ÌŒ»İ‚ÌÄ¶ŠÔ
-	int mnAnimationIndex;   // Ä¶‚µ‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒCƒ“ƒfƒbƒNƒX
-
-	float mfOldAnimationTime;   // 1‚Â‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“Ä¶ŠÔ
-	int mnOldAnimationIndex;    // 1‚Â‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒCƒ“ƒfƒbƒNƒX
-
-	float mfAnimBlendRate;      // ƒ‚[ƒVƒ‡ƒ“‚ÌØ‚è‘Ö‚í‚è“x‡
-
-	AnimationState mnState; // Œ»İÄ¶‚µ‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Ì”Ô† 
-
-	bool mbLoop;            // ƒ‚[ƒVƒ‡ƒ“‚ğƒ‹[ƒv‚³‚¹‚é‚©‚Ç‚¤‚©
-	AnimationState mnLoopFinishState;   // ƒ‹[ƒv‚ªI‚í‚Á‚½‚Æ‚«‚ÉÄ¶‚µ‚½‚¢ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†
-	bool mbLoopFinish;      // ƒ‚[ƒVƒ‡ƒ“ƒ‹[ƒv‚ªI‚í‚Á‚½‚©‚Ç‚¤‚©
+	int mnModelHandle;
+	float mfAnimationTime;
+	int mnAnimationIndex;
+	float mfOldAnimationTime;
+	int mnOldAnimationIndex;
+	float mfAnimBlendRate;
+	AnimationState mnState;
+	bool mbLoop;
+	AnimationState mnLoopFinishState;
+	bool mbLoopFinish;
 };

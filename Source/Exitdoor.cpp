@@ -1,36 +1,32 @@
-#include "Exitdoor.h"
+ï»¿#include "Exitdoor.h"
 #include "Model.h"
 #include "Master.h"
 #include "Scene.h"
 #include "ObjectManager.h"
 
 Exitdoor::Exitdoor(std::string filename, std::string exitCallModelname, VECTOR initPos)
-	:Object3D(initPos)
+	: Object3D(initPos)
+	, mpModel(nullptr)
+	, normal(VGet(0.0f, 0.0f, 0.0f))
 {
-	// ƒ^ƒOİ’è
 	SetTag(Object3D::TagExitdoor);
 
 	mnCollisionHandle = MV1LoadModel(exitCallModelname.c_str());
-
 	MV1SetPosition(mnCollisionHandle, GetPosition());
-
 	MV1SetupCollInfo(mnCollisionHandle);
 
-	// ƒ‚ƒfƒ‹‚Ìì¬
 	mpModel = new Model(filename, initPos);
 }
-
 
 Exitdoor::~Exitdoor()
 {
 	MV1DeleteModel(mnCollisionHandle);
-
 	if (mpModel != nullptr)
 	{
 		delete mpModel;
+		mpModel = nullptr;
 	}
 }
-
 
 void Exitdoor::Update()
 {
@@ -40,76 +36,46 @@ void Exitdoor::Update()
 	}
 }
 
-
+// ãƒ‰ã‚¢3Dãƒ¢ãƒ‡ãƒ«ã®æç”»
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 void Exitdoor::Draw()
 {
-
 	if (mpModel != nullptr)
 	{
 		mpModel->Draw();
 	}
-
-
 }
 
-
-// ƒXƒe[ƒW‚ÆƒJƒvƒZƒ‹Œ^‚Æ‚Ì“–‚½‚è”»’è
+// ã‚«ãƒ—ã‚»ãƒ«ã¨ã®ãƒãƒªã‚´ãƒ³è¡çªåˆ¤å®š
+// å…¥åŠ›: pos1(ã‚«ãƒ—ã‚»ãƒ«å§‹ç‚¹), pos2(ã‚«ãƒ—ã‚»ãƒ«çµ‚ç‚¹), r(åŠå¾„) / å‡ºåŠ›: è¡çªæ™‚true / å‰¯ä½œç”¨: normalæ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã®æ›´æ–°
 bool Exitdoor::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 {
-	// ¶¬‚µ‚Ä‚¨‚¢‚½“–‚½‚è”»’èî•ñ‚ğ‚à‚Æ‚ÉAƒJƒvƒZƒ‹‚Æ‚Ì“–‚½‚è”»’è‚ğs‚¤
 	MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Capsule(mnCollisionHandle, -1, pos1, pos2, r);
 
-	// ƒ|ƒŠƒSƒ“‚É1‚ÂˆÈã“–‚½‚Á‚Ä‚¢‚éê‡
 	if (result.HitNum >= 1)
 	{
 		normal = VGet(0.0f, 0.0f, 0.0f);
-
-		for (int i = 0; i < result.HitNum; i++)
+		for (int i = 0; i < result.HitNum; ++i)
 		{
 			normal = result.Dim[i].Normal;
-
-			//DrawTriangle3D(
-			//	result.Dim[i].Position[0],
-			//	result.Dim[i].Position[1],
-			//	result.Dim[i].Position[2],
-			//	GetColor(255, 0, 0),
-			//	0
-			//);
-
-
 		}
-
-
 	}
 
-	// “–‚½‚è”»’èî•ñ‚ÌŒã•Ğ•t‚¯
 	MV1CollResultPolyDimTerminate(result);
-
-
 	return (result.HitNum >= 1);
 }
 
-
-// ƒXƒe[ƒW‚Æü•ª‚Æ‚Ì“–‚½‚è”»’è
+// ç·šåˆ†ã¨ã®äº¤å·®åˆ¤å®š
+// å…¥åŠ›: pos1(å§‹ç‚¹), pos2(çµ‚ç‚¹) / å‡ºåŠ›: äº¤å·®åº§æ¨™ / å‰¯ä½œç”¨: ãªã—
 VECTOR Exitdoor::CheckHit_Line(VECTOR pos1, VECTOR pos2)
 {
 	VECTOR ret = GetPosition();
-
-	// “–‚½‚è”»’èî•ñ‚Æü•ª‚Æ‚Ì“–‚½‚è”»’è‚ğs‚¤
-	//MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_LineDim(mnCollisionHandle, -1, pos1, pos2);
 	auto result = MV1CollCheck_Line(mnCollisionHandle, -1, pos1, pos2);
 
-	// “–‚½‚Á‚Ä‚¢‚½ê‡
 	if (result.HitFlag)
 	{
-		// “–‚½‚Á‚½ŒÂŠ‚Ìƒ|ƒWƒVƒ‡ƒ“‚ğ return ‚·‚é‚æ‚¤‚Éæ“¾‚·‚é
 		ret = result.HitPosition;
 	}
 
-	// “–‚½‚è”»’èî•ñ‚ÌŒã•Ğ•t‚¯
-	//MV1CollResultPolyDimTerminate(result);
-
-
 	return ret;
 }
-

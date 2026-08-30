@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "DxLib.h"
 #include <string>
@@ -11,123 +11,140 @@ class Item;
 class EscapeItem;
 class TimeItem;
 
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•ã€ã‚¹ã‚¿ãƒŸãƒŠæ¶ˆè²»ã€æ‡ä¸­é›»ç¯ã€ã—ã‚ƒãŒã¿ã€ã‚¢ã‚¤ãƒ†ãƒ ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªãŠã‚ˆã³æ•µAIè¿½è·¡ç”¨ãƒ­ã‚°ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
 class Player3D : public Object3D
 {
 public:
-	Player3D(VECTOR initPos);                     	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	~Player3D() override;                           // ƒfƒXƒgƒ‰ƒNƒ^
-								                  
-	void Update() override;                         // XV
-	void Draw() override;                           // •`‰æ
-								                  
-	void MoveEx();                                 // ˆÚ“®ˆ—iƒXƒe[ƒW‚Æ‚Ì“–‚½‚è”»’è—pj
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–ãŠã‚ˆã³æ‡ä¸­é›»ç¯ãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰
+	// å…¥åŠ›: initPos(åˆæœŸã‚¹ãƒãƒ¼ãƒ³ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: TagPlayer3Dè¨­å®šã€MV1LoadModelå®Ÿè¡Œ
+	Player3D(VECTOR initPos);
+	~Player3D() override;
 
-	void PlayerSquat();                          // ƒvƒŒƒCƒ„[‚Ì‚µ‚á‚ª‚İó‘Ô‚Ì•ÏXˆ—
+	// å…¥åŠ›ãƒ»ç§»å‹•ãƒ»å£è¡çªæŠ¼ã—å‡ºã—ãƒ»ãƒ©ã‚¤ãƒˆåŒæœŸãƒ»è¶³éŸ³ãƒ»ã‚¹ã‚¿ãƒŸãƒŠæ›´æ–°ã®ä¸€æ‹¬å®Ÿè¡Œ
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: åº§æ¨™ãƒ»ã‚¹ã‚¿ãƒŸãƒŠãƒ»ãƒ©ã‚¤ãƒˆçŠ¶æ…‹ãƒ»SEå†ç”Ÿã®æ›´æ–°
+	void Update() override;
 
-	void HaveLight();                           // ƒ‰ƒCƒg‚Ìˆ—
+	// æ‡ä¸­é›»ç¯3Dãƒ¢ãƒ‡ãƒ«ãŠã‚ˆã³ã‚¢ã‚¤ãƒ†ãƒ HUDæ ã®æç”»
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
+	void Draw() override;
 
-	void ItemCollision();   	                  // ƒAƒCƒeƒ€‚Æ‚Ì“–‚½‚è”»’è
+	// ã‚«ãƒ¡ãƒ©è¦–ç·šæ–¹å‘ã‚’åŸºæº–ã¨ã—ãŸå‰å¾Œå·¦å³ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã®ç®—å‡ºãŠã‚ˆã³ã‚¹ãƒ†ãƒ¼ã‚¸å£ã‚³ãƒªã‚¸ãƒ§ãƒ³æŠ¼ã—å‡ºã—
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™mvPositionã®æ›´æ–°
+	void MoveEx();
 
+	// ã—ã‚ƒãŒã¿/ç›´ç«‹å§¿å‹¢ã®åˆ‡ã‚Šæ›¿ãˆãŠã‚ˆã³è¦–ç·šé«˜ãƒ»ç§»å‹•é€Ÿåº¦ã®è£œæ­£
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: isCrouchingãƒ•ãƒ©ã‚°ãŠã‚ˆã³playerHeight/playerSpeedã®å¤‰æ›´
+	void PlayerSquat();
+
+	// æ‡ä¸­é›»ç¯ã®ç‚¹ç¯ãƒˆã‚°ãƒ«ãŠã‚ˆã³ã‚«ãƒ¡ãƒ©è¦–ç·šã¸ã®ãƒ©ã‚¤ãƒˆãƒ¢ãƒ‡ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ã‚·ãƒ§ãƒŠãƒ«å…‰æºåŒæœŸ
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒ©ã‚¤ãƒˆæœ‰åŠ¹ç„¡åŠ¹åˆ‡ã‚Šæ›¿ãˆ
+	void HaveLight();
+
+	// å‘¨å›²ã®è„±å‡ºã‚¢ã‚¤ãƒ†ãƒ ãŠã‚ˆã³æ™‚é–“å»¶é•·ã‚¢ã‚¤ãƒ†ãƒ ã¨ã®è¿‘æ¥ã‚¤ãƒ³ã‚¿ãƒ©ã‚¯ã‚·ãƒ§ãƒ³åˆ¤å®š
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: Rã‚­ãƒ¼æŠ¼ä¸‹æ™‚ã®ã‚¢ã‚¤ãƒ†ãƒ å–å¾—
+	void ItemCollision();
+
+	// ä¿æŒä¸­ã‚¢ã‚¤ãƒ†ãƒ ã®æ¶ˆè²»å®Ÿè¡Œï¼ˆæ™‚é–“åœæ­¢ç™ºå‹•ã¾ãŸã¯è„±å‡ºãƒ‰ã‚¢è§£éŒ ãƒ•ãƒ©ã‚°ã‚»ãƒƒãƒˆï¼‰
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã‹ã‚‰ã®æ¶ˆè²»ãŠã‚ˆã³å„ã‚®ãƒŸãƒƒã‚¯çŠ¶æ…‹ã®æ›´æ–°
 	void UseItem();
 
-	void ItemBox();                         	// ƒAƒCƒeƒ€ƒ{ƒbƒNƒX
+	// ã‚¢ã‚¤ãƒ†ãƒ ã‚¹ãƒ­ãƒƒãƒˆæ ãŠã‚ˆã³æ‰€æŒã‚¢ã‚¤ãƒ†ãƒ ã‚¢ã‚¤ã‚³ãƒ³ã®HUDæç”»
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®UIæç”»
+	void ItemBox();
 
-	bool AddItem(const ItemData item);   	   // ƒAƒCƒeƒ€‚ğƒCƒ“ƒxƒ“ƒgƒŠ‚É’Ç‰Áiæ“¾ˆ—j
+	// ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã¸ã®ã‚¢ã‚¤ãƒ†ãƒ è¿½åŠ 
+	// å…¥åŠ›: item(å–å¾—ã‚¢ã‚¤ãƒ†ãƒ ãƒ‡ãƒ¼ã‚¿) / å‡ºåŠ›: æ ¼ç´æˆåŠŸãªã‚‰true / å‰¯ä½œç”¨: itemsé…åˆ—ã¸ã®push_back
+	bool AddItem(const ItemData item);
 
-	void LoseItem();                           	// ƒAƒCƒeƒ€‚ğƒCƒ“ƒxƒ“ƒgƒŠ‚©‚çíœig—pˆ—
+	// ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã‹ã‚‰ã®å…ˆé ­ã‚¢ã‚¤ãƒ†ãƒ å‰Šé™¤
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: itemsé…åˆ—ã®pop
+	void LoseItem();
 
+	// ã‚¹ã‚¿ãƒŸãƒŠã‚²ãƒ¼ã‚¸ãƒãƒ¼ã®ç”»é¢æç”»
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®HUDæç”»
 	void DrawStamina();
 
-	bool StaminaUpdate(bool isKeyProssese);      // ƒXƒ^ƒ~ƒiƒQ[ƒW‚ÌXVˆ—
+	// ãƒ€ãƒƒã‚·ãƒ¥å…¥åŠ›æ™‚ã®ã‚¹ã‚¿ãƒŸãƒŠæ¶ˆè²»ãŠã‚ˆã³éãƒ€ãƒƒã‚·ãƒ¥æ™‚ã®è‡ªç„¶å›å¾©å‡¦ç†
+	// å…¥åŠ›: isKeyProssese(ã‚·ãƒ•ãƒˆã‚­ãƒ¼æŠ¼ä¸‹ä¸­ã‹) / å‡ºåŠ›: èµ°è¡Œå¯èƒ½çŠ¶æ…‹ãªã‚‰true / å‰¯ä½œç”¨: staminaç¾åœ¨å€¤ã®å¢—æ¸›
+	bool StaminaUpdate(bool isKeyProssese);
 
-	bool GetCrouching() { return isCrouching; } // ‚µ‚á‚ª‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©‚ğæ“¾
-
-	float GetHeight() { return playerHeight; }  // ƒvƒŒƒCƒ„[‚Ì‚‚³‚ğæ“¾
-
-	void SetFreeze(bool freeze) { isFreeze = freeze; } // ƒtƒŠ[ƒY‚ğİ’è
-
-	// ŠÔ~‚ßƒAƒCƒeƒ€‚ğg—p‚·‚é‚©‚ğİ’è
+	bool GetCrouching() const { return isCrouching; }
+	float GetHeight() const { return playerHeight; }
+	void SetFreeze(bool freeze) { isFreeze = freeze; }
 	void SetUseStopItem(bool stop) { isUseStopItem = stop; }
-
 	bool GetEscapeItem() const { return getEscapeItem; }
 	bool GetTimeItem() const { return getTimeItem; }
-	bool GetIsUseStopItem() { return isUseStopItem; }
+	bool GetIsUseStopItem() const { return isUseStopItem; }
 
-
-	std::vector<VECTOR>& GetPlayerRecord() { return playerRecord; } // ƒvƒŒƒCƒ„[‚ÌÀ•W‚ğ•Û‚·‚é\‘¢‘Ì‚ğæ“¾
+	std::vector<VECTOR>& GetPlayerRecord() { return playerRecord; }
 
 private:
 	struct Player {
-		VECTOR pos;      // ’†SÀ•W
-		float radius;    // “–‚½‚è”»’è‚Ì”¼Œa
+		VECTOR pos;
+		float radius;
 	};
 
-	VECTOR DoorPos;                                       // ’EoŒû‚ÌÀ•W‚ğæ“¾‚·‚é‚½‚ß‚Ì•Ï”
-	VECTOR oldPosition;                                   // ‘O‚ÌÀ•W
-	VECTOR oldPlayerPosition;                             // ƒvƒŒƒCƒ„[‚Ì‘O‰ñ‚ÌÀ•W
-	VECTOR lightModelPosition;                            // ƒ‰ƒCƒgƒ‚ƒfƒ‹‚ÌˆÊ’u
-							                            
-	float mfAngle;                                       // Œ»İ‚Ì‰ñ“]’l
-	float mfTargetAngle;                                 // –Ú•W‚Ì‰ñ“]’l
-	float playerHeight = 80.0f;                          // ‚‚³
-	float playerSpeed = 70.0f;                           // ‘¬“x
-	float dis;                                           // ‹——£
-								                         
-	bool isMove;                                         // “®‚¢‚Ä‚¢‚é‚©‚Ç‚¤‚©
-	bool isCrouching;                                   // ‚µ‚á‚ª‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
-	bool isFreeze;                                      // ƒtƒŠ[ƒY‚³‚¹‚é
-	bool isActiveLight;                                 // ƒ‰ƒCƒg‚ğ“_‚¯‚é‚©‚Ç‚¤‚©
+	VECTOR DoorPos;
+	VECTOR oldPosition;
+	VECTOR oldPlayerPosition;
+	VECTOR lightModelPosition;
 
-	int lightHandle;                                     // ƒ‰ƒCƒgƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹
-	int stamina = 100;                                   // ƒXƒ^ƒ~ƒi
-	int staminaMAX = 100;                                // Å‘åƒXƒ^ƒ~ƒi
-	int stamina_X = Utility::SCREEN_WIDTH / 2 - 260;    // ƒXƒ^ƒ~ƒiƒQ[ƒW‚ÌXÀ•W
-	int stamina_Y = Utility::SCREEN_HEIGHT / 2 + 430;   // ƒXƒ^ƒ~ƒiƒQ[ƒW‚ÌYÀ•W
-	int width = 490;                                    // •(ƒXƒ^ƒ~ƒiƒQ[ƒW)
-	int height = 30;                                    // ‚‚³(ƒXƒ^ƒ~ƒiƒQ[ƒW)
-	int gaugeWidth;                                     // Œ»İ’l‚É‰‚¶‚½ƒQ[ƒW‚Ì•
-	int mncount;                                        // ƒXƒe[ƒW‚Ì“–‚½‚è”»’è—pƒJƒEƒ“ƒg
-	int RecordDis;                                     // ƒvƒŒƒCƒ„[‚Ì•Û‚µ‚½À•W‚Ì‹——£
-	int AddItemID;                                     // ID ‚ğ”wˆê’è‚·‚é•Ï”
-	int WalkSETimer;                                   // •à‚¢‚Ä‚¢‚é‚Æ‚«‚ÌSE‚ğ—¬‚·ŠÔ
-	int RunSETimer;                                    // ‘–‚Á‚Ä‚¢‚é‚Æ‚«‚ÌSE‚ğ—¬‚·ŠÔ
-	int FontHandle = CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING);  // ‰æ–Ê‚É•\¦‚·‚éƒtƒHƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
+	float mfAngle;
+	float mfTargetAngle;
+	float playerHeight = 80.0f;
+	float playerSpeed = 70.0f;
+	float dis;
 
+	bool isMove;
+	bool isCrouching;
+	bool isFreeze;
+	bool isActiveLight;
 
-	std::vector<ItemData>items;             // ƒAƒCƒeƒ€ŠÖŒW•Ï”//
+	int lightHandle;
+	int stamina = 100;
+	int staminaMAX = 100;
+	int stamina_X = Utility::SCREEN_WIDTH / 2 - 260;
+	int stamina_Y = Utility::SCREEN_HEIGHT / 2 + 430;
+	int width = 490;
+	int height = 30;
+	int gaugeWidth;
+	int mncount;
+	int RecordDis;
+	int AddItemID;
+	int WalkSETimer;
+	int RunSETimer;
+	int FontHandle = CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING);
 
-	int maxSize = 1;                        // ƒCƒ“ƒxƒ“ƒgƒŠ‚ÌƒTƒCƒY
+	std::vector<ItemData> items;
+	int maxSize = 1;
 
-	bool getEscapeItem;                     // ’EoƒAƒCƒeƒ€‚ğg—p‚µ‚½‚©‚Ç‚¤‚©
-	bool getTimeItem;                       // ŠÔ~‚ßƒAƒCƒeƒ€‚ğg—p‚µ‚½‚©‚Ç‚¤‚©
-	bool isUseStopItem;                     // ŠÔ~‚ßƒAƒCƒeƒ€‚ğg—p‚·‚é‚©‚Ç‚¤‚©
+	bool getEscapeItem;
+	bool getTimeItem;
+	bool isUseStopItem;
 
-	// ƒAƒCƒeƒ€—“‚Ì•Ï”
-	int x;                  // ƒAƒCƒeƒ€‚ğƒ{ƒbƒNƒX‚É•\¦‚·‚é‚½‚ß‚ÌXÀ•W
-	int y;                  // ƒAƒCƒeƒ€‚ğƒ{ƒbƒNƒX‚É•\¦‚·‚é‚½‚ß‚ÌYÀ•W
-	int selX;               // ‘I‘ğ‚Å•\¦‚·‚éXü
-	int selY;               // ‘I‘ğ‚Å•\¦‚·‚éYü
-	int currentItemIndex;   // Œ»İ‚ÌƒAƒCƒeƒ€ƒCƒ“ƒfƒbƒNƒX
+	int x;
+	int y;
+	int selX;
+	int selY;
+	int currentItemIndex;
 
-	const int ItemSize = 170;   // ƒAƒCƒeƒ€‚Ì‘å‚«‚³
-	const int ItemMargin = 10; // ƒAƒCƒeƒ€‚Ì—]”’
-	const int HUD_X = Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin);  // ƒAƒCƒeƒ€‰æ‘œ‚ğ•\¦‚·‚é‚½‚ß‚ÌXÀ•W
-	const int HUD_Y = Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20;             // ƒAƒCƒeƒ€‰æ‘œ‚ğ•\¦‚·‚é‚½‚ß‚ÌYÀ•W
+	const int ItemSize = 170;
+	const int ItemMargin = 10;
+	const int HUD_X = Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin);
+	const int HUD_Y = Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20;
 
-
-	enum MoveState        // “®‚¢‚Ä‚¢‚éó‘Ô‚Ì\‘¢‘Ì
+	enum MoveState
 	{
 		WALK,
 		RUN
 	};
 
-	MoveState state = WALK; // Å‰‚Í•à‚¢‚Ä‚¢‚éó‘Ô
+	MoveState state = WALK;
+	std::vector<VECTOR> playerRecord;
 
-	std::vector<VECTOR>playerRecord; // ƒvƒŒƒCƒ„[‚ÌÀ•W‚ğ•Û‚·‚éVECTOR ‚Ì\‘¢‘Ì
-
-	const float ROTATE_SPEED = 0.2f; // ‰ñ“]‘¬“x
-	const int ITER = 20;              // •Ç‚É“–‚½‚é–‡”
-	const int SEframe_Walk = 25;          // •à‚¢‚Ä‚¢‚é‚Æ‚«‚ÌSEƒtƒŒ[ƒ€
-	const int SEframe_RUN = 18;      // ‘–‚Á‚Ä‚¢‚é‚Æ‚«‚ÌSEƒtƒŒ[ƒ€
-	const int Frame_Light = 25;     // ƒ‰ƒCƒg‚Ì“_–ÅƒtƒŒ[ƒ€
+	const float ROTATE_SPEED = 0.2f;
+	const int ITER = 20;
+	const int SEframe_Walk = 25;
+	const int SEframe_RUN = 18;
+	const int Frame_Light = 25;
 };

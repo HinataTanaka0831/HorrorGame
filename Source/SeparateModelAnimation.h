@@ -1,71 +1,50 @@
-#pragma once
-
-// 
-// šNewš
-// V‹K’Ç‰Áƒtƒ@ƒCƒ‹
-//
+ï»¿#pragma once
 
 #include <string>
 #include <vector>
 #include "ModelUtility.h"
 
+// å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ç¾¤ã‹ã‚‰å€‹åˆ¥ã«èª­ã¿è¾¼ã‚“ã Mixamoç³»ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®å‹•çš„ã‚¢ã‚¿ãƒƒãƒãƒ»ãƒ–ãƒ¬ãƒ³ãƒ‰å†ç”Ÿã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
 class SeparateModelAnimation
 {
 public:
-    SeparateModelAnimation(int modelHandle);   // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-    ~SeparateModelAnimation();  // ƒfƒXƒgƒ‰ƒNƒ^
+	SeparateModelAnimation(int modelHandle);
+	~SeparateModelAnimation();
 
-    void Update();  // XV
+	// ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿæ™‚é–“ã®é€²è¡ŒãŠã‚ˆã³å‰å¾Œãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¯ãƒ­ã‚¹ãƒ•ã‚§ãƒ¼ãƒ‰ãƒ–ãƒ¬ãƒ³ãƒ‰åˆ¶å¾¡
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ã‚¢ã‚¿ãƒƒãƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿæ™‚é–“ãƒ»ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã®æ›´æ–°
+	void Update();
 
-    // šNewš
-    // note: mixamo ‚Åƒ‚[ƒVƒ‡ƒ“‚ğƒ_ƒEƒ“ƒ[ƒh‚·‚é‚ÆA
-    //       0”Ô–Ú‚Ìƒ‚[ƒVƒ‡ƒ“ƒf[ƒ^‚Íƒ_ƒ~[‚ª“ü‚Á‚Ä‚¢‚é‚ç‚µ‚¢‚Ì‚ÅA
-    //       ƒfƒtƒHƒ‹ƒg‚Å“K—p‚·‚éƒCƒ“ƒfƒbƒNƒX‚ğ 1 ‚É‚µ‚Ä‚¨‚­
-    void ChangeAnimation(AnimationState state, int index = 0); // ƒ‚[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦ˆ—
+	// æŒ‡å®šã‚¹ãƒ†ãƒ¼ãƒˆã¸ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³å¤‰æ›´ãŠã‚ˆã³ã‚¯ãƒ­ã‚¹ãƒ•ã‚§ãƒ¼ãƒ‰é–‹å§‹
+	// å…¥åŠ›: state(åˆ‡ã‚Šæ›¿ãˆå…ˆã‚¹ãƒ†ãƒ¼ãƒˆ), index(ã‚¢ã‚¿ãƒƒãƒã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: æ—§ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ã‚¿ãƒƒãƒäºˆç´„ã€æ–°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚¢ã‚¿ãƒƒãƒ
+	void ChangeAnimation(AnimationState state, int index = 0);
 
-    // šNewš
-    // ƒ‚[ƒVƒ‡ƒ“ƒf[ƒ^‚Ì’Ç‰Á
-    // note: •ªŠ„‚³‚ê‚Ä‚¢‚éƒ‚[ƒVƒ‡ƒ“‚ğƒf[ƒ^‚Æ‚µ‚Ä“o˜^‚·‚éB
-    void AddAnimation(AnimationState state, std::string filename);
+	// å¤–éƒ¨ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ã¨ã‚¹ãƒ†ãƒ¼ãƒˆç™»éŒ²
+	// å…¥åŠ›: state(ã‚¹ãƒ†ãƒ¼ãƒˆ), filename(ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: MV1LoadModelå®Ÿè¡Œã€mAnimationInfoListã¸ã®ç™»éŒ²
+	void AddAnimation(AnimationState state, std::string filename);
 
-    // šNewš
-    // ‘Î‰‚µ‚½ƒ‚[ƒVƒ‡ƒ“ƒnƒ“ƒhƒ‹‚Ìæ“¾
-    // note: vector”z—ñ‚Éƒf[ƒ^‚ªŠi”[‚³‚ê‚Ä‚¢‚é‚½‚ßA
-    //       –ˆ‰ñƒnƒ“ƒhƒ‹‚ğŒŸõ‚·‚éèŠÔ‚ªo‚Ä‚«‚Ä‚µ‚Ü‚¤‚Ì‚ÅA
-    //       ‚»‚ê‚ğs‚¤‚½‚ß‚ÌŠÖ”B
-    int GetAnimationHandle(AnimationState state);
+	// ç™»éŒ²æ¸ˆã¿ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒãƒ³ãƒ‰ãƒ«ã®æ¤œç´¢å–å¾—
+	// å…¥åŠ›: state(ã‚¹ãƒ†ãƒ¼ãƒˆ) / å‡ºåŠ›: ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«(-1ã§è¦‹ã¤ã‹ã‚‰ãªã„) / å‰¯ä½œç”¨: ãªã—
+	int GetAnimationHandle(AnimationState state);
 
+	void SetLoop(bool isLoop) { mbLoop = isLoop; }
+	void SetLoopFinishState(AnimationState state) { mnLoopFinishState = state; }
+	void SetAnimationBlend(bool isBlend);
 
-    // ƒ‹[ƒvİ’è
-    void SetLoop(bool isLoop) { mbLoop = isLoop; }
-    // ƒ‹[ƒvI—¹‚ÉÄ¶‚·‚éƒ‚[ƒVƒ‡ƒ“
-    void SetLoopFinishState(AnimationState state) { mnLoopFinishState = state; }
-    // ƒ‚[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒhİ’è
-    void SetAnimationBlend(bool isBlend);
-
-    // Œ»İÄ¶‚³‚ê‚Ä‚¢‚éƒ‚[ƒVƒ‡ƒ“‚Ìæ“¾
-    AnimationState GetNowState() { return mnState; }
-    // ƒ‚[ƒVƒ‡ƒ“‚Ìƒ‹[ƒv‚ªI—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
-    bool IsLoopFinish() { return mbLoopFinish; }
+	AnimationState GetNowState() const { return mnState; }
+	bool IsLoopFinish() const { return mbLoopFinish; }
 
 private:
-    int mnModelHandle;  // ƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
+	int mnModelHandle;
+	float mfAnimationTime;
+	int mnAnimationIndex;
+	float mfOldAnimationTime;
+	int mnOldAnimationIndex;
+	float mfAnimBlendRate;
+	AnimationState mnState;
+	bool mbLoop;
+	AnimationState mnLoopFinishState;
+	bool mbLoopFinish;
 
-    float mfAnimationTime;  // Ä¶‚µ‚Ä‚¢‚éƒ‚[ƒVƒ‡ƒ“‚ÌŒ»İ‚ÌÄ¶ŠÔ
-    int mnAnimationIndex;   // Ä¶‚µ‚Ä‚¢‚éƒ‚[ƒVƒ‡ƒ“‚ÌƒCƒ“ƒfƒbƒNƒX
-
-    float mfOldAnimationTime;   // 1‚Â‘O‚Ìƒ‚[ƒVƒ‡ƒ“Ä¶ŠÔ
-    int mnOldAnimationIndex;    // ‚P‚Â‘O‚Ìƒ‚[ƒVƒ‡ƒ“‚ÌƒCƒ“ƒfƒbƒNƒX
-
-    float mfAnimBlendRate;      // ƒ‚[ƒVƒ‡ƒ“‚ÌØ‚è‘Ö‚í‚è“x‡
-
-    AnimationState mnState; // Œ»İÄ¶‚µ‚Ä‚¢‚éƒ‚[ƒVƒ‡ƒ“‚Ì”Ô†
-
-    bool mbLoop;            // ƒ‚[ƒVƒ‡ƒ“‚ğƒ‹[ƒv‚³‚¹‚é‚©‚Ç‚¤‚©
-    AnimationState mnLoopFinishState;   // ƒ‹[ƒv‚ªI‚í‚Á‚½‚ÉÄ¶‚µ‚½‚¢ƒ‚[ƒVƒ‡ƒ“”Ô†
-    bool mbLoopFinish;      // ƒ‚[ƒVƒ‡ƒ“ƒ‹[ƒv‚ªI‚í‚Á‚½‚©‚Ç‚¤‚©
-
-    // šNewš
-    // ƒ‚[ƒVƒ‡ƒ“ƒf[ƒ^‚ÌƒŠƒXƒg
-    std::vector<AnimationInfo*> mAnimationInfoList;
+	std::vector<AnimationInfo*> mAnimationInfoList;
 };

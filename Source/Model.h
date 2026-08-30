@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "DxLib.h"
 #include <string>
@@ -6,68 +6,64 @@
 #include "ModelAnimation.h"
 #include "SeparateModelAnimation.h"
 
-// ‘O•ûéŒ¾
 class AttachmentModel;
 
-
+// 3Dãƒ¢ãƒ‡ãƒ«ã‚¢ã‚»ãƒƒãƒˆã®ãƒ­ãƒ¼ãƒ‰ã€ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ã€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åˆ¶å¾¡ã€ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆã‚’çµ±æ‹¬ã™ã‚‹ã‚¯ãƒ©ã‚¹
 class Model
 {
 public:
-	// Mixamo—pˆ—
-	// note: •ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“‚ğg‚¤‚©‚Ç‚¤‚©‚Ìİ’è‚ğ’Ç‰ÁB
-	Model(std::string filename, VECTOR initPos, bool isSeparateAnimation = false);   // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	~Model();  // ƒfƒXƒgƒ‰ƒNƒ^
+	// 3Dãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ãŠã‚ˆã³é€šå¸¸/åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã®ç”Ÿæˆ
+	// å…¥åŠ›: filename(ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹), initPos(åˆæœŸé…ç½®åº§æ¨™), isSeparateAnimation(å¤–éƒ¨åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ä½¿ç”¨ã™ã‚‹ã‹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: MV1LoadModelãŠã‚ˆã³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ç”Ÿæˆ
+	Model(std::string filename, VECTOR initPos, bool isSeparateAnimation = false);
+	~Model();
 
-	void Update();   // XV
-	void Draw();     // •`‰æ
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿæ™‚é–“ã®é€²è¡ŒãŠã‚ˆã³åº§æ¨™ãƒ»å›è»¢ã®3Dãƒ¢ãƒ‡ãƒ«ã¸ã®åæ˜ 
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒ¢ãƒ‡ãƒ«å¤‰æ›è¡Œåˆ—ã®æ›´æ–°
+	void Update();
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦
+	// 3Dãƒ¢ãƒ‡ãƒ«æç”»
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®3Dæç”»
+	void Draw();
+
+	// æŒ‡å®šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã¸ã®åˆ‡ã‚Šæ›¿ãˆ
+	// å…¥åŠ›: state(å¤‰æ›´å…ˆã‚¹ãƒ†ãƒ¼ãƒˆ) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã®ã‚¹ãƒ†ãƒ¼ãƒˆå¤‰æ›´
 	void ChangeAnimation(AnimationState state);
-	// ƒ‹[ƒvİ’è
+
 	void SetLoop(bool loop);
 	void SetLoopFinishState(AnimationState state);
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒhİ’è
 	void SetAnimationBlend(bool isBlend);
-	// Œ»İÄ¶‚³‚ê‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Ìæ“¾
 	AnimationState GetNowState();
-	
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ‹[ƒv‚ªI—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool IsAnimationLoopFinish();
 
-	// ƒAƒ^ƒbƒ`ƒ‚ƒfƒ‹ŠÖ˜A
-	// ƒAƒ^ƒbƒ`ƒƒ“ƒg‚ğ’Ç‰Á
+	// è¦ªãƒ¢ãƒ‡ãƒ«ç‰¹å®šãƒœãƒ¼ãƒ³ã¸ã®ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãƒ¢ãƒ‡ãƒ«è¿½åŠ 
+	// å…¥åŠ›: filename(è¿½åŠ ãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹), attachFrameName(ãƒœãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ å) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: AttachmentModelç”Ÿæˆ
 	void AddAttachment(std::string filename, std::string attachFrameName);
-	// ƒAƒ^ƒbƒ`ƒ‚ƒfƒ‹‚ÌÀ•Wæ“¾
+
+	// ã‚¢ã‚¿ãƒƒãƒã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’å–å¾—
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ / å‰¯ä½œç”¨: ãªã—
 	VECTOR GetAttachmentPosition();
 
+	VECTOR GetPosition() const { return mvPosition; }
+	void SetPosition(VECTOR pos) { mvPosition = pos; }
 
-	VECTOR GetPosition() { return mvPosition; }  // À•Wæ“¾
-	void SetPosition(VECTOR pos) { mvPosition = pos; }  // À•Wİ’è
-
-	VECTOR GetRotation() { return mvRotation; }  // ‰ñ“]æ“¾
-	void SetRotation(VECTOR rot) { mvRotation = rot; }  // ‰ñ“]İ’è
+	VECTOR GetRotation() const { return mvRotation; }
+	void SetRotation(VECTOR rot) { mvRotation = rot; }
 
 	void SetScale(float scale);
 	void SetTexture(std::string filename, int index = 0);
 
-	// Mixamo—p
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒf[ƒ^‚Ì’Ç‰Á
-	// note: SeparateModelAnimation ƒNƒ‰ƒX‚Ö‚Ì‹´“n‚µŠÖ”
+	// å¤–éƒ¨ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã®è¿½åŠ ç™»éŒ²ï¼ˆMixamoåˆ†å‰²ãƒ•ã‚¡ã‚¤ãƒ«ç”¨ï¼‰
+	// å…¥åŠ›: state(ç´ã¥ã‘ã‚‹ã‚¹ãƒ†ãƒ¼ãƒˆ), filename(ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: SeparateModelAnimationã¸ã®ç™»éŒ²
 	void AddAnimation(AnimationState state, std::string filename);
 
 private:
-	int mnHandle;  // “Ç‚İ‚ñ‚¾ƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
-	VECTOR mvPosition;  // À•W
-	VECTOR mvRotation;  // ‰ñ“]
+	int mnHandle;
+	VECTOR mvPosition;
+	VECTOR mvRotation;
 	float mfScale;
 	int mnChangeTextureHandle;
 
-	ModelAnimation* mpAnimation;    // ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-
-	// Mixamo—p
-	// •ªŠ„“Ç‚İ‚İƒo[ƒWƒ‡ƒ“‚Ìƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
+	ModelAnimation* mpAnimation;
 	SeparateModelAnimation* mpSeparateAnimation;
-
-	AttachmentModel* mpAttachment;  // ƒAƒ^ƒbƒ`ƒ‚ƒfƒ‹i•¡”‚½‚¹‚½‚¢ê‡‚Í std::vector ‚â”z—ñ‚ÅŠÇ—‚·‚é‚Æ—Ç‚¢j
-
+	AttachmentModel* mpAttachment;
 };

@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include "TitleScene.h"
 #include "DxLib.h"
@@ -10,69 +10,55 @@
 #include <memory>
 #include "Button.h"
 
-
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 TitleScene::TitleScene() 
-: Scene()     // Šî’êƒNƒ‰ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğŒÄ‚Ño‚·
+	: Scene()
 {
-
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
 TitleScene::~TitleScene()
 {
-
 }
 
-// ‰Šú‰»
+// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®ãƒœã‚¿ãƒ³UIç”Ÿæˆã€æ•µã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯èª­ã¿è¾¼ã¿ãŠã‚ˆã³ãƒã‚¦ã‚¹ãƒ­ãƒƒã‚¯è§£é™¤
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ç”»åƒãƒãƒ³ãƒ‰ãƒ«èª­ã¿è¾¼ã¿ã€Buttonã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 void TitleScene::Initialize()
 {
-	// ƒ^ƒCƒgƒ‹ƒƒS‚ÌƒNƒ‰ƒX‚Ìì¬
-	// ƒvƒŒƒCƒ„[‚Ì¶¬
-	// ‚È‚Ç‚ğ‚±‚±‚Ås‚¤
-	// ->ƒ^ƒCƒgƒ‹‰æ–Ê‚Å•K—v‚ÈƒIƒuƒWƒFƒNƒg‚ğ‚±‚±‚Å¶¬‚·‚é
-
-	if (EnemyPictureHandle == -1)
+	if (enemyPictureHandle == -1)
 	{
-		EnemyPictureHandle = LoadGraph("Resource/3D_UI/TitleScene_EnemyPicture.png");
+		enemyPictureHandle = LoadGraph("Resource/3D_UI/TitleScene_EnemyPicture.png");
 	}
 
 	if (mpPlayButton == nullptr)
 	{
-		mpPlayButton = std::make_unique<Button>(StringX, PlayY - 10, StringX + 250, PlayY + 60, " ƒvƒŒƒC ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpPlayButton = std::make_unique<Button>(DrawX, PlayY - 10, DrawX + 250, PlayY + 60, " ãƒ—ãƒ¬ã‚¤ ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 	if (mpPlayRuleButton == nullptr)
 	{
-		mpPlayRuleButton = std::make_unique<Button>(StringX, PlayRuleY - 10, StringX + 250, PlayRuleY + 60, "‘€ì•û–@", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpPlayRuleButton = std::make_unique<Button>(DrawX, PlayRuleY - 10, DrawX + 250, PlayRuleY + 60, "æ“ä½œæ–¹æ³•", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
 	if (mpQuitButton == nullptr)
 	{
-		mpQuitButton = std::make_unique<Button>(StringX, QuitY - 10, StringX + 250, QuitY + 60, "I—¹", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		mpQuitButton = std::make_unique<Button>(DrawX, QuitY - 10, DrawX + 250, QuitY + 60, "çµ‚äº†", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
 	}
 
-	// Mouse‚ÌƒƒbƒN‚ğ‰ğœ
+	// ãƒ¡ãƒ‹ãƒ¥ãƒ¼UIæ“ä½œã‚’å¯èƒ½ã«ã™ã‚‹ãŸã‚ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«æ‹˜æŸã‚’è§£é™¤
 	InputManager::GetInstance().EnableMouseLock(false);
-	
-	// BGMÄ¶
-	//Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
 }
 
-// XV
+// BGMå†ç”Ÿã®ç¶­æŒã€ãƒœã‚¿ãƒ³å…¥åŠ›ã®ç›£è¦–ãŠã‚ˆã³å„ã‚·ãƒ¼ãƒ³ã¸ã®é·ç§»è¦æ±‚
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: BGMå†ç”Ÿã€SEå†ç”Ÿã€SceneManagerã¸ã®é·ç§»äºˆç´„
 void TitleScene::Update()
 {
-	// BGM‚ÌÄ¶
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
 
-	// ƒ{ƒ^ƒ“‚ÌXVˆ—‚ğŒÄ‚Ô
 	if (mpPlayButton)
 	{
 		mpPlayButton->Update();
 
 		if (mpPlayButton->IsClick())
 		{
-			// SEÄ¶
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_3D);
 		}
@@ -84,38 +70,43 @@ void TitleScene::Update()
 
 		if (mpPlayRuleButton->IsClick())
 		{
-			// SEÄ¶
 			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_GAME_RULE);
 		}
 	}
 
-	// Šî’êƒNƒ‰ƒX‚ÌXVˆ—‚ğŒÄ‚Ño‚·
+	if (mpQuitButton)
+	{
+		mpQuitButton->Update();
+
+		if (mpQuitButton->IsClick())
+		{
+			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
+			Master::mpSceneManager->RequestQuit();
+		}
+	}
+
 	Scene::Update();
 }
 
-// •`‰æ
+// ãƒ›ãƒ©ãƒ¼æ¼”å‡ºã®ç ‚åµã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã€æ•µã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã€ã‚¿ã‚¤ãƒˆãƒ«ãƒ­ã‚´ã€UIãƒœã‚¿ãƒ³ã®æç”»
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»ãŠã‚ˆã³ScreenFlip
 void TitleScene::Draw()
 {
-	for (int i = 1; i < 7; i++)
+	// 6æšã®é€£ç•ªç ‚åµãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’é †æ¬¡åˆ‡ã‚Šæ›¿ãˆã¦ãƒã‚¤ã‚ºã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¡¨ç¾
+	for (int i = 1; i < 7; ++i)
 	{
-		// ‰æ–Ê‚ğƒNƒŠƒA
 		ClearDrawScreen();
 
 		char Buf[256];
 		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
-		Noise = LoadGraph(Buf);
+		noise = LoadGraph(Buf);
 
-		// ”wŒi‚ÌF‚ğİ’è
 		SetBackgroundColor(0, 0, 0);
 
-		// “G‚Ì‰æ‘œ‚ğ•\¦
-		DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, EnemyPictureHandle, true);
+		DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, enemyPictureHandle, true);
+		DrawGraph(0, 0, noise, true);
 
-		// ”wŒi‚Ì•\¦
-		DrawGraph(0, 0, Noise, true);
-
-		// ƒ{ƒ^ƒ“‚Ì•\¦
 		if (mpPlayButton)
 		{
 			mpPlayButton->Draw();
@@ -126,31 +117,29 @@ void TitleScene::Draw()
 			mpPlayRuleButton->Draw();
 		}
 
-		// •¶š—ñ‚Ì•\¦
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 2 - 330, "ô‚í‚ê‚½ZÉ", GetColor(255, 0, 0), fontSize130);
+		if (mpQuitButton)
+		{
+			mpQuitButton->Draw();
+		}
 
-		// — ‰æ–Ê‚Ì“à—e‚ğ•\‰æ–Ê‚É‰f‚·
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 2 - 330, "å‘ªã‚ã‚ŒãŸæ ¡èˆ", GetColor(255, 0, 0), fontSize130);
+
 		ScreenFlip();
+		DeleteGraph(noise);
 	}
 
-
-
-	// Šî’êƒNƒ‰ƒX‚Ì•`‰æˆ—‚ğŒÄ‚Ño‚·
 	Scene::Draw();
-
-
 }
 
-// I—¹ˆ—
+// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢å›ºæœ‰ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒªã‚½ãƒ¼ã‚¹ã®è§£æ”¾ãŠã‚ˆã³BGMåœæ­¢
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ç”»åƒãƒãƒ³ãƒ‰ãƒ«ã®å‰Šé™¤ã€BGMåœæ­¢
 void TitleScene::Finalize()
 {
-	// ‰æ‘œ‚ğíœ
-	DeleteGraph(Noise);
-	if (EnemyPictureHandle != -1)
+	if (enemyPictureHandle != -1)
 	{
-		DeleteGraph(EnemyPictureHandle);
+		DeleteGraph(enemyPictureHandle);
+		enemyPictureHandle = -1;
 	}
 
-	// BGM’â~
 	Master::mpSoundManager->StopBGM();
 }

@@ -1,183 +1,112 @@
+ï»¿#include "ModelAnimation.h"
 #include "DxLib.h"
-#include "ModelAnimation.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 ModelAnimation::ModelAnimation(int modelHandle)
 	: mnModelHandle(modelHandle)
 	, mfAnimationTime(0.0f)
-	, mnAnimationIndex(-1)   
+	, mnAnimationIndex(-1)
 	, mfOldAnimationTime(0.0f)
 	, mnOldAnimationIndex(-1)
 	, mfAnimBlendRate(1.0f)
-	, mnState(AnimationState::ANIMATION_MAX)     // Å‰‚ÍÅ‘å’l‚Æ‚µ‚Ä‚¨‚­
+	, mnState(AnimationState::ANIMATION_MAX)
 	, mbLoop(true)
 	, mnLoopFinishState(AnimationState::ANIMATION_MAX)
 	, mbLoopFinish(false)
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÅˆÚ“®‚ğ‚µ‚Ä‚¢‚éƒtƒŒ[ƒ€”Ô†‚ğŒŸõ‚·‚é
-	int moveAnimFrameIndex = MV1SearchFrame(mnModelHandle, "root");
-	 //ˆÚ“®‚ğ–³Œø‚É‚·‚é
-	MV1SetFrameUserLocalMatrix(
-		mnModelHandle,
-		moveAnimFrameIndex,
-		MV1GetFrameLocalMatrix(mnModelHandle, moveAnimFrameIndex)
-	);
-
-	// ‰Šúó‘Ô‚Í‘Ò‹@ƒ‚[ƒVƒ‡ƒ“‚É‚µ‚Ä‚¨‚­
 	ChangeAnimation(AnimationState::ANIMATION_NEUTRAL);
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
 ModelAnimation::~ModelAnimation()
 {
-
+	if (mnAnimationIndex != -1) MV1DetachAnim(mnModelHandle, mnAnimationIndex);
+	if (mnOldAnimationIndex != -1) MV1DetachAnim(mnModelHandle, mnOldAnimationIndex);
 }
 
-// XV
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿæ™‚é–“ã®é€²è¡ŒãŠã‚ˆã³å‰å¾Œãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¯ãƒ­ã‚¹ãƒ•ã‚§ãƒ¼ãƒ‰ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡æ›´æ–°
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒ¢ãƒ‡ãƒ«ã®ã‚¢ã‚¿ãƒƒãƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ™‚é–“ãƒ»ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã®å¤‰æ›´
 void ModelAnimation::Update()
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒh—¦‚ği‚ß‚é
 	if (mfAnimBlendRate < 1.0f)
 	{
-		mfAnimBlendRate += 0.1f;     // += 0.1f ‚ÍƒuƒŒƒ“ƒh‘¬“xB©—R‚É•Ï‚¦‚Ä‚àok
-		if (mfAnimBlendRate > 1.0f)
-		{
-			mfAnimBlendRate = 1.0f;
-		}
+		mfAnimBlendRate += 0.1f;
+		if (mfAnimBlendRate > 1.0f) mfAnimBlendRate = 1.0f;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
 	float fAnimTotalTime = 0.0f;
 	if (mnAnimationIndex != -1)
 	{
-		// ‘Ä¶ŠÔ‚Ìæ“¾
 		fAnimTotalTime = MV1GetAttachAnimTotalTime(mnModelHandle, mnAnimationIndex);
-
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ği‚ß‚é
 		mfAnimationTime += 0.5f;
 
-		// ƒ‹[ƒv‚³‚¹‚é
 		if (mfAnimationTime > fAnimTotalTime)
 		{
-			// ƒ‹[ƒv‚µ‚È‚¢İ’è‚Å‚ ‚ê‚Î
 			if (!mbLoop)
 			{
-				// Ÿ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡
 				if (mnLoopFinishState == ANIMATION_MAX)
 				{
-					// ƒAƒjƒ[ƒVƒ‡ƒ“‚Í‚±‚êˆÈãi‚ß‚¸Aˆ—‚ğ’†’f‚³‚¹‚é
 					mbLoopFinish = true;
 					return;
 				}
-
-				// ƒ‹[ƒvI—¹‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Ö•ÏX
 				ChangeAnimation(mnLoopFinishState);
-				// ƒuƒŒƒ“ƒh‚Í‚µ‚È‚¢
 				SetAnimationBlend(false);
-				// •ÏX‚³‚ê‚½‚Ì‚Å‰ü‚ß‚Ä‘Ä¶ŠÔ‚ğæ‚Á‚Ä‚¨‚­
 				fAnimTotalTime = MV1GetAttachAnimTotalTime(mnModelHandle, mnAnimationIndex);
 			}
-
 			mfAnimationTime = 0.0f;
 		}
 
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ”½‰f
 		MV1SetAttachAnimTime(mnModelHandle, mnAnimationIndex, mfAnimationTime);
-
-		// ƒuƒŒƒ“ƒh—¦‚ğİ’è
 		MV1SetAttachAnimBlendRate(mnModelHandle, mnAnimationIndex, mfAnimBlendRate);
-
 	}
 
-	// 1‚Â‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğXV
 	if (mnOldAnimationIndex != -1)
 	{
-		// ‘Ä¶ŠÔ‚Ìæ“¾
 		fAnimTotalTime = MV1GetAttachAnimTotalTime(mnModelHandle, mnOldAnimationIndex);
-
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ği‚ß‚é
 		mfOldAnimationTime += 0.5f;
 
-		// ƒ‹[ƒv‚³‚¹‚é
 		if (mfOldAnimationTime > fAnimTotalTime)
 		{
 			mfOldAnimationTime = 0.0f;
 		}
 
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ”½‰f
 		MV1SetAttachAnimTime(mnModelHandle, mnOldAnimationIndex, mfOldAnimationTime);
-
-		// ƒuƒŒƒ“ƒh—¦‚ğİ’è
 		MV1SetAttachAnimBlendRate(mnModelHandle, mnOldAnimationIndex, 1.0f - mfAnimBlendRate);
-
 	}
-
 }
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌØ‚è‘Ö‚¦ˆ—
+// æŒ‡å®šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã¸ã®åˆ‡ã‚Šæ›¿ãˆã¨ãƒ–ãƒ¬ãƒ³ãƒ‰åˆæœŸåŒ–
+// å…¥åŠ›: state(ã‚¹ãƒ†ãƒ¼ãƒˆ), index(ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: æ—§ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ä¿æŒã€æ–°ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ã‚¿ãƒƒãƒ
 void ModelAnimation::ChangeAnimation(AnimationState state, int index)
 {
-	// Ø‚è‘Ö‚¦‚æ‚¤‚Æ‚µ‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ªŠù‚Éİ’è‚³‚ê‚Ä‚¢‚éê‡
-	if (mnState == state)
-	{
-		return;   // ‰½‚à‚µ‚È‚¢
-	}
+	if (mnState == state) return;
 
-	// Ø‚è‘Ö‚¦æ‚Ì”Ô†‚ğ•Û
 	mnState = state;
-
-	// ƒ‹[ƒvî•ñ‚Ì‰Šú‰»
-	mbLoop = true;    // İ’è‚ª“Á‚É‚È‚¢ê‡‚Íƒ‹[ƒv‚³‚¹‚é
-	mnLoopFinishState = AnimationState::ANIMATION_MAX;  // ƒ‹[ƒvI—¹‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Í“Á‚É‚È‚µ
+	mbLoop = true;
+	mnLoopFinishState = AnimationState::ANIMATION_MAX;
 	mbLoopFinish = false;
 
-	// 1‚Â‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ª—LŒøó‘Ô‚Å‚ ‚ê‚Î
 	if (mnOldAnimationIndex != -1)
 	{
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒfƒ^ƒbƒ`iæ‚èŠO‚·j
 		MV1DetachAnim(mnModelHandle, mnOldAnimationIndex);
 		mnOldAnimationIndex = -1;
 	}
 
-	// Œ»İ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ó‘Ô‚ğ•Û‚·‚é
 	mnOldAnimationIndex = mnAnimationIndex;
 	mfOldAnimationTime = mfAnimationTime;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒAƒ^ƒbƒ`
-	mnAnimationIndex = MV1AttachAnim(mnModelHandle, (int)state);
-
-	// Ä¶ŠÔ‚Ì‰Šú‰»
+	mnAnimationIndex = MV1AttachAnim(mnModelHandle, index, -1, FALSE);
 	mfAnimationTime = 0.0f;
-
-	// ƒuƒŒƒ“ƒhó‘Ô‚ğ‰Šú‰»
-	// ƒuƒŒƒ“ƒh—¦‚ÍAŒÃ‚¢ƒ‚[ƒVƒ‡ƒ“‚ª—LŒø‚Å‚È‚¢ê‡‚Í1.0fiƒuƒŒƒ“ƒh‚µ‚È‚¢ó‘Ôj‚É‚µ‚Ä‚¨‚­
-	mfAnimBlendRate = (mnOldAnimationIndex == -1 ? 1.0f : 0.0f);  //¨¨if (mnOldAnimationIndex == -1)
-                                                                       	//{
-	                                                                    //	mfAnimBlendRate = 1.0f;
-	                                                                    //}
-	                                                                    //else 
-	                                                                    //{
-	                                                                    //	mfAnimBlendRate = 0.0f;
-	                                                                    //}
-
-
-
+	mfAnimBlendRate = (mnOldAnimationIndex == -1 ? 1.0f : 0.0f);
 }
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒhİ’è
 void ModelAnimation::SetAnimationBlend(bool isBlend)
 {
-	if (isBlend)  // ƒuƒŒƒ“ƒh‚·‚éê‡
+	if (isBlend)
 	{
-		// ƒuƒŒƒ“ƒh—¦‚ÍAŒÃ‚¢ƒ‚[ƒVƒ‡ƒ“‚ª—LŒø‚Å‚È‚¢ê‡‚Í1.0fiƒuƒŒƒ“ƒh‚µ‚È‚¢ó‘Ôj‚É‚µ‚Ä‚¨‚­
 		mfAnimBlendRate = (mnOldAnimationIndex == -1 ? 1.0f : 0.0f);
 	}
-	else    // ƒuƒŒƒ“ƒh‚µ‚È‚¢ê‡
+	else
 	{
-		// ƒuƒŒƒ“ƒh‚µ‚È‚¢ó‘Ô‚É‚·‚é
 		mfAnimBlendRate = 1.0f;
-
-		// ƒuƒŒƒ“ƒh‚·‚é•K—v‚ª‚È‚¢‚Ì‚ÅAŒÃ‚¢ƒAƒjƒ[ƒVƒ‡ƒ“‚Íƒfƒ^ƒbƒ`‚µ‚Ä‚¨‚­
 		if (mnOldAnimationIndex != -1)
 		{
 			MV1DetachAnim(mnModelHandle, mnOldAnimationIndex);

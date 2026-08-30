@@ -1,26 +1,29 @@
-#pragma once
+ï»¿#pragma once
 
 #include "DxLib.h"
 #include "Object3D.h"
 
+// è¦ª3Dãƒ¢ãƒ‡ãƒ«ã®ç‰¹å®šãƒœãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã«è¿½å¾“ã—ã¦æç”»ã•ã‚Œã‚‹è£…å‚™å“ãƒ»å°ç‰©ãƒ¢ãƒ‡ãƒ«ã‚¯ãƒ©ã‚¹
 class AttachmentModel : public Object3D
 {
 public:
-	// filename... ƒ‚ƒfƒ‹‚Ìƒtƒ@ƒCƒ‹ƒpƒX
-	// parentModelHandle... ‚­‚Á‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹ieƒ‚ƒfƒ‹j‚Ìƒnƒ“ƒhƒ‹
-	// parentFrameIndex... ‚­‚Á‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹ieƒ‚ƒfƒ‹j‚ÌƒtƒŒ[ƒ€”Ô†
-
+	// è¦ªãƒ¢ãƒ‡ãƒ«ãƒ•ãƒ¬ãƒ¼ãƒ ã«è¿½å¾“ã™ã‚‹ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰
+	// å…¥åŠ›: filename(ãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹), parentModelHandle(è¦ªãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«), parentFrameIndex(è¿½å¾“å…ˆãƒ•ãƒ¬ãƒ¼ãƒ ç•ªå·) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: MV1LoadModelå®Ÿè¡Œ
 	AttachmentModel(std::string filename, int parentModelHandle, int parentFrameIndex);
 	~AttachmentModel();
 
+	// è¦ªãƒ¢ãƒ‡ãƒ«ãƒœãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›è¡Œåˆ—ã‚’å–å¾—ã—è‡ªèº«ã«åæ˜ 
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: è‡ªèº«ã®æç”»è¡Œåˆ—ã®åŒæœŸ
 	void Update() override;
+
+	// ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãƒ¢ãƒ‡ãƒ«æç”»
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 	void Draw() override;
 
-	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹‚Ìæ“¾
-	int GetHandle() { return mnHandle; }
+	int GetHandle() const { return mnHandle; }
 
 private:
-	int mnHandle;    // ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹
-	int mnParentHandle;       // eƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
-	int mnParentFrameIndex;   // eƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€”Ô†
+	int mnHandle;
+	int mnParentHandle;
+	int mnParentFrameIndex;
 };

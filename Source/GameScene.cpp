@@ -1,4 +1,4 @@
-#include "GameScene.h"
+ï»¿#include "GameScene.h"
 #include "DxLib.h"
 #include "Utility.h"
 #include "Master.h"
@@ -9,7 +9,7 @@
 #include "Enemy.h"
 
 GameScene::GameScene()
-	: SelectScene()     // Šî’êƒNƒ‰ƒX‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğŒÄ‚Ño‚·
+	: SelectScene()     // ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Xï¿½ÌƒRï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 {
 	
 }
@@ -21,7 +21,7 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
-	// SelectScene ‚Å‘I‘ğ‚µ‚½‘I‘ğˆ‚É‚æ‚Á‚Ä’e‚ğ•ÏX‚·‚é‚½‚ßƒvƒŒƒCƒ„[‚ğ•ªŠò //
+	// SelectScene ï¿½Å‘Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½É‚ï¿½ï¿½ï¿½Ä’eï¿½ï¿½ÏXï¿½ï¿½ï¿½é‚½ï¿½ßƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ğ•ªŠï¿½ //
 	switch (chag)
 	{
 	case 2:
@@ -53,7 +53,7 @@ void GameScene::Initialize()
 
 
 
-		// ‹ø—g‚°‰–
+		// ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
 		new Enemy(
 			VGet((float)Utility::SCREEN_WIDTH + 115.0f, GetRand(480 - 53), 0.0f),
 			"Resource/kusikatsu_ton.png", 1, 2
@@ -78,9 +78,9 @@ void GameScene::Initialize()
 void GameScene::Update()
 {
 
-	// .empty() ... ‹ó‚Á‚Û‚©‚Ç‚¤‚©A‚Æ‚¢‚¤ŠÖ”  	
+	// .empty() ... ï¿½ï¿½ï¿½ï¿½Û‚ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½Aï¿½Æ‚ï¿½ï¿½ï¿½ï¿½Öï¿½  	
 
-	// XVˆ—‚ğŒÄ‚Ño‚·
+	// ï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 	Scene::Update();
 
 }
@@ -88,9 +88,9 @@ void GameScene::Update()
 void GameScene::Draw()
 {
 
-	// ”wŒi‚Ì•\¦
+	// ï¿½wï¿½iï¿½Ì•\ï¿½ï¿½
 
-	// “Gî•ñ‚ğæ“¾
+	// ï¿½Gï¿½ï¿½ï¿½ï¿½æ“¾
 	auto pTargetList = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject2DListByTag(Object2D::Enemy2D);
 
 	for (int i = 0; i < pTargetList.size(); i++)
@@ -105,7 +105,7 @@ void GameScene::Draw()
 			if (pEnemy != nullptr)
 			{
 
-				sprintfDx(font, "ƒXƒRƒAF %d / 200", pEnemy->GetScore());
+				sprintfDx(font, "ï¿½Xï¿½Rï¿½Aï¿½F %d / 200", pEnemy->GetScore());
 			}
 		}
 
@@ -115,7 +115,7 @@ void GameScene::Draw()
 	DrawString(100, 10, font, GetColor(255, 255, 255));
 
 
-	// HP ‚Ì•\¦
+	// HP ï¿½Ì•\ï¿½ï¿½
 	auto pPlayer = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject2DByTag(Object2D::Player2D);
 
 	Player* cPlayer = dynamic_cast<Player*>(pPlayer);
@@ -130,7 +130,7 @@ void GameScene::Draw()
 
 
 
-	// •`‰æˆ—‚ğŒÄ‚Ño‚·
+	// ï¿½`ï¿½æˆï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 	Scene::Draw();
 
 }

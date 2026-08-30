@@ -1,4 +1,4 @@
-#include "Scene3D.h"
+ï»¿#include "Scene3D.h"
 #include "Model.h"
 #include "Loading.h"
 #include <memory>
@@ -9,27 +9,20 @@
 #include "Player3D.h"
 #include "Stage.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Scene3D::Scene3D()
 	: Scene()
 {
-
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
 Scene3D::~Scene3D()
 {
-
 }
 
-// ‰Šú‰»
+// ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ»æ•µãƒ»ã‚¢ã‚¤ãƒ†ãƒ ç”Ÿæˆã‚¿ã‚¹ã‚¯ã®å®Ÿè¡ŒãŠã‚ˆã³FPSãƒã‚¦ã‚¹æ‹˜æŸã®æœ‰åŠ¹åŒ–
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: LoadingManagerã«ã‚ˆã‚‹éåŒæœŸã‚¢ã‚»ãƒƒãƒˆç”Ÿæˆã€Cameraã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 void Scene3D::Initialize()
 {
-
-	// ƒ[ƒfƒBƒ“ƒOƒ}ƒl[ƒWƒƒ[‚Ìì¬
 	LoadingManager loader;
-
-	// ƒ^ƒXƒN‚ğ’Ç‰Á
 	loader.AddTask(std::make_unique<InitializePlayerTask>());
 	loader.AddTask(std::make_unique<InitializeEnemyTask>());
 	loader.AddTask(std::make_unique<InitializeStageTask>());
@@ -38,66 +31,52 @@ void Scene3D::Initialize()
 	loader.AddTask(std::make_unique<InitializeTimeItemTask>());
 	loader.AddTask(std::make_unique<InitializeExitDoorTask>());
 
-	// ƒJƒƒ‰‚Ì‰Šú‰»
 	Master::mpCamera = new Camera();
 
-	// FPS ƒV[ƒ“‚ÅƒƒbƒN—LŒø‰»
+	// FPSè¦–ç‚¹æ“ä½œã®ãŸã‚ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç”»é¢ä¸­å¤®ã¸ãƒ­ãƒƒã‚¯
 	InputManager::GetInstance().EnableMouseLock(true);
 
-	// ƒ[ƒfƒBƒ“ƒOÀs
 	loader.ExecuteScene3D();
 
-	// ‰æ‘œ‚Ì¶¬
 	if (mnGraph == -1) mnGraph = LoadGraph("Resource/3D_UI/Player_Crouching.png");
-
-	// ‰æ‘œ‚Ì¶¬
 	if (mnGraph2 == -1) mnGraph2 = LoadGraph("Resource/3D_UI/Player_Move.png");
 
-	EscapeItem::NowNeedItem = 0;  // ’Eo‚Ì‚½‚ß‚É•K—v‚ÈƒAƒCƒeƒ€”‚ğ
+	EscapeItem::NowNeedItem = 0;
 }
 
-// XV
 void Scene3D::Update()
 {
 	Scene::Update();
 }
 
-// •`‰æ
+// 3Dãƒ¯ãƒ¼ãƒ«ãƒ‰æç”»å¾Œã®Zãƒãƒƒãƒ•ã‚¡ä¸€æ™‚ç„¡åŠ¹åŒ–ã«ã‚ˆã‚‹2D HUDï¼ˆæ®‹ã‚Šã‚¢ã‚¤ãƒ†ãƒ æ•°ãƒ»ã‚¹ã‚¿ãƒŸãƒŠãƒ»åˆ¶é™æ™‚é–“ï¼‰ã®æœ€å‰é¢æç”»
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡æç”»ã€Zãƒãƒƒãƒ•ã‚¡ãƒ•ãƒ©ã‚°åˆ‡ã‚Šæ›¿ãˆ
 void Scene3D::Draw()
 {
 	Scene::Draw();
 
-	// Zƒoƒbƒtƒ@‚ğg—p‚·‚éİ’è‚É‚·‚é
+	// 2D HUDè¡¨ç¤ºãŒ3Dç©ºé–“ã‚¸ã‚ªãƒ¡ãƒˆãƒªã«é®è”½ã•ã‚Œãªã„ã‚ˆã†Zãƒãƒƒãƒ•ã‚¡ãƒ†ã‚¹ãƒˆã‚’OFF
 	SetUseZBufferFlag(FALSE);
-
-	// Zƒoƒbƒtƒ@‚Ö‚Ì‘‚«‚İ‚Í‚µ‚È‚¢
 	SetWriteZBufferFlag(FALSE);
 
-	// c‚èƒAƒCƒeƒ€”‚Ì•\¦
-	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), ItemFontHandle, " c‚èƒAƒCƒeƒ€\n  %d / 4", EscapeItem::NowNeedItem);
+	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), ItemFontHandle, " æ®‹ã‚Šã‚¢ã‚¤ãƒ†ãƒ \n  %d / 4", EscapeItem::NowNeedItem);
 
 	auto pPlayerObj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
 
-	if (pPlayer == nullptr)
+	if (pPlayer != nullptr)
 	{
-		return;
-	}
+		pPlayer->DrawStamina();
 
-	pPlayer->DrawStamina();
-
-	if (pPlayer->GetCrouching())
-	{
-		// ƒvƒŒƒCƒ„[‚Ì‚µ‚á‚ª‚İó‘Ô‰æ‘œ‚Ì•\¦
-		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, mnGraph, true);
+		if (pPlayer->GetCrouching())
+		{
+			DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, mnGraph, true);
+		}
+		else
+		{
+			DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, mnGraph2, true);
+		}
 	}
-	else
-	{
-		// ƒvƒŒƒCƒ„[‚Ì•à‚«ó‘Ô‰æ‘œ‚Ì•\¦
-		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, mnGraph2, true);
-	}
-
-	
 
 	auto pTimeItemObj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagTimeItem);
 	TimeItem* pTimeItem = dynamic_cast<TimeItem*>(pTimeItemObj);
@@ -107,20 +86,13 @@ void Scene3D::Draw()
 		pTimeItem->DrawTimer();
 	}
 
-	// Zƒoƒbƒtƒ@‚ğg—p‚·‚éİ’è‚É‚·‚é
+	// æ¬¡ãƒ•ãƒ¬ãƒ¼ãƒ ã®3Dæç”»ã®ãŸã‚ã«Zãƒãƒƒãƒ•ã‚¡ã‚’å†æœ‰åŠ¹åŒ–
 	SetUseZBufferFlag(TRUE);
-
-	// Zƒoƒbƒtƒ@‚Ö‚Ì‘‚«‚İ‚ğ‚·‚é
 	SetWriteZBufferFlag(TRUE);
-
 }
 
-// I—¹ˆ—
 void Scene3D::Finalize()
 {
-	// ‰æ‘œ‚Ìíœ
-	if (mnGraph != -1) DeleteGraph(mnGraph);
-
-	// ‰æ‘œ‚Ìíœ
-	if (mnGraph2 != -1) DeleteGraph(mnGraph2);
+	if (mnGraph != -1) { DeleteGraph(mnGraph); mnGraph = -1; }
+	if (mnGraph2 != -1) { DeleteGraph(mnGraph2); mnGraph2 = -1; }
 }

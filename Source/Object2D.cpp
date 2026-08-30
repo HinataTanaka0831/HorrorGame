@@ -1,51 +1,46 @@
-#include "Object2D.h"
+ï»¿#include "Object2D.h"
 #include "Texture.h"
 #include "Master.h"
 #include "ObjectManager.h"
 #include "Scene.h"
 
+int Object2D::score = 0;
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Object2D::Object2D(std::string filename, VECTOR initPos)
 	: mvPosition(initPos)
 	, mbDeleteFlag(false)
 	, mfAngle(0.0f)
 	, mfspeed(0.0f)
 	, mvDirection(VGet(0.0f, 0.0f, 0.0f))
+	, mnTag(Tag::None2D)
 {
-	// Œ»İƒV[ƒ“‚Ì ObjectManager ‚É©githisj‚ğ’Ç‰Á‚·‚é
+	// ã‚·ãƒ¼ãƒ³ç ´æ£„æ™‚ã®ä¸€æ‹¬è§£æ”¾ã‚’ä¿è¨¼ã™ã‚‹ãŸã‚ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã¸ç™»éŒ²
 	Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->AddObject(this);
-
-	// ‰æ‘œ¶¬
 	mpTexture = new Texture(filename, initPos, true);
-
-
-
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
 Object2D::~Object2D()
 {
-	// ‰æ‘œ”jŠü
 	if (mpTexture != nullptr)
 	{
 		delete mpTexture;
+		mpTexture = nullptr;
 	}
 }
 
-// XV
+// åº§æ¨™åŒæœŸãŠã‚ˆã³ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ›´æ–°
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: å†…éƒ¨Textureåº§æ¨™ã®æ›´æ–°
 void Object2D::Update()
 {
 	if (mpTexture != nullptr)
 	{
 		mpTexture->Update();
+		mpTexture->SetPosition(mvPosition);
 	}
-
-	// À•Wİ’è
-	mpTexture->SetPosition(mvPosition);
 }
 
-// •`‰æ
+// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
+// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®æç”»
 void Object2D::Draw()
 {
 	if (mpTexture != nullptr)
@@ -54,14 +49,7 @@ void Object2D::Draw()
 	}
 }
 
-
-
-// ”¼Œa‚Ìæ“¾
 float Object2D::GetRadius()
 {
-      return mpTexture->GetRadius();
+	return mpTexture ? mpTexture->GetRadius() : 0.0f;
 }
-
-
-// ƒOƒ[ƒoƒ‹ƒXƒR[ƒv‚Å‰Šú‰» //
-int Object2D::score = 0;

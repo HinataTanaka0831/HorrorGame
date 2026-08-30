@@ -1,34 +1,26 @@
-#include "Object3D.h"
+ï»¿#include "Object3D.h"
 #include "Master.h"
 #include "ObjectManager.h"
 #include "Scene.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Object3D::Object3D(VECTOR initPos)
-	:mvPosition(initPos)
+	: mvPosition(initPos)
 	, mvRotation(VGet(0.0f, 0.0f, 0.0f))
 	, mbDeleteFlag(false)
 	, mnTag(Tag3D::None3D)
 {
-	// Œ»İƒV[ƒ“‚ÌobjectManager‚É©M(this)‚ğ’Ç‰Á‚·‚é
+	// ã‚·ãƒ¼ãƒ³ç®¡ç†ä¸‹ã§ã®ä¸€æ‹¬æ›´æ–°ãƒ»æç”»ãƒ»ç ´æ£„ã‚’å¯èƒ½ã«ã™ã‚‹ãŸã‚ç™»éŒ²
 	Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->AddObject(this);
-
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
 Object3D::~Object3D()
 {
-
 }
 
-// XV
 void Object3D::Update()
 {
-
 }
 
-// •`‰æ
 void Object3D::Draw()
 {
-
 }

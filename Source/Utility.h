@@ -1,11 +1,9 @@
-#pragma once
+﻿#pragma once
 
-// �v���O�������ŋ��ʂ��Ďg�p����萔��`�Ȃǂ������ɋL�q���Ă���
-// �֐��Ȃǂ��L�q���Ă���
-
+// プロジェクト全体で共有する画面解像度等の共通定数を定義するユーティリティクラス
 class Utility
 {
-public:  // �萔��`
-	static const int SCREEN_WIDTH = 1920;   // ��ʂ̕� 
-	static const int SCREEN_HEIGHT = 1080;   // ��ʂ̍���
+public:
+	static const int SCREEN_WIDTH = 1920;   // 基準描画解像度（横幅）
+	static const int SCREEN_HEIGHT = 1080;  // 基準描画解像度（縦幅）
 };

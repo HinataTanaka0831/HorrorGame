@@ -1,37 +1,19 @@
-#include "Item.h"
-#include "Model.h"
-#include "Master.h"
-#include "Scene.h"
-#include "ObjectManager.h"
-#include "Stage.h"
-#include "Collision.h"
-#include "EscapeItem.h"
-#include "TimeItem.h"
-#include "Enemy3D.h"
+ï»¿#include "Item.h"
 
-
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Item::Item(VECTOR initPos)
-	:Object3D(initPos)
+	: Object3D(initPos)
 {
-
+	SetTag(Object3D::TagItem3D);
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
 Item::~Item()
 {
-	
 }
 
-// XV
 void Item::Update()
 {
-
 }
 
-// •`‰æ
 void Item::Draw()
 {
-
 }
-

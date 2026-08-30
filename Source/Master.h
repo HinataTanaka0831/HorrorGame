@@ -1,22 +1,14 @@
-#pragma once
+ï»¿#pragma once
 
 #include "SceneManager.h"
 #include "SoundManagerh.h"
 #include "Camera.h"
 
-//
-// ƒQ[ƒ€“à‚Å1‚Â‚¾‚¯‚µ‚©‘¶İ‚µ‚È‚¢‚à‚Ì‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-// —á‚¦‚ÎA
-// SceneManager ‚¾‚Á‚½‚èAiƒV[ƒ“ŠÇ—ƒNƒ‰ƒXj
-// SoundManager ‚¾‚Á‚½‚èAiƒTƒEƒ“ƒhŠÇ—ƒNƒ‰ƒXj
-// ResourceManager ‚¾‚Á‚½‚èiƒŠƒ\[ƒXi‰æ‘œ‚âƒ‚ƒfƒ‹jŠÇ—ƒNƒ‰ƒXj
-// ‚ğA‚Ç‚±‚©‚ç‚Å‚àQÆ‚Å‚«‚é‚æ‚¤‚É‚µ‚Ä‚¨‚«‚½‚¢‚Ì‚ÅA
-// ‚±‚¤‚¢‚Á‚½ƒNƒ‰ƒX‚ğì‚éB
-//
+// ã‚²ãƒ¼ãƒ å…¨ä½“ã§å…±æœ‰ã™ã‚‹ä¸»è¦ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã¸ã®ã‚°ãƒ­ãƒ¼ãƒãƒ«ã‚¢ã‚¯ã‚»ã‚¹ã‚’æä¾›ã™ã‚‹é™çš„ã‚µãƒ¼ãƒ“ã‚¹ã‚¯ãƒ©ã‚¹
 class Master
 {
 public:
-	static SceneManager* mpSceneManager;        // ƒV[ƒ“ƒ}ƒl[ƒWƒƒ[‚Ìƒ|ƒCƒ“ƒ^
-	static SoundManager* mpSoundManager;        // ƒTƒEƒ“ƒhƒ}ƒl[ƒWƒƒ[‚Ìƒ|ƒCƒ“ƒ^
-	static Camera* mpCamera;                    // ƒJƒƒ‰ƒ|ƒCƒ“ƒ^
+	static SceneManager* mpSceneManager;  // ç”»é¢é·ç§»ãƒ»é€²è¡Œåˆ¶å¾¡
+	static SoundManager* mpSoundManager;  // éŸ³å£°å†ç”Ÿãƒ»åœæ­¢åˆ¶å¾¡
+	static Camera* mpCamera;              // ãƒ¡ã‚¤ãƒ³è¦–ç‚¹ãƒ»ã‚«ãƒ¡ãƒ©æ¼”å‡ºåˆ¶å¾¡
 };
