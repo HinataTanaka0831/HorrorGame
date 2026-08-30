@@ -1,6 +1,10 @@
 #pragma once
 
 #include "Scene.h"
+#include "Utility.h"
+#include <memory>
+
+class Button;
 
 class GameRuleScene : public Scene
 {
@@ -19,6 +23,9 @@ public:
 	void Finalize() override;
 
 private:
+	std::unique_ptr<Button> mpBackButton = nullptr;
+	const int StringX = Utility::SCREEN_WIDTH / 2 - 150;
+	const int BackY = 900;
 	int noise;
 	int keyHandle = -1;        // 移動キーハンドル
 	int key_R_Handle = -1;     // Rキーハンドル

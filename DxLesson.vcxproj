@@ -34,7 +34,6 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\ModelAnimation.cpp" />
-    <ClCompile Include="Source\MouseManager.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
     <ClCompile Include="Source\ObjectManagercpp.cpp" />
     <ClCompile Include="Source\Player3D.cpp" />
@@ -50,7 +49,6 @@
     <ClCompile Include="Source\TextureAnimation.cpp" />
     <ClCompile Include="Source\TimeItem.cpp" />
     <ClCompile Include="Source\TitleScene.cpp" />
-    <ClCompile Include="Source\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\Player.bmp" />
@@ -73,7 +71,6 @@
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\ModelAnimation.h" />
     <ClInclude Include="Source\ModelUtility.h" />
-    <ClInclude Include="Source\MouseManager.h" />
     <ClInclude Include="Source\Object3D.h" />
     <ClInclude Include="Source\ObjectManager.h" />
     <ClInclude Include="Source\Player3D.h" />
@@ -90,7 +87,6 @@
     <ClInclude Include="Source\TimeItem.h" />
     <ClInclude Include="Source\TitleScene.h" />
     <ClInclude Include="Source\Utility.h" />
-    <ClInclude Include="Source\Wall.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

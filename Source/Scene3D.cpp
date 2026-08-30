@@ -42,7 +42,7 @@ void Scene3D::Initialize()
 	Master::mpCamera = new Camera();
 
 	// FPS シーンでロック有効化
-	g_MouseMgr.EnableMouseLock(true);
+	InputManager::GetInstance().EnableMouseLock(true);
 
 	// ローディング実行
 	loader.ExecuteScene3D();

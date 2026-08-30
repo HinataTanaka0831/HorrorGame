@@ -5,6 +5,7 @@
 #include "Master.h"
 #include "InputManager.h"
 #include "EscapeItem.h"
+#include "Button.h"
 
 
 // コンストラクタ
@@ -23,12 +24,18 @@ GameOverScene::~GameOverScene()
 // 初期化
 void GameOverScene::Initialize()
 {
-	// ボタンの生成
-	if (mpRetoryBtn == nullptr) mpRetoryBtn = new Button(RetoryBtn.left, RetoryBtn.top, RetoryBtn.right, RetoryBtn.bottom, " リトライ　", GetColor(255, 126, 115), GetColor(250, 250, 250), FontSize20);
-	if (mpTitleBtn == nullptr) mpTitleBtn = new Button(TitleBtn.left, TitleBtn.top, TitleBtn.right, TitleBtn.bottom, "タイトルへ　", GetColor(255, 126, 115), GetColor(250, 250, 250), FontSize20);
+	if (mpRetoryButton == nullptr)
+	{
+		mpRetoryButton = std::make_unique<Button>(StringX, RetoryY - 10, StringX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+	}
+
+	if (mpTitleButton == nullptr)
+	{
+		mpTitleButton = std::make_unique<Button>(StringX, TitleY - 10, StringX + 250, TitleY + 60, "タイトルへ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+	}
 
 	// Mouseのロックを解除
-	g_MouseMgr.EnableMouseLock(false);
+	InputManager::GetInstance().EnableMouseLock(false);
 
 }
 
@@ -39,46 +46,31 @@ void GameOverScene::Update()
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_RESULT);
 
 	// ボタンの更新処理を呼ぶ
-	if (mpRetoryBtn)
+	if (mpRetoryButton)
 	{
-		mpRetoryBtn->Update();
+		mpRetoryButton->Update();
 
-		if (mpRetoryBtn->IsClicked())
+		if (mpRetoryButton->IsClick())
 		{
-			NowSelect4 = select_Retory;
-		}
-
-	}
-
-	if (mpTitleBtn)
-	{
-		mpTitleBtn->Update();
-
-		if (mpTitleBtn->IsClicked())
-		{
-			NowSelect4 = select_Title;
-		}
-	}
-
-
-	// エンターキーが押されたら画面の切り替え処理
-	if (g_MouseMgr.isLeftDown)
-	{
-		// SE再生
-		Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-
-		switch (NowSelect4)
-		{
-		case select_Retory:  // プレイ画面へ
+			// SE再生
+			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
 			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_3D);
-			break;
-
-		case select_Title:  // タイトル画面へ
-			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TITLE);
-			break;
 		}
 
 	}
+
+	if (mpTitleButton)
+	{
+		mpTitleButton->Update();
+
+		if (mpTitleButton->IsClick())
+		{
+			// SE再生
+			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
+			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TITLE);
+		}
+	}
+
 
 	// 基底クラスの更新処理を呼び出す
 	Scene::Update();
@@ -103,20 +95,19 @@ void GameOverScene::Draw()
 		// 背景の表示
 		DrawGraph(0, 0, Noise, true);
 
-		// ボタンの表示
-		if (mpRetoryBtn)
-		{
-			mpRetoryBtn->Draw();
-		}
-
-		if (mpTitleBtn)
-		{
-			mpTitleBtn->Draw();
-		}
-
 		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 10, Utility::SCREEN_HEIGHT / 2 - 300, "GAME OVER", GetColor(255, 0, 0), FontSize);
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 160, 950, "マウス移動 : 選択　マウス左クリック:決定", GetColor(255, 0, 0), FontSize50);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 150, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), fontSize90);
+
+		// ボタンの表示
+		if (mpRetoryButton)
+		{
+			mpRetoryButton->Draw();
+		}
+
+		if (mpTitleButton)
+		{
+			mpTitleButton->Draw();
+		}
 
 		// 裏画面の内容を表画面に映す
 		ScreenFlip();

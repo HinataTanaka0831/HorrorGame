@@ -5,7 +5,6 @@
 #include "Master.h"
 #include "Scene3D.h"
 #include "Player3D.h"
-#include "Wall.h"
 #include "Enemy3D.h"
 #include "Stage.h"
 #include "EscapeItem.h"

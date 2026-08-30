@@ -2,7 +2,6 @@
 #include "SceneManager.h"
 #include "ObjectManager.h"
 #include "InputManager.h"
-#include "MouseManager.h"
 #include "Master.h"
 #include "Scene.h"
 #include "Utility.h"
@@ -19,7 +18,7 @@
 SceneManager* Master::mpSceneManager = new SceneManager();
 SoundManager* Master::mpSoundManager = new SoundManager();
 Camera* Master::mpCamera = new Camera();
-MouseManager g_MouseMgr;
+InputManager& input = InputManager::GetInstance();
 
 /**
 * @fn WinMain
@@ -97,15 +96,19 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// 更新
 		Master::mpSceneManager->Update();
 
-		// マウスのクリック処理更新
-		g_MouseMgr.ButtonSelect();
+		// 毎フレームのクリック・リリース状態を検知するため入力状態を更新
+		input.MouseUpdate();
 
 		// 描画
 		Master::mpSceneManager->Draw();
 		
+		if (Master::mpSceneManager->IsQuitRequest())
+		{
+			break;
+		}
 
 		// ゲーム画面のスクリーンショットを撮影する処理
-		if (InputManager::CheckDownKey(KEY_INPUT_F1))
+		if (input.CheckDownKey(KEY_INPUT_F1))
 		{
 			SaveDrawScreen(0, 0, Utility::SCREEN_WIDTH, Utility::SCREEN_HEIGHT, "screenshot.bmp");
 		}

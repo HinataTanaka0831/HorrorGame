@@ -10,7 +10,6 @@
 SceneManager::SceneManager()
 : mnSceneType(SCENE_TYPE::SCENE_NONE)
 , mnNextSceneType(SCENE_TYPE::SCENE_NONE)
-, mpCurrentScene(nullptr)
 {
 
 }
@@ -99,6 +98,14 @@ void SceneManager::ChangeSceneIfNeeded()
 
 
 	// ƒV[ƒ“‚Ì¶¬‚ª‚³‚ê‚Ä‚¢‚é‚Í‚¸‚È‚Ì‚ÅA‰Šú‰»ˆ—‚ð“Ç‚ñ‚Å‚¨‚­
-	mpCurrentScene->Initialize();
+	if (mpCurrentScene != nullptr)
+	{
+		mpCurrentScene->Initialize();
+	}
 
+}
+
+void SceneManager::RequestQuit()
+{
+	mbQuitRequest = true;
 }

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include "DxLib.h"
 #include "GameRuleScene.h"
-#include "Utility.h"
 #include "InputManager.h"
 #include "Master.h"
+#include "Button.h"
 
 // コンストラクタ
 GameRuleScene::GameRuleScene()
@@ -30,7 +30,13 @@ void GameRuleScene::Initialize()
 	if (mouseHandle == -1) mouseHandle = LoadGraph("Resource/3D_UI/playRule_Mouse_UI.png");
 	if (mouseMoveHandle == -1) mouseMoveHandle = LoadGraph("Resource/3D_UI/playRule_MouseMove_UI.png");
 
-	g_MouseMgr.EnableMouseLock(false);
+	if (mpBackButton == nullptr)
+	{
+		mpBackButton = std::make_unique<Button>(StringX, BackY - 10, StringX + 250, BackY + 60, "戻る", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+	}
+
+
+	InputManager::GetInstance().EnableMouseLock(false);
 
 }
 
@@ -39,14 +45,15 @@ void GameRuleScene::Update()
 {
 	Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
 
-	// マウス左クリックされたらタイトル画面に戻る
-	if (g_MouseMgr.isLeftDown)
+	if (mpBackButton)
 	{
-		// SE再生
-		Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
+		mpBackButton->Update();
 
-		// タイトルシーンへ
-		Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TYPE::SCENE_TITLE);
+		if (mpBackButton->IsClick())
+		{
+			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
+			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TYPE::SCENE_TITLE);
+		}
 	}
 
 	// 基底クラスの更新処理を呼び出す
@@ -76,7 +83,7 @@ void GameRuleScene::Draw()
 		// 四角形の表示
 		DrawBox(Utility::SCREEN_WIDTH / 4 - 300, 30, Utility::SCREEN_WIDTH / 2 + 780, 1060, GetColor(255, 255, 255), false);
 		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 240, Utility::SCREEN_HEIGHT / 3 - 260, "～～ 操作方法 ～～", GetColor(255, 255, 255), FontSize50);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 240, Utility::SCREEN_HEIGHT / 3 - 260, "～～ 操作方法 ～～", GetColor(255, 255, 255), fontSize50);
 
 		// 画像の表示
 		DrawGraph(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 3 - 180, keyHandle, true);
@@ -93,13 +100,18 @@ void GameRuleScene::Draw()
 
 
 		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 + 50, Utility::SCREEN_HEIGHT / 3, "アイテム取得　  アイテム使用　  しゃがみ", GetColor(255, 255, 255), FontSize50);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 + 50, Utility::SCREEN_HEIGHT / 3, "アイテム取得　  アイテム使用　  しゃがみ", GetColor(255, 255, 255), fontSize50);
 
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 290, 920, "ライトのON/OFF", GetColor(255, 255, 255), FontSize50);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 290, 920, "ライトのON/OFF", GetColor(255, 255, 255), fontSize50);
 
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 + 205, 920, "視点移動", GetColor(255, 255, 255), FontSize50);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 + 205, 920, "視点移動", GetColor(255, 255, 255), fontSize50);
 
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 80, 1000, "マウス左クリックでタイトルへ戻る", GetColor(255, 255, 255), FontSize50);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 3 - 80, 1000, "マウス左クリックでタイトルへ戻る", GetColor(255, 255, 255), fontSize50);
+
+		if (mpBackButton)
+		{
+			mpBackButton->Draw();
+		}
 
 
 		// 裏画面の内容を表画面に映す

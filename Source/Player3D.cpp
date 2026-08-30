@@ -22,7 +22,7 @@ Player3D::Player3D(VECTOR initPos)
 	, getEscapeItem(false)
 	, getTimeItem(false)
 	, oldPosition(VGet(0.0f, 0.0f, 0.0f))
-	, oldplayerPos(mvPosition)
+	, oldPlayerPosition(mvPosition)
 	, lightModelPosition(VGet(0.0f, 0.0f, 0.0f))
 	, DoorPos(VGet(0.0f, 0.0f, 0.0f))
 	, dis(0.0f)
@@ -84,40 +84,6 @@ void Player3D::Draw()
 {
 	// 懐中電灯のモデルを描画
 	MV1DrawModel(lightHandle);
-
-
-	// デバック表示用
-
-    // ステージとの当たり判定デバック表示
-    //auto stage = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-    //if (stage != nullptr)
-    //{
-    //	Stage* pStage = dynamic_cast<Stage*>(stage);
-    //	if (pStage != nullptr)
-    //	{
-    //		pStage->CheckHit_Capsule(mvPosition, VAdd(mvPosition, VGet(0.0f, 150.0f, 0.0f)), 40.0f);
-    //	}
-    //}
-
-
-	// プレイヤーを包むような球形
-	//DrawCapsule3D(mvPosition, VAdd(mvPosition, VGet(0.0f, 150.0f, 0.0f)), 40.0f, 8, GetColor(255, 255, 255), GetColor(255, 255, 255), false);
-
-	// 武器を包むような球形
-	//DrawSphere3D(
-	//	mpModel->GetAttachmentPosition(),
-	//	30.0f,
-	//	8,
-	//	GetColor(255, 255, 255),
-	//	GetColor(255, 255, 255),
-	//	false
-	//);
-
-
-
-	// デバック表示：座標
-	//DrawFormatString(0, 20, GetColor(255, 255, 255), "X: %f  Y: %f Z: %f", mvPosition.x, mvPosition.y, mvPosition.z);
-	//DrawFormatString(0, 20, GetColor(255, 255, 255), "角度: %f  目標角度: %f", mfAngle, mfTargetAngle);
 }
 
 
@@ -131,8 +97,6 @@ void Player3D::MoveEx()
 		return;
 	}
 
-	// 前の座標を設定
-	oldPosition = mvPosition;
 
 
 	VECTOR moveVec = VGet(0.0f, 0.0f, 0.0f);   // 移動方向
@@ -201,7 +165,8 @@ void Player3D::MoveEx()
 		moveVec = VNorm(moveVec);
 	}
 
-
+	// 前の座標を設定
+	oldPosition = mvPosition;
 
 	// 走る処理
 	if (StaminaUpdate(CheckHitKey(KEY_INPUT_LSHIFT)))
@@ -264,23 +229,18 @@ void Player3D::MoveEx()
 			if (found)
 			{
 				// ベクトルのサイズを取得・距離を計測
-				dis = VSize(VSub(mvPosition, oldplayerPos));
+				dis = VSize(VSub(mvPosition, oldPlayerPosition));
 
 				// 距離が一定距離以上なら
 				if (dis >= 25.0f)
 				{
 					// プレイヤーの座標を保存
 					playerRecord.push_back(mvPosition);
-					oldplayerPos = mvPosition;
+					oldPlayerPosition = mvPosition;
 				}
 
 			}
 
-			// デバッグ表示
-			//DrawFormatString(0, 30, GetColor(255, 0, 0), "old: %f %f %f\n", oldplayerPos.x, oldplayerPos.y, oldplayerPos.z);
-			//DrawFormatString(0, 40, GetColor(255, 0, 0), "now: %f %f %f\n", mvPosition.x, mvPosition.y, mvPosition.z);
-			//DrawFormatString(0, 50, GetColor(255, 0, 0), "dis: %f\n", dis);
-			//DrawFormatString(0, 60, GetColor(255, 0, 0), "record size: %d\n", playerRecord.size());
 
 		}
 	}
@@ -551,7 +511,7 @@ void Player3D::HaveLight()
 
 
 
-			if (mMouseMgr.isLeftTrigger)
+			if (InputManager::GetInstance().CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 			{
 				// ライトを点ける
 				isActiveLight = true;
@@ -561,7 +521,7 @@ void Player3D::HaveLight()
 			// ライトが照らされていたら
 			if (GetLightEnable() == TRUE && !getScare)
 			{
-				if (mMouseMgr.isLeftTrigger)
+				if (InputManager::GetInstance().CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 				{
 					// ライトを消す
 					isActiveLight = false;

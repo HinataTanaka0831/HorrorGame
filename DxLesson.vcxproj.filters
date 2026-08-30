@@ -78,9 +78,6 @@
     <ClCompile Include="Source\AttachmentModel.cpp">
       <Filter>ソース ファイル\3D\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Wall.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Enemy3D.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
@@ -138,9 +135,6 @@
     <ClCompile Include="Source\TimeItem.cpp">
       <Filter>ソース ファイル\3D\Item</Filter>
     </ClCompile>
-    <ClCompile Include="Source\MouseManager.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Button.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
@@ -176,9 +170,6 @@
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\AttachmentModel.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Wall.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\Stage.h">
@@ -237,9 +228,6 @@
     </ClInclude>
     <ClInclude Include="Source\ModelUtility.h">
       <Filter>ヘッダー ファイル\3D\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MouseManager.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
     <ClInclude Include="Source\Item.h">
       <Filter>ヘッダー ファイル\3D\Item</Filter>

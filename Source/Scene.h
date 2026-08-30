@@ -1,6 +1,5 @@
 #pragma once
 #include "DxLib.h"
-#include "MouseManager.h"
 #include "Button.h"
 
 // クラスの前方宣言
@@ -40,11 +39,10 @@ public:
 	ObjectManager* GetObjectManager() { return mpObjectManager; }
 
 protected:
-	int FontSize = CreateFontToHandle(NULL, 140, -1, -1);
-	int FontSize130 = CreateFontToHandle(NULL, 130, -1, DX_FONTTYPE_ANTIALIASING);
-	int FontSize20 = CreateFontToHandle(NULL, 20, -1, -1);
-	int FontSize50 = CreateFontToHandle(NULL, 50, -1, -1);
-	MouseManager g_MouseMgr;
+	int fontSize90 = CreateFontToHandle(NULL, 90, -1, -1);
+	int fontSize130 = CreateFontToHandle(NULL, 130, -1, DX_FONTTYPE_ANTIALIASING);
+	int fontSize20 = CreateFontToHandle(NULL, 20, -1, -1);
+	int fontSize50 = CreateFontToHandle(NULL, 50, -1, -1);
 private:
 	ObjectManager* mpObjectManager;        // オブジェクト管理クラスのポインタ
 

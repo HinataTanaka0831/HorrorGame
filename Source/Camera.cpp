@@ -5,7 +5,6 @@
 #include "Scene.h"
 #include "Player3D.h"
 #include "Enemy3D.h"
-#include "MouseManager.h"
 
 // コンストラクタ
 Camera::Camera()
@@ -109,11 +108,11 @@ void Camera::UpdateRotation()
 	}
 
 	// マウス移動による更新処理を呼ぶ
-	MouseManager::MouseRotationUpdate();
+	InputManager::GetInstance().MouseRotationUpdate();
 
 	// マウスで上下左右に動かせるようにする
-	mfHorizontalAngle += MouseManager::m_deltaX;
-	mfVerticalAngle -= MouseManager::m_deltaY;
+	mfHorizontalAngle += InputManager::GetInstance().GetDeltaX();
+	mfVerticalAngle -= InputManager::GetInstance().GetDeltaY();
 
 
 
