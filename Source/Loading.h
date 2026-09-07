@@ -71,6 +71,14 @@ public:
 };
 
 
+class InitializeItemTask : public ILoadTask {
+public:
+    InitializeItemTask();
+    int Execute() override;
+    const char* GetTaskName() const override;
+};
+
+
 class InitializeSkyBoxTask : public ILoadTask {
 public:
     InitializeSkyBoxTask();
@@ -82,31 +90,6 @@ public:
 class InitializeStageTask : public ILoadTask {
 public:
     InitializeStageTask();
-    int Execute() override;
-    const char* GetTaskName() const override;
-};
-
-
-class InitializeEscapeItemTask : public ILoadTask {
-public:
-    InitializeEscapeItemTask();
-    int Execute() override;
-    const char* GetTaskName() const override;
-
-private:
-
-    struct Point {
-
-        VECTOR PointPosition;
-
-    };
-
-};
-
-
-class InitializeTimeItemTask : public ILoadTask {
-public:
-    InitializeTimeItemTask();
     int Execute() override;
     const char* GetTaskName() const override;
 };
@@ -127,8 +110,8 @@ class LoadingManager {
 private:
     std::vector<std::unique_ptr<ILoadTask>> tasks;
     std::vector<std::unique_ptr<ILoadTask>> m_tasks;
-    int Scene3D_GameRuleHandle = -1;
-    int FontSize = CreateFontToHandle(NULL, 30, -1, -1);
+    int m_scene3DGameRuleHandle = -1;
+    int m_fontSize = CreateFontToHandle(NULL, 30, -1, -1);
 
 public:
     void AddTask(std::unique_ptr<ILoadTask> task);

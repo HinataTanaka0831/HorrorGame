@@ -17,7 +17,7 @@ class Scene
 
 public:
 	// シーン専任のObjectManagerインスタンス生成
-	// 入力: なし / 出力: なし / 副作用: mpObjectManagerのメモリ確保
+	// 入力: なし / 出力: なし / 副作用: m_objectManagerのメモリ確保
 	Scene();
 	~Scene();
 
@@ -39,14 +39,14 @@ public:
 
 
 	// オブジェクトマネージャーの取得
-	ObjectManager* GetObjectManager() { return mpObjectManager; }
+	ObjectManager* GetObjectManager() { return m_objectManager; }
 
 protected:
-	int fontSize140 = CreateFontToHandle(NULL, 140, -1, -1);
-	int fontSize130 = CreateFontToHandle(NULL, 130, -1, DX_FONTTYPE_ANTIALIASING);
-	int fontSize20 = CreateFontToHandle(NULL, 20, -1, -1);
-	int fontSize50 = CreateFontToHandle(NULL, 50, -1, -1);
+	int m_fontSize140 = CreateFontToHandle(NULL, 140, -1, -1);
+	int m_fontSize130 = CreateFontToHandle(NULL, 130, -1, DX_FONTTYPE_ANTIALIASING);
+	int m_fontSize20 = CreateFontToHandle(NULL, 20, -1, -1);
+	int m_fontSize50 = CreateFontToHandle(NULL, 50, -1, -1);
 private:
-	ObjectManager* mpObjectManager;        // オブジェクト管理クラスのポインタ
+	ObjectManager* m_objectManager;        // オブジェクト管理クラスのポインタ
 
 };

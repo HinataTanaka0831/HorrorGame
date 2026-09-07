@@ -16,7 +16,7 @@
 class Master
 {
 public:
-	static SceneManager* mpSceneManager;        // シーンマネージャーのポインタ
-	static SoundManager* mpSoundManager;        // サウンドマネージャーのポインタ
-	static Camera* mpCamera;                    // カメラポインタ
+	static SceneManager* m_sceneManager;        // シーンマネージャーのポインタ
+	static SoundManager* m_soundManager;        // サウンドマネージャーのポインタ
+	static Camera* m_camera;                    // カメラポインタ
 };

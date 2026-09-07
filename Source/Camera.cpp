@@ -7,12 +7,6 @@
 #include "Enemy3D.h"
 
 Camera::Camera()
-	: mfHorizontalAngle(DX_PI_F / 1.2f)
-	, mfVerticalAngle(0.0f)
-	, mvPosition(VGet(0.0f, 0.0f, 0.0f))
-	, mvLookAtPosition(VGet(0.0f, 0.0f, 0.0f))
-	, mpTarget(nullptr)
-	, isFreeze(false)
 {
 
 }
@@ -24,7 +18,7 @@ Camera::~Camera()
 
 void Camera::Initialize()
 {
-	this->mvPosition = VGet(mvPosition.x, mvPosition.y, mvPosition.z);
+	m_position = VGet(m_position.x, m_position.y, m_position.z);
 
 	// カメラのクリッピング距離の設定  
 	SetCameraNearFar(20.0f, 50000.0f);
@@ -33,7 +27,7 @@ void Camera::Initialize()
 	SetBackgroundColor(128, 128, 128);
 
 	// カメラの位置を設定
-	SetCameraPositionAndTarget_UpVecY(mvPosition, mvLookAtPosition);
+	SetCameraPositionAndTarget_UpVecY(m_position, m_lookAtPosition);
 
 
 	// 更新処理を一度行っておく
@@ -46,23 +40,23 @@ void Camera::Update()
 	// マウスによる回転処理
 	UpdateRotation();
 
-	if (isFreeze)
+	if (m_isFreeze)
 	{
 		// 画面揺れの処理
 		Shake();
 	}
 
-	if (mpTarget == nullptr)
+	if (m_target == nullptr)
 	{
-		mpTarget = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+		m_target = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	}
 
-	if (mpTarget != nullptr)
+	if (m_target != nullptr)
 	{
 		// プレイヤーの座標にカメラを設定 // 160.0f
-		mvPosition = VAdd(mpTarget->GetPosition(), VGet(0.0f, 160.0f, 0.0f));
+		m_position = VAdd(m_target->GetPosition(), VGet(0.0f, 160.0f, 0.0f));
 
-		Player3D* player = dynamic_cast<Player3D*>(mpTarget);
+		Player3D* player = dynamic_cast<Player3D*>(m_target);
 		if (player != nullptr)
 		{
 			// しゃがみ状態かどうかを取得
@@ -73,20 +67,20 @@ void Camera::Update()
 			// しゃがみ状態ならばカメラの位置を変更する
 			if (Crouching)
 			{
-				mvPosition.y -= playerHeight;
+				m_position.y -= playerHeight;
 			}
 		}
 
 	
 
 			// プレイヤーの位置に座標を設定
-			mvLookAtPosition.x = mvPosition.x + cosf(mfVerticalAngle / 5.0f * DX_PI_F) * sinf(mfHorizontalAngle / 5.0f * DX_PI_F);
-			mvLookAtPosition.y = mvPosition.y + sinf(mfVerticalAngle / 5.0f * DX_PI_F);
-			mvLookAtPosition.z = mvPosition.z + cosf(mfVerticalAngle / 5.0f * DX_PI_F) * cosf(mfHorizontalAngle / 5.0f * DX_PI_F);
+			m_lookAtPosition.x = m_position.x + cosf(m_verticalAngle / 5.0f * DX_PI_F) * sinf(m_horizontalAngle / 5.0f * DX_PI_F);
+			m_lookAtPosition.y = m_position.y + sinf(m_verticalAngle / 5.0f * DX_PI_F);
+			m_lookAtPosition.z = m_position.z + cosf(m_verticalAngle / 5.0f * DX_PI_F) * cosf(m_horizontalAngle / 5.0f * DX_PI_F);
 
 
 			// カメラ設定を反映
-			SetCameraPositionAndTarget_UpVecY(VAdd(mvPosition, mvShakePosition), VAdd(mvLookAtPosition, mvShakePosition));
+			SetCameraPositionAndTarget_UpVecY(VAdd(m_position, m_shakePosition), VAdd(m_lookAtPosition, m_shakePosition));
 
 
 	}
@@ -97,7 +91,7 @@ void Camera::UpdateRotation()
 {
 
 	// フリーズするなら終了
-	if (isFreeze)
+	if (m_isFreeze)
 	{
 		return;
 	}
@@ -106,60 +100,56 @@ void Camera::UpdateRotation()
 	InputManager::GetInstance().MouseRotationUpdate();
 
 	// マウスで上下左右に動かせるようにする
-	mfHorizontalAngle += InputManager::GetInstance().GetDeltaX();
-	mfVerticalAngle -= InputManager::GetInstance().GetDeltaY();
+	m_horizontalAngle += InputManager::GetInstance().GetDeltaX();
+	m_verticalAngle -= InputManager::GetInstance().GetDeltaY();
 
 
 
 	// 上下方向に制限をかける
 	float MAX = DX_PI_F / 2.0f;
-	if (mfVerticalAngle >= MAX)
+	if (m_verticalAngle >= MAX)
 	{
-		mfVerticalAngle = MAX;
+		m_verticalAngle = MAX;
 	}
-	if (mfVerticalAngle <= -MAX)
+	if (m_verticalAngle <= -MAX)
 	{
-		mfVerticalAngle = -MAX;
+		m_verticalAngle = -MAX;
 	}
 
 
 	// デバッグ表示
-	//DrawFormatString(10, 10, GetColor(255, 255, 255), "MoveX: %d", MoveX);
-	//DrawFormatString(10, 30, GetColor(255, 255, 255), "MoveY: %d", MoveY);
-	//DrawFormatString(10, 50, GetColor(255, 255, 255), "VerticalAngle: %.2f", mfVerticalAngle);
-	//DrawFormatString(10, 70, GetColor(255, 255, 255), "HorizontalAngle: %.2f", mfHorizontalAngle);
-	//DrawFormatString(10, 90, GetColor(255, 255, 255), "MouseY: %d", MouseY);
-	//DrawFormatString(10, 110, GetColor(255, 255, 255), "CENTER_Y: %d", CENTER_Y);
+	//DrawFormatString(10, 50, GetColor(255, 255, 255), "VerticalAngle: %.2f", m_verticalAngle);
+	//DrawFormatString(10, 70, GetColor(255, 255, 255), "HorizontalAngle: %.2f", m_horizontalAngle);
 }
 
 void Camera::Shake()
 {
-	if (mfShakeTimeCounter < mfShakeTime)
+	if (m_shakeTimeCounter < m_shakeTime)
 	{
 		// sinf を利用して揺らし座標を算出
-		mvShakePosition.y = sinf(mfShakeAngle) * (1.0f - (mfShakeTimeCounter / mfShakeTime) ) * mfShakeWidth;
-		mvShakePosition.x = 0.0f;
-		mvShakePosition.z = 0.0f;
+		m_shakePosition.y = sinf(m_shakeAngle) * (1.0f - (m_shakeTimeCounter / m_shakeTime) ) * m_shakeWidth;
+		m_shakePosition.x = 0.0f;
+		m_shakePosition.z = 0.0f;
 
 		// 揺らし処理に使用する sinf に渡す角度の変更処理
-		mfShakeAngle += mfShakeAngleSpeed * mfStepTime;
+		m_shakeAngle += m_shakeAngleSpeed * m_stepTime;
 
 		// 揺らす時間を経過させる
-		mfShakeTimeCounter += mfStepTime;
+		m_shakeTimeCounter += m_stepTime;
 
 	}
 	else
 	{
 		// 揺らされていない場合は揺らし処理による加算座標を０にする
-		mvShakePosition = VGet(0.0f, 0.0f, 0.0f);
+		m_shakePosition = VGet(0.0f, 0.0f, 0.0f);
 	}
 }
 
 void Camera::SetUpShake(float time, float width, float anglespeed, float stepTime)
 {
-	mfShakeTimeCounter = 0.0f;
-	mfShakeTime = time;
-	mfShakeWidth = width;
-	mfShakeAngleSpeed = anglespeed;
-	mfStepTime = stepTime;
+	m_shakeTimeCounter = 0.0f;
+	m_shakeTime = time;
+	m_shakeWidth = width;
+	m_shakeAngleSpeed = anglespeed;
+	m_stepTime = stepTime;
 }

@@ -1,33 +1,29 @@
 #include "Texture.h"
-#include "DxLib.h"
 
-Texture::Texture(std::string filename, VECTOR centerPosition, int transFlag)
-    : mnHandle(-1)
-    , mvPosition(centerPosition)
-    , mnSizeX(0)
-    , mnSizeY(0)
-    , mnTransFlag(transFlag)
+Texture::Texture(std::string fileName, VECTOR centerPosition, int transFlag)
+    : m_position(centerPosition)
+    , m_transFlag(transFlag)
 {
     // 画像の読み込み
-    mnHandle = LoadGraph(filename.c_str());
+    m_handle = LoadGraph(fileName.c_str());
 
     // 画像のサイズを取得する
-    GetGraphSize(mnHandle, &mnSizeX, &mnSizeY);
+    GetGraphSize(m_handle, &m_sizeX, &m_sizeY);
 
     // 半径を設定（とりあえず共通で幅の半分を半径としておく）
-    mfRadius = (float)mnSizeX / 2.0f;
+    m_radius = (float)m_sizeX / 2.0f;
 }
 
 Texture::~Texture()
 {
     // 読み込んだ画像の破棄
-    DeleteGraph(mnHandle);
+    DeleteGraph(m_handle);
 }
 
 void Texture::Draw()
 {
     // 画像の表示
-    DrawGraph((int)mvPosition.x - (mnSizeX / 2), (int)mvPosition.y - (mnSizeY / 2), mnHandle, mnTransFlag);
+    DrawGraph((int)m_position.x - (m_sizeX / 2), (int)m_position.y - (m_sizeY / 2), m_handle, m_transFlag);
 }
 
 void Texture::Update()

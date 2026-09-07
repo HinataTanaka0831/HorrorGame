@@ -19,26 +19,26 @@ public:
 	void Draw() override;
 
 	// カプセル形状（キャラクター）とステージ壁・床ポリゴンとの衝突判定
-	// 入力: pos1(カプセル始点), pos2(カプセル終点), r(半径) / 出力: 衝突していればtrue / 副作用: normal(法線), hitpos(衝突点)の更新
-	bool CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r);
+	// 入力: position1(カプセル始点), position2(カプセル終点), radius(半径) / 出力: 衝突していればtrue / 副作用: normal(法線), hitpos(衝突点)の更新
+	bool CheckHit_Capsule(VECTOR position1, VECTOR position2, float radius);
 
 	// 線分（視線・レイキャスト）とステージジオメトリとの交差判定
-	// 入力: pos1(始点), pos2(終点) / 出力: 交差座標（交差しなければ原点） / 副作用: なし
-	VECTOR CheckHit_Line(VECTOR pos1, VECTOR pos2);
+	// 入力: position1(始点), position2(終点) / 出力: 交差座標（交差しなければ原点） / 副作用: なし
+	VECTOR CheckHit_Line(VECTOR position1, VECTOR position2);
 
-	VECTOR GetNormal() { return normal; }
+	VECTOR GetNormal() { return m_normal; }
 	
-	VECTOR GetHitPos() { return hitpos; }
+	VECTOR GetHitPos() { return m_hitpos; }
 
 	// MV1 の衝突判定関数が必要とするコリジョンハンドルを取得
 	// これにより外部から MV1CollCheck_* 系の関数を直接呼び出す
-	int GetCollisionHandle() const { return mnCollisionHandle; }
+	int GetCollisionHandle() const { return m_collisionHandle; }
 
 private:
-	int mnModelHandle;      // ステージモデルのハンドル
-	int mnCollisionHandle;  // ステージのコリジョンモデルのハンドル
+	int m_modelHandle;      // ステージモデルのハンドル
+	int m_collisionHandle;  // ステージのコリジョンモデルのハンドル
 
-	VECTOR normal;
-	VECTOR hitpos;
+	VECTOR m_normal;
+	VECTOR m_hitpos;
 
 };

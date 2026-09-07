@@ -10,15 +10,15 @@ public:  // enum, struct の定義
 
 	// シーンの種類
 	// note: シーンを増やす必要があれば、ここも追加していくこと
-	enum SCENE_TYPE
+	enum SceneType
 	{
-		SCENE_NONE = 0,
-		SCENE_TITLE,      // タイトル画面
-		SCENE_RESULT,     // クリアリザルト画面
-		SCENE_GAME_RULE,  // 操作説明画面
-		SCENE_GAMEOVER,   // ゲームオーバー画面
-		SCENE_3D,         // 3Dホラーゲーム本編
-		// SCENE_OPTION,  // オプション
+		SceneNone = 0,
+		SceneTitle,      // タイトル画面
+		SceneResult,     // クリアリザルト画面
+		SceneGameRule,  // 操作説明画面
+		SceneGameOver,   // ゲームオーバー画面
+		SceneGame3D,         // 3Dホラーゲーム本編
+		// SceneOption,  // オプション
 	};
 
 
@@ -50,21 +50,21 @@ public:  // メンバ関数の定義
 	void ChangeSceneIfNeeded();
 
 	// 次フレームで遷移するシーン種別の予約設定
-	// 入力: next(遷移先シーン種別) / 出力: なし / 副作用: mnNextSceneTypeの更新
-	void SetNextScene(SCENE_TYPE next) { mnNextSceneType = next; }
+	// 入力: next(遷移先シーン種別) / 出力: なし / 副作用: m_nextSceneTypeの更新
+	void SetNextScene(SceneType next) { m_nextSceneType = next; }
 
 	// ゲームループ終了要求の発行
-	// 入力: なし / 出力: なし / 副作用: mbQuitRequestフラグのtrue化
+	// 入力: なし / 出力: なし / 副作用: m_quitRequestフラグのtrue化
 	void RequestQuit();
 
-	bool IsQuitRequest() const { return mbQuitRequest; }
+	bool IsQuitRequest() const { return m_quitRequest; }
 
 	// 現在シーンの取得
-	Scene* GetCurrentScene() { return mpCurrentScene; }
+	Scene* GetCurrentScene() { return m_currentScene; }
 
 private:
-	SCENE_TYPE mnSceneType;        // 現在実行中のシーン種別
-	SCENE_TYPE mnNextSceneType;    // 遷移予約されている次シーン種別
-	Scene* mpCurrentScene = nullptr;
-	bool mbQuitRequest = false;    // メインループ終了フラグ
+	SceneType m_sceneType = SceneType::SceneNone;        // 現在実行中のシーン種別
+	SceneType m_nextSceneType = SceneType::SceneNone;    // 遷移予約されている次シーン種別
+	Scene* m_currentScene = nullptr;
+	bool m_quitRequest = false;    // メインループ終了フラグ
 };

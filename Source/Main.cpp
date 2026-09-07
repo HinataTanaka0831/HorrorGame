@@ -15,9 +15,10 @@
 */
 
 // Master クラスの静的メンバ変数定義
-SceneManager* Master::mpSceneManager = new SceneManager();
-SoundManager* Master::mpSoundManager = new SoundManager();
-Camera* Master::mpCamera = new Camera();
+SceneManager* Master::m_sceneManager = new SceneManager();
+SoundManager* Master::m_soundManager = new SoundManager();
+Camera* Master::m_camera = new Camera();
+// InputManager クラスのシングルトンインスタンス取得
 InputManager& input = InputManager::GetInstance();
 
 /**
@@ -91,19 +92,19 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		ClearDrawScreen();
 
 		// カメラの更新
-		Master::mpCamera->Update();
+		Master::m_camera->Update();
 
 		// 更新
-		Master::mpSceneManager->Update();
+		Master::m_sceneManager->Update();
 
 		// 毎フレームのクリック・リリース状態を検知するため入力状態を更新
 		input.MouseUpdate();
 
 		// 描画
-		Master::mpSceneManager->Draw();
+		Master::m_sceneManager->Draw();
 		
 		// ゲームループの終了フラグがtrueならループを抜ける
-		if (Master::mpSceneManager->IsQuitRequest())
+		if (Master::m_sceneManager->IsQuitRequest())
 		{
 			break;
 		}
@@ -129,11 +130,11 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 		// 削除する必要のあるオブジェクトがあれば削除する
-		Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll2DIfNeeded();
-		Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll3DIfNeeded();
+		Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll2DIfNeeded();
+		Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll3DIfNeeded();
 
 		// ループする直前にシーン遷移チェックを入れておく
-		Master::mpSceneManager->ChangeSceneIfNeeded();
+		Master::m_sceneManager->ChangeSceneIfNeeded();
 
 	}
 
@@ -142,10 +143,10 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// 終了処理
 	//Finalize();
-	Master::mpSceneManager->Finalize();
-	delete Master::mpSceneManager;
-	Master::mpSoundManager->Finalize();
-	delete Master::mpSoundManager;
+	Master::m_sceneManager->Finalize();
+	delete Master::m_sceneManager;
+	Master::m_soundManager->Finalize();
+	delete Master::m_soundManager;
 
 
 	// DXライブラリ使用の終了

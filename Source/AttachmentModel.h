@@ -7,13 +7,13 @@
 class AttachmentModel : public Object3D
 {
 public:
-	// filename... モデルのファイルパス
+	// fileName... モデルのファイルパス
 	// parentModelHandle... くっつけたいモデル（親モデル）のハンドル
 	// parentFrameIndex... くっつけたいモデル（親モデル）のフレーム番号
 
     // 親モデルフレームに追従するアタッチメントモデルのロード
-	// 入力: filename(モデルパス), parentModelHandle(親モデルハンドル), parentFrameIndex(追従先フレーム番号) / 出力: なし / 副作用: MV1LoadModel実行
-	AttachmentModel(std::string filename, int parentModelHandle, int parentFrameIndex);
+	// 入力: fileName(モデルパス), parentModelHandle(親モデルハンドル), parentFrameIndex(追従先フレーム番号) / 出力: なし / 副作用: MV1LoadModel実行
+	AttachmentModel(std::string fileName, int parentModelHandle, int parentFrameIndex);
 	~AttachmentModel();
 
 	// 親モデルボーンフレームのワールド変換行列を取得し自身に反映
@@ -25,10 +25,10 @@ public:
 	void Draw() override;
 
 	// モデルハンドルの取得
-	int GetHandle() { return mnHandle; }
+	int GetHandle() { return m_handle; }
 
 private:
-	int mnHandle;             // モデルハンドル
-	int mnParentHandle;       // 親モデルのハンドル
-	int mnParentFrameIndex;   // 親モデルのフレーム番号
+	int m_handle;             // モデルハンドル
+	int m_parentHandle;       // 親モデルのハンドル
+	int m_parentFrameIndex;   // 親モデルのフレーム番号
 };

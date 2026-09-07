@@ -2,21 +2,20 @@
 
 #include "Item.h"
 #include <string>
-#include "DxLib.h"
 #include "Model.h"
 #include "ItemData.h"
 
-// 校舎脱出に必要な収集対象アイテム（お札/鍵）クラス
+// 校舎脱出に必要な収集対象アイテム（おふだ）クラス
 class EscapeItem : public Item
 {
 public:
-	ItemData escape = { 1, LoadGraph("Resource/3D_UI/escapeItem.png"), "お札" };  // EscapeItem のデータ
+	ItemData escape = { 1, LoadGraph("Resource/3D_UI/escapeItem.png"), "おふだ" };  // EscapeItem のデータ
 	static int NowNeedItem;  // 現在までに取得・消費された脱出アイテム数
 
 public:
 	// 脱出アイテム3Dモデルのロードおよび配置
-	// 入力: filename(モデルパス), initPos(ワールド配置座標) / 出力: なし / 副作用: TagEscapeItem3D設定、Model生成
-	EscapeItem(std::string filename, VECTOR initPos);
+	// 入力: fileName(モデルパス), initPosition(ワールド配置座標) / 出力: なし / 副作用: TagEscapeItem3D設定、Model生成
+	EscapeItem(std::string fileName, VECTOR initPosition);
 	~EscapeItem() override;
 
 	// アイテムの浮遊回転アニメーション更新
@@ -32,5 +31,5 @@ public:
 	static void Escape();
 
 private:
-	Model* mpModel;  // モデルクラスのポインタ
+	Model* m_model;  // モデルクラスのポインタ
 };

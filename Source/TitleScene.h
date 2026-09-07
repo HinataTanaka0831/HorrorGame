@@ -35,13 +35,13 @@ public:
 
 
 private:
-	std::unique_ptr<Button> mpPlayButton = nullptr;      // ゲーム本編（3Dシーン）開始ボタン
-	std::unique_ptr<Button> mpPlayRuleButton = nullptr;  // 操作方法画面遷移ボタン
-	std::unique_ptr<Button> mpQuitButton = nullptr;      // ゲーム終了ボタン
+	std::unique_ptr<Button> m_playButton = nullptr;      // ゲーム本編（3Dシーン）開始ボタン
+	std::unique_ptr<Button> m_playRuleButton = nullptr;  // 操作方法画面遷移ボタン
+	std::unique_ptr<Button> m_quitButton = nullptr;      // ゲーム終了ボタン
 	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150;   // UIボタン配置基準X座標
 	const int PlayY = 650;                               // プレイボタンY座標
 	const int PlayRuleY = 750;                           // 操作方法ボタンY座標
 	const int QuitY = 850;                               // 終了ボタンY座標
-	int noise = -1;                                      // 砂嵐エフェクト画像ハンドル
-	int enemyPictureHandle = -1;                         // 敵立ち絵グラフィックハンドル};
+	int m_noiseHandle = -1;                                    // 砂嵐エフェクト画像ハンドル
+	int m_enemyPictureHandle = -1;                       // 敵立ち絵グラフィックハンドル};
 };

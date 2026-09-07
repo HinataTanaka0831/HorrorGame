@@ -1,19 +1,19 @@
 #include "Collision.h"
 
 bool Collision::CheckCircleToCircle(
-	const VECTOR& centerPosA,
+	const VECTOR& centerPositionA,
 	const float& radiusA,
-	const VECTOR& centerPosB,
+	const VECTOR& centerPositionB,
 	const float& radiusB)
 {
 	// 当たり判定を書く　三平方の定理(a^2 + b^2 = c^2)
 
 	// X軸の距離（緑の横線）
-	float distanceX = centerPosA.x - centerPosB.x;
+	float distanceX = centerPositionA.x - centerPositionB.x;
 	// Y軸の距離（緑の縦線）
-	float distanceY = centerPosA.y - centerPosB.y;
+	float distanceY = centerPositionA.y - centerPositionB.y;
 	// Z軸の距離（緑の奥の線）
-	float distanceZ = centerPosA.z - centerPosB.z;
+	float distanceZ = centerPositionA.z - centerPositionB.z;
 
 	// 条件
 	float powX = distanceX * distanceX; // 横線の2乗
@@ -30,17 +30,17 @@ bool Collision::CheckCircleToCircle(
 }
 
 bool Collision::CheckPointToCircle(
-	const VECTOR& pointPos,
-	const VECTOR& centerPos,
+	const VECTOR& pointPosition,
+	const VECTOR& centerPosition,
 	const float& radius
 )
 {
 	// X軸の距離
-	float distanceX = centerPos.x - pointPos.x;
+	float distanceX = centerPosition.x - pointPosition.x;
 	// Y軸の距離
-	float distanceY = centerPos.y - pointPos.y;
+	float distanceY = centerPosition.y - pointPosition.y;
 	// Z軸の距離
-	float distanceZ = centerPos.z - pointPos.z;
+	float distanceZ = centerPosition.z - pointPosition.z;
 
 	// 判定
 	float powX = distanceX * distanceX;   // 横線の２乗

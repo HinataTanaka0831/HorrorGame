@@ -8,8 +8,6 @@
 
 
 SceneManager::SceneManager()
-: mnSceneType(SCENE_TYPE::SCENE_NONE)
-, mnNextSceneType(SCENE_TYPE::SCENE_NONE)
 {
 
 }
@@ -22,7 +20,7 @@ SceneManager::~SceneManager()
 void SceneManager::Initialize()
 {
 	 // 初期シーンの設定
-	mnNextSceneType = SCENE_TYPE::SCENE_TITLE;
+	m_nextSceneType = SceneType::SceneTitle;
 
 	// シーン遷移をさせる
 	ChangeSceneIfNeeded();
@@ -31,13 +29,13 @@ void SceneManager::Initialize()
 void SceneManager::Update()
 {
 	// シーンの更新
-	mpCurrentScene->Update();
+	m_currentScene->Update();
 }
 
 void SceneManager::Draw()
 {
 	// シーンの描画
-	mpCurrentScene->Draw();
+	m_currentScene->Draw();
 }
 
 void SceneManager::Finalize()
@@ -49,47 +47,47 @@ void SceneManager::ChangeSceneIfNeeded()
 {
 
 	// 現在シーンと次シーンが一緒であれば何もしない
-	if (mnSceneType == mnNextSceneType)
+	if (m_sceneType == m_nextSceneType)
 	{
 		return;
 	}
 	
 
-	if (mpCurrentScene != nullptr)
+	if (m_currentScene != nullptr)
 	{
 		// 現在シーンの終了処理をする
-		mpCurrentScene->Finalize();
+		m_currentScene->Finalize();
 
 		// 一旦シーン自体も破棄しておく
-		delete mpCurrentScene;
-		mpCurrentScene = nullptr;
+		delete m_currentScene;
+		m_currentScene = nullptr;
 	}
 
 
 	// 次シーンにするためシーンタイプを更新
-	mnSceneType = mnNextSceneType;
+	m_sceneType = m_nextSceneType;
 
-	// mnSceneType に応じてシーンを生成する
-	switch (mnSceneType)
+	// m_sceneType に応じてシーンを生成する
+	switch (m_sceneType)
 	{
-	case SCENE_TYPE::SCENE_TITLE:
-		mpCurrentScene = new TitleScene();
+	case SceneType::SceneTitle:
+		m_currentScene = new TitleScene();
 		break;
 
-	case SCENE_TYPE::SCENE_RESULT:
-		mpCurrentScene = new ResultScene();
+	case SceneType::SceneResult:
+		m_currentScene = new ResultScene();
 		break;
 
-	case SCENE_TYPE::SCENE_GAME_RULE:
-		mpCurrentScene = new GameRuleScene();
+	case SceneType::SceneGameRule:
+		m_currentScene = new GameRuleScene();
 		break;
 
-	case SCENE_TYPE::SCENE_GAMEOVER:
-		mpCurrentScene = new GameOverScene();
+	case SceneType::SceneGameOver:
+		m_currentScene = new GameOverScene();
 		break;
 
-	case SCENE_TYPE::SCENE_3D:
-		mpCurrentScene = new Scene3D();
+	case SceneType::SceneGame3D:
+		m_currentScene = new Scene3D();
 		break;
 
 	default:
@@ -98,14 +96,14 @@ void SceneManager::ChangeSceneIfNeeded()
 
 
 	// シーンの生成がされているはずなので、初期化処理を読んでおく
-	if (mpCurrentScene != nullptr)
+	if (m_currentScene != nullptr)
 	{
-		mpCurrentScene->Initialize();
+		m_currentScene->Initialize();
 	}
 
 }
 
 void SceneManager::RequestQuit()
 {
-	mbQuitRequest = true;
+	m_quitRequest = true;
 }

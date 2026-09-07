@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DxLib.h"
 #include <string>
 #include <vector>
 
@@ -8,18 +9,18 @@ class SoundManager
 {
 public:          // enum, struct などの定義
 	// BGM の種類
-	enum SOUND_BGM
+	enum SoundBGM
 	{
-		BGM_TITLE = 0,  // タイトル画面BGM
-		BGM_GAME,       // 探索・ホラー演出用BGM（ジャンプスケア等）
-		BGM_RESULT,     // リザルト画面BGM
+		BGMTitle = 0,  // タイトル画面BGM
+		BGMGame,       // 探索・ホラー演出用BGM（ジャンプスケア等）
+		BGMResult,     // リザルト画面BGM
 	};
 
 	// SE の種類
-	enum SOUND_SE
+	enum SoundSE
 	{
-		SE_DECIDE = 0,  // UI決定音
-		SE_Walk = 1,    // プレイヤー歩行・足音
+		SEDecide = 0,  // UI決定音
+		SEWalk = 1,    // プレイヤー歩行・足音
 	};
 
 public:
@@ -40,27 +41,27 @@ public:        // サウンド再生系
 
 	// 指定BGMのループ再生開始
 	// 入力: bgm(再生するBGM種別), isTop(先頭から再生し直すか) / 出力: なし / 副作用: 音声再生および再生中BGM状態の更新
-	void PlayBGM(SOUND_BGM bgm, bool isTop = true);
+	void PlayBGM(SoundBGM bgm, bool isTop = true);
 
 	// 指定SEのバックグラウンド単発再生
 	// 入力: se(再生するSE種別) / 出力: なし / 副作用: 効果音再生
-	void PlaySE(SOUND_SE se);
+	void PlaySE(SoundSE se);
 
 	// BGMファイルのメモリ読み込み（二重登録ガード付き）
-	// 入力: bgm(BGM種別), filename(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
-	void LoadBGM(SOUND_BGM bgm, std::string filename);
+	// 入力: bgm(BGM種別), fileName(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
+	void LoadBGM(SoundBGM bgm, std::string fileName);
 
 	// SEファイルのメモリ読み込み（二重登録ガード付き）
-	// 入力: se(SE種別), filename(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
-	void LoadSE(SOUND_SE se, std::string filename);
+	// 入力: se(SE種別), fileName(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
+	void LoadSE(SoundSE se, std::string fileName);
 
 	// 現在再生中のBGMを停止
 	// 入力: なし / 出力: なし / 副作用: BGM再生の停止
 	void StopBGM();
 
 private:    // メンバ変数
-	SOUND_BGM mnNowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
-	SOUND_SE mnNowPlayingSe;         // 直近に再生されたSE種別
-	std::vector<std::pair<SOUND_BGM, int>> mnBgmHandleList;  // BGM種別とDXライブラリハンドルの対応表
-	std::vector<std::pair<SOUND_SE, int>> mnSeHandleList;    // SE種別とDXライブラリハンドルの対応表
+	SoundBGM m_nowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
+	SoundSE m_nowPlayingSe;         // 直近に再生されたSE種別
+	std::vector<std::pair<SoundBGM, int>> m_bgmHandleList;  // BGM種別とDXライブラリハンドルの対応表
+	std::vector<std::pair<SoundSE, int>> m_seHandleList;    // SE種別とDXライブラリハンドルの対応表
 };

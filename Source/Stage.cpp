@@ -10,21 +10,21 @@ Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
 	SetTag(Object3D::TagStage);
 
 	// ステージモデルの読み込み
-	mnModelHandle = MV1LoadModel(stageModelName.c_str());
+	m_modelHandle = MV1LoadModel(stageModelName.c_str());
 	
 	// コリジョンモデル（当たり判定用モデル）の読み込み
-	mnCollisionHandle = MV1LoadModel(stageCollisionModelName.c_str());
+	m_collisionHandle = MV1LoadModel(stageCollisionModelName.c_str());
 
 	// 当たり判定情報の作成
-	MV1SetupCollInfo(mnCollisionHandle);
+	MV1SetupCollInfo(m_collisionHandle);
 
 }
 
 Stage::~Stage()
 {
 	// 読み込んだモデルデータの破棄
-	MV1DeleteModel(mnModelHandle);
-	MV1DeleteModel(mnCollisionHandle);
+	MV1DeleteModel(m_modelHandle);
+	MV1DeleteModel(m_collisionHandle);
 }
 
 void Stage::Update()
@@ -36,16 +36,16 @@ void Stage::Draw()
 {
 
 	// ステージの描画
-	MV1DrawModel(mnModelHandle);
+	MV1DrawModel(m_modelHandle);
 
 	// コリジョンモデルの描画（ワイヤーフレームみたいな感じで描画）
-	//MV1DrawModelDebug(mnCollisionHandle, GetColor(255, 255, 255), 1, 10, 1, 0);
+	//MV1DrawModelDebug(m_collisionHandle, GetColor(255, 255, 255), 1, 10, 1, 0);
 }
 
 bool Stage::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 {
 	// 生成しておいた当たり判定情報をもとに、カプセルとの当たり判定を行う
-	MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Capsule(mnCollisionHandle, -1, pos1, pos2, r);
+	MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Capsule(m_collisionHandle, -1, pos1, pos2, r);
 
 	// ポリゴンに1つ以上当たっている場合
 	if (result.HitNum >= 1)
@@ -75,8 +75,8 @@ bool Stage::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 
 		}
 
-		normal = bestNormal;
-		hitpos = bestHitPos;
+		m_normal = bestNormal;
+		m_hitpos = bestHitPos;
 
 
 	}
@@ -93,8 +93,8 @@ VECTOR Stage::CheckHit_Line(VECTOR pos1, VECTOR pos2)
 	VECTOR ret = VGet(0.0f, 0.0f, 0.0f);
 
 	// 当たり判定情報と線分との当たり判定を行う
-	//MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_LineDim(mnCollisionHandle, -1, pos1, pos2);
-	auto result = MV1CollCheck_Line(mnCollisionHandle, -1, pos1, pos2);
+	//MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_LineDim(m_collisionHandle, -1, pos1, pos2);
+	auto result = MV1CollCheck_Line(m_collisionHandle, -1, pos1, pos2);
 
 
 	// 当たっていた場合

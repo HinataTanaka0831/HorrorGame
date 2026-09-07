@@ -1,16 +1,8 @@
 #include "Loading.h"
-#include "DxLib.h"
 #include <string>
 #include <cstdio>
 #include "Master.h"
 #include "Scene3D.h"
-#include "Player3D.h"
-#include "Enemy3D.h"
-#include "Stage.h"
-#include "EscapeItem.h"
-#include "TimeItem.h"
-#include "Exitdoor.h"
-#include "SkyBox.h"
 #include "Scene.h"
 #include "ObjectManager.h"
 
@@ -55,7 +47,7 @@ int InitializeSoundManagerTask::Execute() {
     // サウンドマネージャーの初期化処理をここに書く
     
     // サウンドマネージャーの初期化
-    Master::mpSoundManager->Initialize();    // 全てのサウンドが読み込まれる
+    Master::m_soundManager->Initialize();    // 全てのサウンドが読み込まれる
 
     // 今はダミーで待機だけ
     //WaitTimer(100);
@@ -78,7 +70,7 @@ int InitializeSceneManagerTask::Execute() {
     // シーンマネージャーの初期化処理をここに書く
     
     // シーンマネージャーの初期化
-    Master::mpSceneManager->Initialize();
+    Master::m_sceneManager->Initialize();
 
     // 今はダミーで待機だけ
     //WaitTimer(100);
@@ -101,7 +93,7 @@ int InitializeCameraTask::Execute() {
 
 
     // カメラ生成
-    Master::mpCamera->Initialize();   // 初期化
+    Master::m_camera->Initialize();   // 初期化
 
     return 0;
 }
@@ -121,16 +113,19 @@ InitializePlayerTask::InitializePlayerTask() {}
 
 int InitializePlayerTask::Execute(){
 
-    // プレイヤーの生成
-    new Player3D(VGet(-4000.0f, 82.0f, 1700.0f));
+    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
+
+    if (pScene3D != nullptr)
+    {
+        pScene3D->InitializePlayerData();
+    }
 
     return 0;
 }
 
 const char* InitializePlayerTask::GetTaskName() const {
-    return "Initialize Player3D";
+    return "Initialize Player";
 }
-
 
 
 // ========================
@@ -139,35 +134,44 @@ const char* InitializePlayerTask::GetTaskName() const {
 
 InitializeEnemyTask::InitializeEnemyTask() {}
 
-int InitializeEnemyTask::Execute() {
+int InitializeEnemyTask::Execute(){
 
-    auto enemy = new Enemy3D(
-        "Resource/Mixamo3DModel/Whiteclown_N_Hallin.mv1",
-        VGet(-50.0f, 70.0f, 1700.0f),
-        1,
-        true
-    );
-    enemy->AddAnimation(ANIMATION_NEUTRAL, "Resource/Mixamo3DModel/Idle.mv1");
-    enemy->AddAnimation(ANIMATION_WALKING, "Resource/Mixamo3DModel/Walking.mv1");
-    enemy->AddAnimation(ANIMATION_RUN, "Resource/Mixamo3DModel/Running.mv1");
+    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
 
-    auto enemy2 = new Enemy3D(
-        "Resource/Mixamo3DModel/Whiteclown_N_Hallin.mv1",
-        VGet(1000.0f, 70.0f, -1700.0f),
-        2,
-        true
-    );
-    enemy2->AddAnimation(ANIMATION_NEUTRAL, "Resource/Mixamo3DModel/Idle.mv1");
-    enemy2->AddAnimation(ANIMATION_WALKING, "Resource/Mixamo3DModel/Walking.mv1");
-    enemy2->AddAnimation(ANIMATION_RUN, "Resource/Mixamo3DModel/Running.mv1");
+    if (pScene3D != nullptr)
+    {
+        pScene3D->InitializeEnemyData();
+    }
 
     return 0;
 }
 
 const char* InitializeEnemyTask::GetTaskName() const {
-    return "Initialize Enemy3D";
+    return "Initialize Enemy";
 }
 
+
+// ========================
+// InitializeItemTask 実装
+// ========================
+
+InitializeItemTask::InitializeItemTask() {}
+
+int InitializeItemTask::Execute() {
+
+    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
+
+    if (pScene3D != nullptr)
+    {
+        pScene3D->InitializeItemData();
+    }
+
+    return 0;
+}
+
+const char* InitializeItemTask::GetTaskName() const {
+    return "Initialize Item";
+}
 
 
 // ========================
@@ -178,9 +182,12 @@ InitializeSkyBoxTask::InitializeSkyBoxTask() {}
 
 int InitializeSkyBoxTask::Execute() {
 
-    SkyBox* pSky = new SkyBox("Resource/SkyBox/SkyBox.x");
-    pSky->SetScale(8.0f);
-    pSky->SetModelTexture("Resource/SkyBox/sky001.jpg");
+    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
+
+    if (pScene3D != nullptr)
+    {
+        pScene3D->InitializeSkyBoxData();
+    }
 
     return 0;
 }
@@ -188,7 +195,6 @@ int InitializeSkyBoxTask::Execute() {
 const char* InitializeSkyBoxTask::GetTaskName() const {
     return "Initialize SkyBox";
 }
-
 
 
 // ========================
@@ -199,7 +205,12 @@ InitializeStageTask::InitializeStageTask() {}
 
 int InitializeStageTask::Execute() {
 
-    new Stage("Resource/Stage2/School_02.mv1", "Resource/Stage2/School_02_C.mv1");
+    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
+
+    if (pScene3D != nullptr)
+    {
+        pScene3D->InitializeStageData();
+    }
 
     return 0;
 }
@@ -207,73 +218,6 @@ int InitializeStageTask::Execute() {
 const char* InitializeStageTask::GetTaskName() const {
     return "Initialize Stage";
 }
-
-
-
-// ========================
-// InitializeEscapeItemTask 実装
-// ========================
-
-InitializeEscapeItemTask::InitializeEscapeItemTask() {}
-
-int InitializeEscapeItemTask::Execute() {
-
-    int CurrentPos = GetRand(4);
-    int currentpos = GetRand(3);
-
-
-    Point RandomPoint1[] = { VGet(-1615.0f, 120.0f, 2120.0f), VGet(350.0f, 53.0f, 2986.0f), VGet(-3270.0f, 52.0f, 2220.0f), VGet(-1440.0f, 444.0f, 2666.0f), VGet(3416.0f, 453.0f, 2537.0f) };
-
-    Point RandomPoint2[] = { VGet(3920.0f, 1228.0f, 2800.0f), VGet(999.0f, 836.0f, 2426.0f), VGet(-2029.0f, 833.0f, 2933.0f), VGet(539.0f, 1228.0f, 2536.0f), VGet(-1853.0f, 839.0f, 2205.0f) };
-
-    Point RandomPoint3[] = { VGet(-570.0f, 120.0f, -2687.0f), VGet(1851.0f, 446.0f, -2155.0f), VGet(-2120.0f, 905.0f, -2895.0f), VGet(-37.0f, 1228.0f, -2715.0f), VGet(2160.0f, 975.0f, -2460.0f) };
-
-    Point RandomPoint4[] = { VGet(2050.0f, 510.0f, -2912.0f), VGet(-2132.0f, 831.0f, -2581.0f),  VGet(70.0f, 1224.0f, 2809.0f), VGet(3920.0f, 1228.0f, -2800.0f) };
-
-   VECTOR RandomPosition1 = RandomPoint1[CurrentPos].PointPosition;
-   VECTOR RandomPosition2 = RandomPoint2[CurrentPos].PointPosition;
-   VECTOR RandomPosition3 = RandomPoint3[CurrentPos].PointPosition;
-   VECTOR RandomPosition4 = RandomPoint4[currentpos].PointPosition;
-
-    new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition1);
-
-    new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition2);
-
-    new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition3);
-
-    new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition4);
-
-    return 0;
-
-}
-
-const char* InitializeEscapeItemTask::GetTaskName() const {
-    return "Initialize EscapeItem";
-}
-
-
-
-// ========================
-// InitializeTimeItemTask 実装
-// ========================
-
-InitializeTimeItemTask::InitializeTimeItemTask() {}
-
-int InitializeTimeItemTask::Execute() {
-
-    new TimeItem("Resource/3D/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
-
-    new TimeItem("Resource/3D/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false);
-
-    new TimeItem("Resource/3D/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false);
-
-    return 0;
-}
-
-const char* InitializeTimeItemTask::GetTaskName() const {
-    return "Initialize TimeItem";
-}
-
 
 
 // ========================
@@ -284,7 +228,12 @@ InitializeExitDoorTask::InitializeExitDoorTask() {}
 
 int InitializeExitDoorTask::Execute() {
 
-    new Exitdoor("Resource/Door/Door_Blender.mv1", "Resource/Door/Door_Blender_C.mv1", VGet(500.0f, 0.0f, 1900.0f));
+    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
+
+    if (pScene3D != nullptr)
+    {
+        pScene3D->InitializeExitDoorData();
+    }
 
     return 0;
 }
@@ -292,7 +241,6 @@ int InitializeExitDoorTask::Execute() {
 const char* InitializeExitDoorTask::GetTaskName() const {
     return "Initialize ExitDoor";
 }
-
 
 
 
@@ -323,7 +271,7 @@ void LoadingManager::ExecuteAll() {
         std::string loadingText = "Loading: ";
         loadingText += m_tasks[i]->GetTaskName();
 
-        DrawStringToHandle(1280, 900, loadingText.c_str(), GetColor(255, 255, 255), FontSize);
+        DrawStringToHandle(1280, 900, loadingText.c_str(), GetColor(255, 255, 255), m_fontSize);
 
         ScreenFlip();
 
@@ -340,7 +288,7 @@ void LoadingManager::ExecuteAll() {
     DrawBox(1280, 950, 1280 + 580, 990, GetColor(255, 255, 255), FALSE);
     DrawBox(1280, 950, 1280 + 580, 990, GetColor(100, 200, 255), TRUE);
 
-    DrawStringToHandle(1280, 900, "Loading Complete!", GetColor(255, 255, 255), FontSize);
+    DrawStringToHandle(1280, 900, "Loading Complete!", GetColor(255, 255, 255), m_fontSize);
 
     ScreenFlip();
 
@@ -355,9 +303,9 @@ void LoadingManager::ExecuteScene3D()
     {
         ClearDrawScreen();
 
-       if (Scene3D_GameRuleHandle == -1) Scene3D_GameRuleHandle = LoadGraph("Resource/3D_UI/GameRulePicture.png");
+       if (m_scene3DGameRuleHandle == -1) m_scene3DGameRuleHandle = LoadGraph("Resource/3D_UI/GameRulePicture.png");
 
-        DrawGraph(0, 0, Scene3D_GameRuleHandle, false);
+        DrawGraph(0, 0, m_scene3DGameRuleHandle, false);
 
         float progress = static_cast<float>(i) / total;
 
@@ -383,7 +331,7 @@ void LoadingManager::ExecuteScene3D()
     DrawBox(1280, 950, 1280 + 580, 990, GetColor(255, 255, 255), FALSE);
     DrawBox(1280, 950, 1280 + 580, 990, GetColor(100, 200, 255), TRUE);
 
-   if (Scene3D_GameRuleHandle != -1) DeleteGraph(Scene3D_GameRuleHandle);
+   if (m_scene3DGameRuleHandle != -1) DeleteGraph(m_scene3DGameRuleHandle);
 
     ScreenFlip();
 

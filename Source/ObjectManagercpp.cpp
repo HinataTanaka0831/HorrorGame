@@ -20,13 +20,13 @@ void ObjectManager::Update()
 	// イテレーターとは？ ... std::list の要素のことを指す。
 	// リストの利点 ... 要素と要素の間に新しい要素を差し込むことが容易に出来る
 	// std::list ... 双方向連結リスト（要素の前後の要素にアクセスすることが簡単）
-	for (std::list<Object2D*>::iterator itr = mObject2DList.begin(); itr != mObject2DList.end(); itr++)
+	for (std::list<Object2D*>::iterator itr = m_object2DList.begin(); itr != m_object2DList.end(); itr++)
 	{
 		(*itr)->Update();
 	}
 
 	// 3D
-	for (std::list<Object3D*>::iterator itr = mObject3DList.begin(); itr != mObject3DList.end(); itr++)
+	for (std::list<Object3D*>::iterator itr = m_object3DList.begin(); itr != m_object3DList.end(); itr++)
 	{
 		(*itr)->Update();
 	}
@@ -38,13 +38,13 @@ void ObjectManager::Draw()
 {
 
 	// auto ... 型推論。 = より右側の型を推測してくれる便利なやつ
-	for (auto itr = mObject2DList.begin(); itr != mObject2DList.end(); itr++)
+	for (auto itr = m_object2DList.begin(); itr != m_object2DList.end(); itr++)
 	{
 		(*itr)->Draw();
 	}
 
 	// 3D
-	for (auto itr = mObject3DList.begin(); itr != mObject3DList.end(); itr++)
+	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); itr++)
 	{
 		(*itr)->Draw();
 
@@ -54,17 +54,17 @@ void ObjectManager::Draw()
 
 void ObjectManager::AddObject(Object2D* object2D)
 {
-	mObject2DList.push_back(object2D);
+	m_object2DList.push_back(object2D);
 }
 
 void ObjectManager::DeleteAll2D()
 {
-	for (auto itr = mObject2DList.begin(); itr != mObject2DList.end(); /*ここは空っぽなので注意*/)
+	for (auto itr = m_object2DList.begin(); itr != m_object2DList.end(); /*ここは空っぽなので注意*/)
 	{
 		Object2D* temp = *itr;
 
 		// リストから削除
-		itr = mObject2DList.erase(itr);
+		itr = m_object2DList.erase(itr);
 
 		// オブジェクトそのものを削除
 		delete temp;
@@ -75,7 +75,7 @@ void ObjectManager::DeleteAll2D()
 
 void ObjectManager::DeleteAll2DIfNeeded()
 {
-	for (auto itr = mObject2DList.begin(); itr != mObject2DList.end(); /*ここは空っぽなので注意*/)
+	for (auto itr = m_object2DList.begin(); itr != m_object2DList.end(); /*ここは空っぽなので注意*/)
 	{
 		// 破棄フラグが立っていれば削除する
 		if ( (*itr)->IsDeleteFlag() )
@@ -84,7 +84,7 @@ void ObjectManager::DeleteAll2DIfNeeded()
 
 			// リストから削除
 			// erase() は、削除した itr の次の要素を返却してくれる
-			itr = mObject2DList.erase(itr);
+			itr = m_object2DList.erase(itr);
 
 			// オブジェクトそのものを削除
 			delete temp;
@@ -103,8 +103,8 @@ Object2D* ObjectManager::GetObject2DByTag(Object2D::Tag tag)
 {
 	// std::find を利用して対象のオブジェクトを探す
 	auto itr = std::find_if(
-		mObject2DList.begin(),
-		mObject2DList.end(),
+		m_object2DList.begin(),
+		m_object2DList.end(),
 		[&](Object2D* obj) { return obj->GetTag() == tag; }   // ラムダ式
 		// [&] ... 今回の場合、mObject2Dlist の要素を[参照]するという意味合い
 		// (Object2D *obj) ... 参照したオブジェクトの型と引数名
@@ -114,7 +114,7 @@ Object2D* ObjectManager::GetObject2DByTag(Object2D::Tag tag)
 
 
 	// 見つかったかどうか判定
-	if (itr != mObject2DList.end())
+	if (itr != m_object2DList.end())
 	{
 		return (*itr);    // オブジェクトが見つかった
 	}
@@ -127,7 +127,7 @@ std::vector<Object2D*> ObjectManager::GetObject2DListByTag(Object2D::Tag tag)
 {
 	std::vector<Object2D*> ret;
 
-	for (auto itr = mObject2DList.begin(); itr != mObject2DList.end(); itr++)
+	for (auto itr = m_object2DList.begin(); itr != m_object2DList.end(); itr++)
 	{
 		// tag と同じタグを持っているオブジェクトがあればvectorに入れる
 		if ( (*itr)->GetTag() == tag )
@@ -145,18 +145,18 @@ std::vector<Object2D*> ObjectManager::GetObject2DListByTag(Object2D::Tag tag)
 
 void ObjectManager::AddObject(Object3D* object3D)
 {
-	mObject3DList.push_back(object3D);
+	m_object3DList.push_back(object3D);
 }
 
 // 3Dオブジェクトの全削除
 void ObjectManager::DeleteAll3D()
 {
-	for (auto itr = mObject3DList.begin(); itr != mObject3DList.end(); /*ここは空っぽなので注意*/)
+	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); /*ここは空っぽなので注意*/)
 	{
 		Object3D* temp = *itr;
 
 		// リストから削除
-		itr = mObject3DList.erase(itr);
+		itr = m_object3DList.erase(itr);
 
 		// オブジェクトそのものを削除
 		delete temp;
@@ -167,7 +167,7 @@ void ObjectManager::DeleteAll3D()
 
 void ObjectManager::DeleteAll3DIfNeeded()
 {
-	for (auto itr = mObject3DList.begin(); itr != mObject3DList.end(); /*ここは空っぽなので注意*/)
+	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); /*ここは空っぽなので注意*/)
 	{
 		// 破棄フラグが立っていれば削除する
 		if ((*itr)->IsDeleteFlag())
@@ -176,7 +176,7 @@ void ObjectManager::DeleteAll3DIfNeeded()
 
 			// リストから削除
 			// erase() は、削除した itr の次の要素を返却してくれる
-			itr = mObject3DList.erase(itr);
+			itr = m_object3DList.erase(itr);
 
 			// オブジェクトそのものを削除
 			delete temp;
@@ -195,8 +195,8 @@ Object3D* ObjectManager::GetObject3DByTag(Object3D::Tag3D tag)
 {
 	// std::find を利用して対象のオブジェクトを探す
 	auto itr = std::find_if(
-		mObject3DList.begin(),
-		mObject3DList.end(),
+		m_object3DList.begin(),
+		m_object3DList.end(),
 		[&](Object3D* obj) { return obj->GetTag() == tag; }   // ラムダ式
 		// [&] ... 今回の場合、mObject3Dlist の要素を[参照]するという意味合い
 		// (Object3D *obj) ... 参照したオブジェクトの型と引数名
@@ -206,7 +206,7 @@ Object3D* ObjectManager::GetObject3DByTag(Object3D::Tag3D tag)
 
 
 	// 見つかったかどうか判定
-	if (itr != mObject3DList.end())
+	if (itr != m_object3DList.end())
 	{
 		return (*itr);    // オブジェクトが見つかった
 	}
@@ -219,7 +219,7 @@ std::vector<Object3D*> ObjectManager::GetObject3DListByTag(Object3D::Tag3D tag)
 {
 	std::vector<Object3D*> ret;
 
-	for (auto itr = mObject3DList.begin(); itr != mObject3DList.end(); itr++)
+	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); itr++)
 	{
 		// tag と同じタグを持っているオブジェクトがあればvectorに入れる
 		if ((*itr)->GetTag() == tag)

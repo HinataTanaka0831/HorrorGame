@@ -16,8 +16,8 @@ class Player3D : public Object3D
 {
 public:
 	// プレイヤー初期化および懐中電灯モデルのロード
-	// 入力: initPos(初期スポーンワールド座標) / 出力: なし / 副作用: TagPlayer3D設定、MV1LoadModel実行
-	Player3D(VECTOR initPos);                     
+	// 入力: initPosition(初期スポーンワールド座標) / 出力: なし / 副作用: TagPlayer3D設定、MV1LoadModel実行
+	Player3D(VECTOR initPosition);                     
 	~Player3D() override;                         
 			
 	// 入力・移動・壁衝突押し出し・ライト同期・足音・スタミナ更新の一括実行
@@ -68,93 +68,86 @@ public:
 	// 入力: isKeyProssese(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
 	bool StaminaUpdate(bool isKeyProssese);    
 
-	bool GetCrouching() { return isCrouching; }
+	bool GetCrouching() { return m_isCrouching; }
 
-	float GetHeight() { return playerHeight; } 
+	float GetHeight() { return m_playerHeight; } 
 
-	void SetFreeze(bool freeze) { isFreeze = freeze; } 
+	void SetFreeze(bool freeze) { m_isFreeze = freeze; } 
 
-	void SetUseStopItem(bool stop) { isUseStopItem = stop; }
+	void SetUseStopItem(bool stop) { m_isUseStopItem = stop; }
 
-	bool GetEscapeItem() const { return getEscapeItem; }
-	bool GetTimeItem() const { return getTimeItem; }
-	bool GetIsUseStopItem() { return isUseStopItem; }
+	bool GetEscapeItem() const { return m_getEscapeItem; }
+	bool GetTimeItem() const { return m_getTimeItem; }
+	bool GetIsUseStopItem() { return m_isUseStopItem; }
 
 
-	std::vector<VECTOR>& GetPlayerRecord() { return playerRecord; } // プレイヤーの座標を保持する構造体を取得
+	std::vector<VECTOR>& GetPlayerRecord() { return m_playerRecord; } // プレイヤーの座標を保持する構造体を取得
 
 private:
 	struct Player {
-		VECTOR pos;      // 中心座標
+		VECTOR position;      // 中心座標
 		float radius;    // 当たり判定の半径
 	};
 
-	VECTOR DoorPos;                                       // 脱出口の座標を取得するための変数
-	VECTOR oldPosition;                                   // 前の座標
-	VECTOR oldPlayerPosition;                             // プレイヤーの前回の座標
-	VECTOR lightModelPosition;                            // ライトモデルの位置
+	VECTOR m_doorPos = VGet(0.0f, 0.0f, 0.0f);              // 脱出口の座標を取得するための変数
+	VECTOR m_oldPosition = VGet(0.0f, 0.0f, 0.0f);          // 前の座標
+	VECTOR m_oldPlayerPosition = m_position;                // プレイヤーの前回の座標
+	VECTOR m_lightModelPosition = VGet(0.0f, 0.0f, 0.0f);   // ライトモデルの位置
 							                            
-	float mfAngle;                                       // 現在の回転値
-	float mfTargetAngle;                                 // 目標の回転値
-	float playerHeight = 80.0f;                          // 高さ
-	float playerSpeed = 70.0f;                           // 速度
-	float dis;                                           // 距離
+	float m_angle = 0.0f;                                   // 現在の回転値
+	float m_targetAngle = 0.0f;                             // 目標の回転値
+	float m_playerHeight = 80.0f;                           // 高さ
+	float m_speed = 70.0f;                                  // 速度
+	float m_distance = 0.0f;                                // 距離
 								                         
-	bool isMove;                                         // 動いているかどうか
-	bool isCrouching;                                   // しゃがんでいるかどうか
-	bool isFreeze;                                      // フリーズさせる
-	bool isActiveLight;                                 // ライトを点けるかどうか
+	bool m_isMove = false;                                  // 動いているかどうか
+	bool m_isCrouching = false;                             // しゃがんでいるかどうか
+	bool m_isFreeze = false;                                // フリーズさせる
+	bool m_isActiveLight = true;                            // ライトを点けるかどうか
+	int m_lightHandle = -1;                                 // ライトモデルハンドル
+	int m_stamina = 100;                                    // スタミナ
+	const int MaxStamina = 100;                                 // 最大スタミナ
+	int m_staminaX = Utility::SCREEN_WIDTH / 2 - 260;       // スタミナゲージのX座標
+	int m_staminaY = Utility::SCREEN_HEIGHT / 2 + 430;      // スタミナゲージのY座標
+	int m_width = 490;                                      // 幅(スタミナゲージ)
+	int m_height = 30;                                      // 高さ(スタミナゲージ)
+	int m_gaugeWidth = 0;                                   // 現在値に応じたゲージの幅
+	int m_count = 0;                                        // ステージの当たり判定用カウント
+	int m_recordDis = 0;                                    // プレイヤーの保持した座標の距離
+	int m_addItemID = 0;                                    // ID を背一定する変数
+	int m_walkSETimer = 0;                                  // 歩いているときのSEを流す時間
+	int m_runSETimer = 0;                                   // 走っているときのSEを流す時間
+	int m_fontHandle = CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING);  // 画面に表示するフォントのハンドル
 
-	int lightHandle;                                     // ライトモデルハンドル
-	int stamina = 100;                                   // スタミナ
-	int staminaMAX = 100;                                // 最大スタミナ
-	int stamina_X = Utility::SCREEN_WIDTH / 2 - 260;    // スタミナゲージのX座標
-	int stamina_Y = Utility::SCREEN_HEIGHT / 2 + 430;   // スタミナゲージのY座標
-	int width = 490;                                    // 幅(スタミナゲージ)
-	int height = 30;                                    // 高さ(スタミナゲージ)
-	int gaugeWidth;                                     // 現在値に応じたゲージの幅
-	int mncount;                                        // ステージの当たり判定用カウント
-	int RecordDis;                                     // プレイヤーの保持した座標の距離
-	int AddItemID;                                     // ID を背一定する変数
-	int WalkSETimer;                                   // 歩いているときのSEを流す時間
-	int RunSETimer;                                    // 走っているときのSEを流す時間
-	int FontHandle = CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING);  // 画面に表示するフォントのハンドル
 
+	std::vector<ItemData>m_items;             // アイテム関係変数
 
-	std::vector<ItemData>items;             // アイテム関係変数//
-
-	int maxSize = 1;                        // インベントリのサイズ
-
-	bool getEscapeItem;                     // 脱出アイテムを使用したかどうか
-	bool getTimeItem;                       // 時間止めアイテムを使用したかどうか
-	bool isUseStopItem;                     // 時間止めアイテムを使用するかどうか
+	bool m_getEscapeItem = false;                     // 脱出アイテムを所持しているかどうか
+	bool m_getTimeItem = false;                       // 時間止めアイテムを所持しているかどうか
+	bool m_isUseStopItem = false;                     // 時間止めアイテムを使用するかどうか
 
 	// アイテム欄の変数
-	int x;                  // アイテムをボックスに表示するためのX座標
-	int y;                  // アイテムをボックスに表示するためのY座標
-	int selX;               // 選択で表示するX線
-	int selY;               // 選択で表示するY線
-	int currentItemIndex;   // 現在のアイテムインデックス
-
-	const int ItemSize = 170;   // アイテムの大きさ
-	const int ItemMargin = 10; // アイテムの余白
-	const int HUD_X = Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin);  // アイテム画像を表示するためのX座標
-	const int HUD_Y = Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20;             // アイテム画像を表示するためのY座標
-
+	int m_itemBoxX = 0;                  // アイテムをボックスに表示するためのX座標
+	int m_itemBoxY = 0;                  // アイテムをボックスに表示するためのY座標
+	const int ItemSize = 170;            // アイテムの大きさ
+	const int ItemMargin = 10;           // アイテムの余白
+	const int DrawX = Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin);   // アイテム画像を表示するためのX座標
+	const int DrawY = Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20;            // アイテム画像を表示するためのY座標
+	const int MaxSize = 1;                                                         // インベントリのサイズ
 
 	enum MoveState        // 動いている状態の構造体
 	{
-		WALK,
-		RUN
+		Walk,
+		Run
 	};
 
-	MoveState state = WALK; // 最初は歩いている状態
+	MoveState m_state = Walk; // 最初は歩いている状態
 
-	std::vector<VECTOR>playerRecord; // プレイヤーの座標を保持するVECTOR の構造体
+	std::vector<VECTOR>m_playerRecord; // プレイヤーの座標を保持するVECTOR の構造体
 
-	const float ROTATE_SPEED = 0.2f; // 回転速度
+	const float RotsteSpeed = 0.2f;   // 回転速度
 	const int ITER = 20;              // 壁に当たる枚数
-	const int SEframe_Walk = 25;          // 歩いているときのSEフレーム
-	const int SEframe_RUN = 18;      // 走っているときのSEフレーム
-	const int Frame_Light = 25;     // ライトの点滅フレーム
+	const int SEframeWalk = 25;      // 歩いているときのSEフレーム
+	const int SEframeRUN = 18;       // 走っているときのSEフレーム
+	const int FrameLight = 25;       // ライトの点滅フレーム
 };

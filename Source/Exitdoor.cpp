@@ -4,39 +4,39 @@
 #include "Scene.h"
 #include "ObjectManager.h"
 
-Exitdoor::Exitdoor(std::string filename, std::string exitCallModelname, VECTOR initPos)
-	:Object3D(initPos)
+Exitdoor::Exitdoor(std::string fileName, std::string exitCallModelname, VECTOR initPosition)
+	:Object3D(initPosition)
 {
 	// タグ設定
 	SetTag(Object3D::TagExitdoor);
 
-	mnCollisionHandle = MV1LoadModel(exitCallModelname.c_str());
+	m_collisionHandle = MV1LoadModel(exitCallModelname.c_str());
 
-	MV1SetPosition(mnCollisionHandle, GetPosition());
+	MV1SetPosition(m_collisionHandle, GetPosition());
 
-	MV1SetupCollInfo(mnCollisionHandle);
+	MV1SetupCollInfo(m_collisionHandle);
 
 	// モデルの作成
-	mpModel = new Model(filename, initPos);
+	m_model = new Model(fileName, initPosition);
 }
 
 
 Exitdoor::~Exitdoor()
 {
-	MV1DeleteModel(mnCollisionHandle);
+	MV1DeleteModel(m_collisionHandle);
 
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		delete mpModel;
+		delete m_model;
 	}
 }
 
 
 void Exitdoor::Update()
 {
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->Update();
+		m_model->Update();
 	}
 }
 
@@ -44,9 +44,9 @@ void Exitdoor::Update()
 void Exitdoor::Draw()
 {
 
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->Draw();
+		m_model->Draw();
 	}
 
 
@@ -54,19 +54,19 @@ void Exitdoor::Draw()
 
 
 // ステージとカプセル型との当たり判定
-bool Exitdoor::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
+bool Exitdoor::CheckHit_Capsule(VECTOR position1, VECTOR position2, float radius)
 {
 	// 生成しておいた当たり判定情報をもとに、カプセルとの当たり判定を行う
-	MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Capsule(mnCollisionHandle, -1, pos1, pos2, r);
+	MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Capsule(m_collisionHandle, -1, position1, position2, radius);
 
 	// ポリゴンに1つ以上当たっている場合
 	if (result.HitNum >= 1)
 	{
-		normal = VGet(0.0f, 0.0f, 0.0f);
+		m_normal = VGet(0.0f, 0.0f, 0.0f);
 
 		for (int i = 0; i < result.HitNum; i++)
 		{
-			normal = result.Dim[i].Normal;
+			m_normal = result.Dim[i].Normal;
 
 			//DrawTriangle3D(
 			//	result.Dim[i].Position[0],
@@ -91,13 +91,13 @@ bool Exitdoor::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 
 
 // ステージと線分との当たり判定
-VECTOR Exitdoor::CheckHit_Line(VECTOR pos1, VECTOR pos2)
+VECTOR Exitdoor::CheckHit_Line(VECTOR position1, VECTOR position2)
 {
 	VECTOR ret = GetPosition();
 
 	// 当たり判定情報と線分との当たり判定を行う
 	//MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_LineDim(mnCollisionHandle, -1, pos1, pos2);
-	auto result = MV1CollCheck_Line(mnCollisionHandle, -1, pos1, pos2);
+	auto result = MV1CollCheck_Line(m_collisionHandle, -1, position1, position2);
 
 	// 当たっていた場合
 	if (result.HitFlag)

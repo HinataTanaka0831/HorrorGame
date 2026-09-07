@@ -8,54 +8,38 @@
 #include "Player3D.h"
 
 
-Enemy3D::Enemy3D(std::string filename, VECTOR initPos, int enemytype, bool isSeparateAnim)
-	:Object3D(initPos)
-	, mfAngle(0.0f)
-	, mfTargetAngle(0.0f)
-	, moveVec(VGet(0.0f, 0.0f, 0.0f))
-	, mncount(0)
-	, currentPoint(0)
-	, pointcount(28)
-	, waitTimer(0)
-	, scareTimer(0)
-	, foundPlayer(false)
-	, isWait(false)
-	, isback(false)
-	, isScare(false)
-	, isRun(false)
-	, isStopItem(false)
-
+Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation)
+	:Object3D(initPosition)
 {
 	// タグ設定
 	SetTag(Object3D::TagEnemy3D);
 
 	// 敵のモデルによって目標地点を変更する
-	SetEnemyType(enemytype);
+	SetEnemyType(enemyType);
 
-	ScareLight = CreateDirLightHandle(VGet(0.0f, mvPosition.y, 0.0f));
-	SetLightDifColorHandle(ScareLight, GetColorF(0.6f, 0.2f, 0.2f, 0.0f));
-	SetLightAmbColorHandle(ScareLight, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
-	SetLightEnableHandle(ScareLight, false);
+	m_scareLight = CreateDirLightHandle(VGet(0.0f, m_position.y, 0.0f));
+	SetLightDifColorHandle(m_scareLight, GetColorF(0.6f, 0.2f, 0.2f, 0.0f));
+	SetLightAmbColorHandle(m_scareLight, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
+	SetLightEnableHandle(m_scareLight, false);
 
 	// Mixamo用処理
 	// モデルの生成
-	mpModel = new Model(filename, initPos, isSeparateAnim);
-
+	m_model = new Model(fileName, initPosition, isSeparateAnimation);
 }
 
-void Enemy3D::AddAnimation(AnimationState state, std::string filename)
+void Enemy3D::AddAnimation(AnimationState state, std::string fileName)
 {
-	mpModel->AddAnimation(state, filename);
+	m_model->AddAnimation(state, fileName);
 }
 
 
 Enemy3D::~Enemy3D()
 {
-	DeleteLightHandle(ScareLight);
+	DeleteLightHandle(m_scareLight);
 
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		delete mpModel;
+		delete m_model;
 	}
 }
 
@@ -68,26 +52,26 @@ void Enemy3D::Update()
 	// プレイヤーが敵と当たった時の処理
 	CollScare();
 
-	if (!isScare)
+	if (!m_isScare)
 	{
 		// 移動による回転処理
 		RotationByMove();
 	}
 
 	// モデルの更新
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->SetPosition(mvPosition);
-		mpModel->Update();
+		m_model->SetPosition(m_position);
+		m_model->Update();
 	}
 }
 
 void Enemy3D::Draw()
 {
 
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->Draw();
+		m_model->Draw();
 	}
 
 	// デバック表示用
@@ -100,20 +84,20 @@ void Enemy3D::Draw()
 void Enemy3D::Move()
 {
 	// ジャンプスケア中は移動処理を全てスキップする
-	if (isScare)
+	if (m_isScare)
 	{
 		return;
 	}
 
-	if (isStopItem)
+	if (m_isStopItem)
 	{
-		mpModel->ChangeAnimation(ANIMATION_NEUTRAL);
+		m_model->ChangeAnimation(AnimationNeutral);
 		return;
 	}
 
 	// 現在再生中のアニメーションを取得
-	AnimationState state = mpModel->GetNowState();
-	if (state == ANIMATION_ATTACK || state == ANIMATION_JUMP_OUT)
+	AnimationState state = m_model->GetNowState();
+	if (state == AnimationAttack || state == AnimationJumpOut)
 	{
 		return; // 特定のモーション中であれば何もしない
 	}
@@ -141,19 +125,19 @@ void Enemy3D::Move()
 						  {100.0f, 44.0f, -1700.0f} };                                                                                            // 初期座標に戻る
 
 
-	oldPosition = mvPosition;   // 前回の座標をいったん保持
+	m_oldPosition = m_position;   // 前回の座標をいったん保持
 
 
 		// プレイヤーの情報を取得
-		Object3D* Player = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+		Object3D* Player = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 
 		if (Player != nullptr)
 		{
 			// プレイヤーの座標を取得
-			playerPos = Player->GetPosition();
+			m_playerPos = Player->GetPosition();
 
 			// プレイヤーと敵の座標の距離を計算
-			VECTOR distance = VSub(playerPos, mvPosition);
+			VECTOR distance = VSub(m_playerPos, m_position);
 
 			// ベクトルのサイズを取得
 			float dis = VSize(distance);
@@ -168,10 +152,10 @@ void Enemy3D::Move()
 					// プレイヤーの移動処理を止める
 					player->SetFreeze(true);
 					// カメラの移動を止める
-					Master::mpCamera->SetFreeze(true);
-					isRun = false;
+					Master::m_camera->SetFreeze(true);
+					m_isRun = false;
 					// ジャンプスケアを発生させる
-					isScare = true;
+					m_isScare = true;
 				}
 
 			}
@@ -187,7 +171,7 @@ void Enemy3D::Move()
 			float founddis = 1500.0f;
 
 			// プレイヤーと敵の高さの差を計算する
-			float heightDis = (playerPos.y + 80.0f) - (mvPosition.y + 80.0f);
+			float heightDis = (m_playerPos.y + 80.0f) - (m_position.y + 80.0f);
 
 			// スパイク防止のためのスムージング処理
 			static float smoothHeight = 0.0f;
@@ -196,12 +180,12 @@ void Enemy3D::Move()
 			// 高さの差が一定距離より大きいならプレイヤーを見つけていない
 			if (fabs(smoothHeight) > 150.0f)
 			{
-				foundPlayer = false;
+				m_foundPlayer = false;
 			}
 
 
 			// 敵の視点を設定
-			VECTOR forward = VGet(sinf(mfAngle), 0.0f, cosf(mfAngle));
+			VECTOR forward = VGet(sinf(m_angle), 0.0f, cosf(m_angle));
 
 			// 距離を正規化
 			distance = VNorm(distance);
@@ -214,140 +198,139 @@ void Enemy3D::Move()
 			if (dot >= sight && dis <= founddis)
 			{
 				// プレイヤーを見つけた
-				foundPlayer = true;
+				m_foundPlayer = true;
 			}
 			else  // 一定の距離を離れたら目標座標に行くようにする
 			{
-				foundPlayer = false;
+				m_foundPlayer = false;
 			}
 
 
 
 			// プレイヤーを見つけていない場合(目標座標に向かう処理)
-			if (!foundPlayer)
+			if (!m_foundPlayer)
 			{
 				// 走っていない
-				isRun = false;
-
+				m_isRun = false;
 
 				// 待機状態の場合
-				if (isWait)
+				if (m_isWait)
 				{
 					// 待機時間増加
-					waitTimer++;
+					m_waitTimer++;
 
 					// 待機時間が待機するフレーム数以上の場合
-					if (waitTimer >= waitFram)
+					if (m_waitTimer >= WaitFram)
 					{
 						// 待機時間終了
-						isWait = false;
+						m_isWait = false;
 
 						// 待機時間の初期化
-						waitTimer = 0;
+						m_waitTimer = 0;
 					}
 
 				}
 				else
 				{
 					// 敵のモデルによって目標地点を変更する
-					switch (enetype)
+					switch (m_enemyType)
 					{
 					case 1:
 						// 目標座標の変数に設定
-						TargetX = Weipoint[currentPoint].pointX;
-						TargetY = Weipoint[currentPoint].pointY;
-						TargetZ = Weipoint[currentPoint].pointZ;
+						m_targetX = Weipoint[m_currentPoint].pointX;
+						m_targetY = Weipoint[m_currentPoint].pointY;
+						m_targetZ = Weipoint[m_currentPoint].pointZ;
 
 						// 目標座標と敵の座標の距離を求める
-						dx = TargetX - mvPosition.x;
-						dy = TargetY - mvPosition.y;
-						dz = TargetZ - mvPosition.z;
+						m_distanceX = m_targetX - m_position.x;
+						m_distanceY = m_targetY - m_position.y;
+						m_distanceZ = m_targetZ - m_position.z;
 
 						break;
 
 					case 2:
 						// 目標座標の変数に設定
-						TargetX = WeipointNex[currentPoint].pointX;
-						TargetY = WeipointNex[currentPoint].pointY;
-						TargetZ = WeipointNex[currentPoint].pointZ;
+						m_targetX = WeipointNex[m_currentPoint].pointX;
+						m_targetY = WeipointNex[m_currentPoint].pointY;
+						m_targetZ = WeipointNex[m_currentPoint].pointZ;
 
 						// 目標座標と敵の座標の距離を求める
-						dx = TargetX - mvPosition.x;
-						dy = TargetY - mvPosition.y;
-						dz = TargetZ - mvPosition.z;
+						m_distanceX = m_targetX - m_position.x;
+						m_distanceY = m_targetY - m_position.y;
+						m_distanceZ = m_targetZ - m_position.z;
 
 						break;
 					}
 
 					// 距離を計算
-					float distance = sqrtf(dx * dx + dy * dy + dz * dz);
+					float distance = sqrtf(m_distanceX * m_distanceX + m_distanceY * m_distanceY + m_distanceZ * m_distanceZ);
 
 
 					// 距離が速さより大きいなら
-					if (distance > mnSpeed)
+					if (distance > Speed)
 					{
 						//求めた距離を設定
-						VECTOR d = VGet(dx, dy, dz);
+						VECTOR d = VGet(m_distanceX, m_distanceY, m_distanceZ);
 						// 目標座標を正規化
 						d = VNorm(d);
 
 						// 移動ベクトルに加える
-						moveVec = VAdd(moveVec, d);
+						m_moveVec = VAdd(m_moveVec, d);
 
 						// 移動させる
-						mvPosition = VAdd(mvPosition, VScale(moveVec, mnSpeed));
+						m_position = VAdd(m_position, VScale(m_moveVec, Speed));
 
 					}
 					else
 					{
 						// 目標座標をモデルに設定
-						mvPosition.x = TargetX;
+						m_position.x = m_targetX;
 
-						mvPosition.y = TargetY;
+						m_position.y = m_targetY;
 
-						mvPosition.z = TargetZ;
+						m_position.z = m_targetZ;
 
 						// 移動方向を初期化
-						moveVec = VGet(0.0f, 0.0f, 0.0f);
+						m_moveVec = VGet(0.0f, 0.0f, 0.0f);
 
 						// 階段の上り下りの際には待機状態を無くす
-						if (currentPoint == 2 || currentPoint == 3 || currentPoint == 6 || currentPoint == 7
-							|| currentPoint == 12 || currentPoint == 13 || currentPoint == 16 || currentPoint == 17
-							|| currentPoint == 20 || currentPoint == 21 || currentPoint == 24 || currentPoint == 25
+						if (m_currentPoint == 2 || m_currentPoint == 3 || m_currentPoint == 6 || m_currentPoint == 7
+							|| m_currentPoint == 12 || m_currentPoint == 13 || m_currentPoint == 16 || m_currentPoint == 17
+							|| m_currentPoint == 20 || m_currentPoint == 21 || m_currentPoint == 24 || m_currentPoint == 25
 							)
 						{
-							isWait = false;
+							m_isWait = false;
 						}
 						else
 						{
-							isWait = true;
+							m_isWait = true;
 						}
 
 						// 目標地点の最後まで行ったら通ってきた座標を順番に戻るようにする
-						if (mvPosition.x == Weipoint[27].pointX && mvPosition.y == Weipoint[27].pointY && mvPosition.z == Weipoint[27].pointZ)
+						if (m_position.x == Weipoint[27].pointX && m_position.y == Weipoint[27].pointY && m_position.z == Weipoint[27].pointZ)
 						{
-							isback = true;
+							m_isback = true;
 						}
-						if (mvPosition.x == WeipointNex[27].pointX && mvPosition.y == WeipointNex[27].pointY && mvPosition.z == WeipointNex[27].pointZ)
+						if (m_position.x == WeipointNex[27].pointX && m_position.y == WeipointNex[27].pointY && m_position.z == WeipointNex[27].pointZ)
 						{
-							isback = true;
+							m_isback = true;
 						}
 
 						// 目標地点を全部通るまで設定した目標地点を通っていく
-						if (!isback)
+						if (!m_isback)
 						{
-							currentPoint = (currentPoint + 1) % pointcount;
+							m_currentPoint = (m_currentPoint + 1) % m_pointcount;
 						}
 						else  // 目標地点を全部通ったら通ってきた地点を戻る
 						{
 							// 現在の目標座標を示す変数を減らしていく
-							currentPoint--;
+							m_currentPoint--;
 
 							// 最大配列数が0になったら
-							if (currentPoint <= 0)
+							if (m_currentPoint <= 0)
 							{
-								isback = false;
-								currentPoint = 0;
+								m_isback = false;
+								m_currentPoint = 0;
 							}
 
 
@@ -362,11 +345,11 @@ void Enemy3D::Move()
 			else   // プレイヤーを見つけた場合(追尾処理～プレイヤーの座標を通る～)
 			{
 					// 走る
-					isRun = true;
+					m_isRun = true;
 
-					Player3D* getplayer = dynamic_cast<Player3D*>(Player);
+					Player3D* getPlayer = dynamic_cast<Player3D*>(Player);
 
-					if (getplayer != nullptr)
+					if (getPlayer != nullptr)
 					{
 						// ========== 追加実装：敵がプレイヤーに近づいたらステージを避けながら追尾する処理 ==========
 						// プレイヤーとの距離が一定距離以下（例：800.0f 以下）なら直接追尾を試みる
@@ -374,13 +357,13 @@ void Enemy3D::Move()
 						bool isDirectChase = (dis <= 800.0f);
 
 						// プレイヤーの足跡リストを取得
-						std::vector<VECTOR>& PlayerRecord = getplayer->GetPlayerRecord();
+						std::vector<VECTOR>& playerRecord = getPlayer->GetPlayerRecord();
 
 						// 直接追尾を行う場合
 						if (isDirectChase)
 						{
 							// プレイヤーの方向へ向かうベクトルを計算
-							VECTOR toPlayer = VSub(playerPos, mvPosition);
+							VECTOR toPlayer = VSub(m_playerPos, m_position);
 							
 							// 高さを無視して平面で追尾するように Y を 0 にする
 							toPlayer.y = 0.0f; 
@@ -392,37 +375,37 @@ void Enemy3D::Move()
 								toPlayer = VNorm(toPlayer);
 
 								// 慣性を弱めて、プレイヤーの方向に素早く向き直れるようにする
-								moveVec = VAdd(VScale(moveVec, 0.5f), VScale(toPlayer, 0.5f));
-								moveVec = VNorm(moveVec); // 常の長さを1に保つことで、移動速度が爆発するのを防ぐ
+								m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
+								m_moveVec = VNorm(m_moveVec); // 常の長さを1に保つことで、移動速度が爆発するのを防ぐ
 
 								// 敵をプレイヤーの方向に移動させる（速度は走るスピード）
-								mvPosition = VAdd(mvPosition, VScale(moveVec, mnSpeed * 1.8f));
+								m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
 							}
 
 							// ※ステージの壁を避ける（滑り抜ける）処理自体は、
 							// Move()関数の後半にある「全ヒット情報で押し出すロジック」で自動的に行われます。
 							
 							// プレイヤーに直接追尾できている間は、通過したとみなして足跡を古いものから少し消しておく
-							if (!PlayerRecord.empty())
+							if (!playerRecord.empty())
 							{
-								PlayerRecord.erase(PlayerRecord.begin());
+								playerRecord.erase(playerRecord.begin());
 							}
 						}
 						else
 						{
 							// 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる
 							// 足跡リストが空の場合
-							if (PlayerRecord.empty())
+							if (playerRecord.empty())
 							{
 								// 追尾すべき足跡がないので終了
 								return;
 							}
 
 							// 一番古い足跡（向かうべきターゲット）を取得
-							VECTOR TargetPos = PlayerRecord.front();
+							VECTOR TargetPos = playerRecord.front();
 
 							// ターゲットと敵の距離を計算
-							VECTOR vec = VSub(TargetPos, mvPosition);
+							VECTOR vec = VSub(TargetPos, m_position);
 							vec.y = 0.0f; // 高さは無視
 
 							// ベクトルのサイズ（距離）を取得
@@ -432,10 +415,10 @@ void Enemy3D::Move()
 							if (Dis <= 30.0f)
 							{
 								// 足跡リストが空でない場合
-								if (!PlayerRecord.empty())
+								if (!playerRecord.empty())
 								{
 									// 通過した足跡をリストから削除し、次の足跡に向かうようにする
-									PlayerRecord.erase(PlayerRecord.begin());
+									playerRecord.erase(playerRecord.begin());
 								}
 							}
 							else
@@ -447,11 +430,11 @@ void Enemy3D::Move()
 									vec = VNorm(vec);
 
 									// 慣性を弱める
-									moveVec = VAdd(VScale(moveVec, 0.5f), VScale(vec, 0.5f));
-									moveVec = VNorm(moveVec);
+									m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
+									m_moveVec = VNorm(m_moveVec);
 
 									// 敵を足跡の方向に移動させる
-									mvPosition = VAdd(mvPosition, VScale(moveVec, mnSpeed * 1.8f));
+									m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
 								}
 							}
 
@@ -475,16 +458,15 @@ void Enemy3D::Move()
 
 
 		// 移動している状態であれば
-		bool isMove = (moveVec.x != 0.0f || moveVec.z != 0.0f);
+		bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
 		if (isMove)
 		{
 
 			// 移動方向を正規化しておく
-			moveVec = VNorm(moveVec);
+			m_moveVec = VNorm(m_moveVec);
 
 			// 新しい回転をセット
-			mfTargetAngle = atan2f(moveVec.x, moveVec.z);
-
+			m_targetAngle = atan2f(m_moveVec.x, m_moveVec.z);
 
 		}
 
@@ -492,18 +474,18 @@ void Enemy3D::Move()
 		// 移動している状態であれば
 		if (isMove)
 		{
-			if (isRun)
+			if (m_isRun)
 			{
-				mpModel->ChangeAnimation(ANIMATION_RUN);
+				m_model->ChangeAnimation(AnimationRun);
 			}
 			else
 			{
-				mpModel->ChangeAnimation(ANIMATION_WALKING);
+				m_model->ChangeAnimation(AnimationWalking);
 			}
 		}
 		else
 		{
-			mpModel->ChangeAnimation(ANIMATION_NEUTRAL);
+			m_model->ChangeAnimation(AnimationNeutral);
 		}
 
 
@@ -512,19 +494,19 @@ void Enemy3D::Move()
 		VECTOR hitPos = VGet(0.0f, 0.0f, 0.0f);
 		bool isHit = false;
 		int count = 0;
-		auto obj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+		auto obj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
 		if (obj != nullptr)
 		{
 			Stage* pStage = dynamic_cast<Stage*>(obj);
 			if (pStage != nullptr)
 			{
 				// ステージとプレイヤーのカプセルが当たっている場合 (ステージの地面とプレイヤーとの当たり判定処理)
-				if (pStage->CheckHit_Capsule(mvPosition, VAdd(mvPosition, VGet(0.0f, 70.0f, 0.0f)), 40.0f))
+				if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, 70.0f, 0.0f)), 40.0f))
 				{
 					// 当たっているであろうポリゴンとの接触点を求める
 					hitPos = pStage->CheckHit_Line(
-						VAdd(mvPosition, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
-						VAdd(mvPosition, VGet(0.0f, -50.0f, 0.0f))  // プレイヤーの少し下あたりを線分として指定
+						VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
+						VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))  // プレイヤーの少し下あたりを線分として指定
 					);
 
 
@@ -537,21 +519,21 @@ void Enemy3D::Move()
 				// -------------------------------------------------
 				// ★ 敵用：全ヒット情報で押し出すロジック ★
 				// -------------------------------------------------
-					VECTOR capBottom = VAdd(mvPosition, VGet(0.0f, 70.0f, 0.0f));
-				    VECTOR capTop = VAdd(mvPosition, VGet(0.0f, 90.0f, 0.0f));
+					VECTOR capBottom = VAdd(m_position, VGet(0.0f, 70.0f, 0.0f));
+				    VECTOR capTop = VAdd(m_position, VGet(0.0f, 90.0f, 0.0f));
 				
 				if (pStage->CheckHit_Capsule(capBottom, capTop, 50.0f))
 				{
 				       // ① 現在の壁の法線で勢いを打ち消す
 					   VECTOR stageNormal = VNorm(pStage->GetNormal());
-				       float   b = VDot(moveVec, stageNormal);
+				       float   b = VDot(m_moveVec, stageNormal);
 				      if (b < 0.0f)
 				      {
 				          VECTOR pushBack = VScale(stageNormal, -b);
-				          moveVec = VAdd(moveVec, pushBack);
-				          mvPosition = VAdd(oldPosition, VScale(moveVec, mnSpeed));
-				          capBottom = VAdd(mvPosition, VGet(0.0f, 70.0f, 0.0f));
-				          capTop = VAdd(mvPosition, VGet(0.0f, 90.0f, 0.0f));
+				          m_moveVec = VAdd(m_moveVec, pushBack);
+				          m_position = VAdd(m_oldPosition, VScale(m_moveVec, Speed));
+				          capBottom = VAdd(m_position, VGet(0.0f, 70.0f, 0.0f));
+				          capTop = VAdd(m_position, VGet(0.0f, 90.0f, 0.0f));
 				      }
 				     
 				     // ② MV1 の衝突関数で全ヒット情報取得し、合成法線で押し出す
@@ -575,7 +557,7 @@ void Enemy3D::Move()
 
 				          VECTOR pushDir = VNorm(summed);
 				          
-				          	mvPosition = VAdd(mvPosition, VScale(pushDir, 1.0f));
+				          	m_position = VAdd(m_position, VScale(pushDir, 1.0f));
 				            capBottom = VAdd(capBottom, VScale(pushDir, 1.0f));
 				            capTop = VAdd(capTop, VScale(pushDir, 1.0f));
 				      }
@@ -586,7 +568,7 @@ void Enemy3D::Move()
 			if (isHit)
 			{
 				// 地面に沿って歩いている状態として、Y座標をステージに合わせる
-				mvPosition.y = hitPos.y;
+				m_position.y = hitPos.y;
 
 			}
 
@@ -599,7 +581,7 @@ void Enemy3D::Move()
 void Enemy3D::RotationByMove()
 {
 	// 現在の回転値から目標の回転値の差分を求める
-	float subAngle = mfTargetAngle - mfAngle;
+	float subAngle = m_targetAngle - m_angle;
 
 	// ある方向からある方向の差が180度以上（以下）になることがないはずなので、
 	// 差の値が180度以上（以下）になっていたら矯正する
@@ -615,7 +597,7 @@ void Enemy3D::RotationByMove()
 	// 角度の差分を徐々に 0 に近づける
 	if (subAngle > 0.0f)
 	{
-		subAngle -= ROTATE_SPEED;
+		subAngle -= RotateSpeed;
 
 		if (subAngle < 0.0f)
 		{
@@ -624,7 +606,7 @@ void Enemy3D::RotationByMove()
 	}
 	else if (subAngle < 0.0f)
 	{
-		subAngle += ROTATE_SPEED;
+		subAngle += RotateSpeed;
 
 		if (subAngle > 0.0f)
 		{
@@ -633,44 +615,44 @@ void Enemy3D::RotationByMove()
 	}
 
 	// 今向いてほしい角度を算出
-	mfAngle = mfTargetAngle - subAngle;
+	m_angle = m_targetAngle - subAngle;
 
 	// 回転値を設定
-	mvRotation.y = mfAngle + DX_PI_F;
+	m_rotation.y = m_angle + DX_PI_F;
 
 	// モデルに伝える
-	mpModel->SetRotation(mvRotation);
+	m_model->SetRotation(m_rotation);
 
 }
 
 
 void Enemy3D::CollScare()
 {
-	Object3D* pobj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+	Object3D* pobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	if (pobj != nullptr)
 	{
 		// ジャンプスケアなら
-		if (isScare)
+		if (m_isScare)
 		{
 			// ジャンプスケア中は移動ベクトルをゼロにして敵を停止させる
-			moveVec = VGet(0.0f, 0.0f, 0.0f);
+			m_moveVec = VGet(0.0f, 0.0f, 0.0f);
 
 			// ジャンプスケア中は敵のアニメーションをIdle（待機）状態にする
-			mpModel->ChangeAnimation(ANIMATION_NEUTRAL);
+			m_model->ChangeAnimation(AnimationNeutral);
 
-			SetLightEnableHandle(ScareLight, true);
+			SetLightEnableHandle(m_scareLight, true);
 
 			// ジャンプスケアの時間を進める
-			scareTimer++;
+			m_scareTimer++;
 
 			// SE再生
-			Master::mpSoundManager->PlayBGM(SoundManager::BGM_GAME);
+			Master::m_soundManager->PlayBGM(SoundManager::BGMGame);
 
 			// カメラの座標を取得
-			VECTOR camPos = Master::mpCamera->GetPosition();
+			VECTOR camPos = Master::m_camera->GetPosition();
 
 			// カメラの注視点を取得
-			VECTOR camLook = Master::mpCamera->GetLookAtPosition();
+			VECTOR camLook = Master::m_camera->GetLookAtPosition();
 
 			// ワールド座標の上方向
 			VECTOR worldUp = VGet(0.0f, 1.0f, 0.0f);
@@ -685,18 +667,18 @@ void Enemy3D::CollScare()
 			VECTOR camUp = VNorm(VCross(camDir, camRight));
 
 			// 敵のモデルを設定する位置を計算
-			currentPos = camPos;
-			currentPos = VAdd(currentPos, VScale(camDir, 55.0f));
-			currentPos = VAdd(currentPos, VScale(camRight, 5.0f));
-			currentPos = VAdd(currentPos, VScale(camUp, -185.0f));
+			m_currentPos = camPos;
+			m_currentPos = VAdd(m_currentPos, VScale(camDir, 55.0f));
+			m_currentPos = VAdd(m_currentPos, VScale(camRight, 5.0f));
+			m_currentPos = VAdd(m_currentPos, VScale(camUp, -185.0f));
 
 			// 敵のモデルの位置を設定する
-			mvPosition = currentPos;
+			m_position = m_currentPos;
 			
 
 
 			// カメラと敵の位置から距離を計算
-			VECTOR Enemydir = VSub(camPos, mvPosition);
+			VECTOR Enemydir = VSub(camPos, m_position);
 
 			// 正規化する
 			Enemydir = VNorm(Enemydir);
@@ -705,30 +687,30 @@ void Enemy3D::CollScare()
 			float angle = atan2f(Enemydir.x, Enemydir.z);
 
 			// 回転値を設定
-			mvRotation.y = angle + DX_PI_F;
+			m_rotation.y = angle + DX_PI_F;
 
 			// モデルに伝える
-			mpModel->SetRotation(mvRotation);
+			m_model->SetRotation(m_rotation);
 
 
-			Master::mpCamera->SetUpShake((float)scareTimer, (float)Utility::SCREEN_WIDTH / 500, 15.0f);
+			Master::m_camera->SetUpShake((float)m_scareTimer, (float)Utility::SCREEN_WIDTH / 500, 15.0f);
 
 			// ジャンプスケアが一定時間たった場合
-			if (scareTimer > 100)
+			if (m_scareTimer > 100)
 			{
 				// ゲームオーバーシーンを呼び出す
-				Master::mpSceneManager->SetNextScene(SceneManager::SCENE_GAMEOVER);
+				Master::m_sceneManager->SetNextScene(SceneManager::SceneGameOver);
 
 				// BGMを止める
-				Master::mpSoundManager->StopBGM();
+				Master::m_soundManager->StopBGM();
 
-				SetLightEnableHandle(ScareLight, false);
+				SetLightEnableHandle(m_scareLight, false);
 
 				// 終了
-				isScare = false;
+				m_isScare = false;
 
 				// タイマーを初期化
-				scareTimer = 0;
+				m_scareTimer = 0;
 
 			}
 

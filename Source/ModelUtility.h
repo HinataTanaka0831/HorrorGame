@@ -9,31 +9,31 @@
 // アニメーションの切り替え番号
 enum AnimationState
 {
-    ANIMATION_NEUTRAL = 0,  // 待機
-    ANIMATION_RUN,          // 走り
-    ANIMATION_JUMP_IN,      // ジャンプ開始
-    ANIMATION_JUMP_LOOP,    // ジャンプ中
-    ANIMATION_JUMP_OUT,     // 着地時
-    ANIMATION_ATTACK,       // 攻撃
+    AnimationNeutral = 0,  // 待機
+    AnimationRun,          // 走り
+    AnimationJumpIn,      // ジャンプ開始
+    AnimationJumpLoop,    // ジャンプ中
+    AnimationJumpOut,     // 着地時
+    AnimationAttack,       // 攻撃
     // note: ↑ここから上には追加しない。
     //       Hero.mv1 がこの順番じゃないと機能しないので維持しておく。
     //       ただし、SeparateModelAnimation の方で使ってはいけない訳ではないので注意。
 
     // ★New★
     // 上にある定義以外で使いたいモーションがあれば、このように下に追加していけばOK。
-    ANIMATION_WALKING,      // 歩き
-    ANIMATION_DYING,        // 死亡時
-    ANIMATION_DROP_KICK,    // ドロップキック
-    ANIMATION_LEFT_TURN,    // 左回転
-    ANIMATION_RIGHT_TURN,   // 右回転
+    AnimationWalking,      // 歩き
+    AnimationDying,        // 死亡時
+    AnimationDropKick,    // ドロップキック
+    AnimationLeftTurn,    // 左回転
+    AnimationRightTTurn,   // 右回転
 
-    ANIMATION_MAX
+    AnimationMax
 };
 
 // ★New★
 // 分割されているアニメーションのデータ
 struct AnimationInfo
 {
-    AnimationState mState;
-    int mnAnimationHandle;
+    AnimationState m_state;
+    int m_animationHandle;
 };

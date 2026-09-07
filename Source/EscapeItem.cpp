@@ -7,33 +7,33 @@
 
 int EscapeItem::NowNeedItem = 0;
 
-EscapeItem::EscapeItem(std::string filename, VECTOR initPos)
-	:Item(initPos)
+EscapeItem::EscapeItem(std::string fileName, VECTOR initPosition)
+	:Item(initPosition)
 	
 {
 	// タグの設定
 	SetTag(Object3D::TagEscapeItem);
 
 	// モデルクラスを生成
-	mpModel = new Model(filename, initPos);
+	m_model = new Model(fileName, initPosition);
 
 }
 
 EscapeItem::~EscapeItem()
 {
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		delete mpModel;
+		delete m_model;
 	}
 }
 
 void EscapeItem::Update()
 {
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->SetRotation(VGet(0.0f, 0.0f, -4.712f));
-		mpModel->SetPosition(mvPosition);
-		mpModel->Update();
+		m_model->SetRotation(VGet(0.0f, 0.0f, -4.712f));
+		m_model->SetPosition(m_position);
+		m_model->Update();
 	}
 
 
@@ -41,9 +41,9 @@ void EscapeItem::Update()
 
 void EscapeItem::Draw()
 {
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->Draw();
+		m_model->Draw();
 	}
 
 }
@@ -56,7 +56,7 @@ void EscapeItem::Escape()
 	// もし残り必要なアイテム数が0になったらゲームクリアする
 	if (NowNeedItem == 4)
 	{
-		Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TYPE::SCENE_RESULT);
+		Master::m_sceneManager->SetNextScene(SceneManager::SceneType::SceneResult);
 	}
 
 }

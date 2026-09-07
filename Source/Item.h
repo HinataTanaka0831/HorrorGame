@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DxLib.h"
 #include "Object3D.h"
 #include <string>
 #include <vector>
@@ -11,8 +10,8 @@ class Item : public Object3D
 {
 public:
 	// アイテムの配置座標初期化およびTagItem3D設定
-	// 入力: initPos(ワールド配置座標) / 出力: なし / 副作用: Object3D初期化
-	Item(VECTOR initPos);
+	// 入力: initPosition(ワールド配置座標) / 出力: なし / 副作用: Object3D初期化
+	Item(VECTOR initPosition);
 	virtual ~Item() override;
 
 

@@ -1,187 +1,172 @@
-#include "DxLib.h"
 #include "ModelAnimation.h"
 
-// コンストラクタ
 ModelAnimation::ModelAnimation(int modelHandle)
-	: mnModelHandle(modelHandle)
-	, mfAnimationTime(0.0f)
-	, mnAnimationIndex(-1)   
-	, mfOldAnimationTime(0.0f)
-	, mnOldAnimationIndex(-1)
-	, mfAnimBlendRate(1.0f)
-	, mnState(AnimationState::ANIMATION_MAX)     // 最初は最大値としておく
-	, mbLoop(true)
-	, mnLoopFinishState(AnimationState::ANIMATION_MAX)
-	, mbLoopFinish(false)
+	: m_modelHandle(modelHandle)
 {
 	// アニメーションで移動をしているフレーム番号を検索する
-	int moveAnimFrameIndex = MV1SearchFrame(mnModelHandle, "root");
+	int moveAnimFrameIndex = MV1SearchFrame(m_modelHandle, "root");
 	 //移動を無効にする
 	MV1SetFrameUserLocalMatrix(
-		mnModelHandle,
+		m_modelHandle,
 		moveAnimFrameIndex,
-		MV1GetFrameLocalMatrix(mnModelHandle, moveAnimFrameIndex)
+		MV1GetFrameLocalMatrix(m_modelHandle, moveAnimFrameIndex)
 	);
 
 	// 初期状態は待機モーションにしておく
-	ChangeAnimation(AnimationState::ANIMATION_NEUTRAL);
+	ChangeAnimation(AnimationState::AnimationNeutral);
 }
 
-// デストラクタ
 ModelAnimation::~ModelAnimation()
 {
 
 }
 
-// 更新
 void ModelAnimation::Update()
 {
 	// アニメーションのブレンド率を進める
-	if (mfAnimBlendRate < 1.0f)
+	if (m_animationBlendRate < 1.0f)
 	{
-		mfAnimBlendRate += 0.1f;     // += 0.1f はブレンド速度。自由に変えてもok
-		if (mfAnimBlendRate > 1.0f)
+		m_animationBlendRate += 0.1f;     // += 0.1f はブレンド速度。自由に変えてもok
+		if (m_animationBlendRate > 1.0f)
 		{
-			mfAnimBlendRate = 1.0f;
+			m_animationBlendRate = 1.0f;
 		}
 	}
 
 	// アニメーションの更新
 	float fAnimTotalTime = 0.0f;
-	if (mnAnimationIndex != -1)
+	if (m_animationIndex != -1)
 	{
 		// 総再生時間の取得
-		fAnimTotalTime = MV1GetAttachAnimTotalTime(mnModelHandle, mnAnimationIndex);
+		fAnimTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_animationIndex);
 
 		// アニメーションを進める
-		mfAnimationTime += 0.5f;
+		m_animationTime += 0.5f;
 
 		// ループさせる
-		if (mfAnimationTime > fAnimTotalTime)
+		if (m_animationTime > fAnimTotalTime)
 		{
 			// ループしない設定であれば
-			if (!mbLoop)
+			if (!m_loop)
 			{
 				// 次のアニメーションが設定されていない場合
-				if (mnLoopFinishState == ANIMATION_MAX)
+				if (m_loopFinishState == AnimationMax)
 				{
 					// アニメーションはこれ以上進めず、処理を中断させる
-					mbLoopFinish = true;
+					m_loopFinish = true;
 					return;
 				}
 
 				// ループ終了時のアニメーションへ変更
-				ChangeAnimation(mnLoopFinishState);
+				ChangeAnimation(m_loopFinishState);
 				// ブレンドはしない
 				SetAnimationBlend(false);
 				// 変更されたので改めて総再生時間を取っておく
-				fAnimTotalTime = MV1GetAttachAnimTotalTime(mnModelHandle, mnAnimationIndex);
+				fAnimTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_animationIndex);
 			}
 
-			mfAnimationTime = 0.0f;
+			m_animationTime = 0.0f;
 		}
 
 		// アニメーションを反映
-		MV1SetAttachAnimTime(mnModelHandle, mnAnimationIndex, mfAnimationTime);
+		MV1SetAttachAnimTime(m_modelHandle, m_animationIndex, m_animationTime);
 
 		// ブレンド率を設定
-		MV1SetAttachAnimBlendRate(mnModelHandle, mnAnimationIndex, mfAnimBlendRate);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_animationIndex, m_animationBlendRate);
 
 	}
 
 	// 1つ前のアニメーションを更新
-	if (mnOldAnimationIndex != -1)
+	if (m_oldAnimationIndex != -1)
 	{
 		// 総再生時間の取得
-		fAnimTotalTime = MV1GetAttachAnimTotalTime(mnModelHandle, mnOldAnimationIndex);
+		fAnimTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_oldAnimationIndex);
 
 		// アニメーションを進める
-		mfOldAnimationTime += 0.5f;
+		m_oldAnimationTime += 0.5f;
 
 		// ループさせる
-		if (mfOldAnimationTime > fAnimTotalTime)
+		if (m_oldAnimationTime > fAnimTotalTime)
 		{
-			mfOldAnimationTime = 0.0f;
+			m_oldAnimationTime = 0.0f;
 		}
 
 		// アニメーションを反映
-		MV1SetAttachAnimTime(mnModelHandle, mnOldAnimationIndex, mfOldAnimationTime);
+		MV1SetAttachAnimTime(m_modelHandle, m_oldAnimationIndex, m_oldAnimationTime);
 
 		// ブレンド率を設定
-		MV1SetAttachAnimBlendRate(mnModelHandle, mnOldAnimationIndex, 1.0f - mfAnimBlendRate);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_oldAnimationIndex, 1.0f - m_animationBlendRate);
 
 	}
 
 }
 
-// アニメーションの切り替え処理
 void ModelAnimation::ChangeAnimation(AnimationState state, int index)
 {
 	// 切り替えようとしているアニメーションが既に設定されている場合
-	if (mnState == state)
+	if (m_state == state)
 	{
 		return;   // 何もしない
 	}
 
 	// 切り替え先の番号を保持
-	mnState = state;
+	m_state = state;
 
 	// ループ情報の初期化
-	mbLoop = true;    // 設定が特にない場合はループさせる
-	mnLoopFinishState = AnimationState::ANIMATION_MAX;  // ループ終了時のアニメーションは特になし
-	mbLoopFinish = false;
+	m_loop = true;    // 設定が特にない場合はループさせる
+	m_loopFinishState = AnimationState::AnimationMax;  // ループ終了時のアニメーションは特になし
+	m_loopFinish = false;
 
 	// 1つ前のアニメーションが有効状態であれば
-	if (mnOldAnimationIndex != -1)
+	if (m_oldAnimationIndex != -1)
 	{
 		// アニメーションのデタッチ（取り外す）
-		MV1DetachAnim(mnModelHandle, mnOldAnimationIndex);
-		mnOldAnimationIndex = -1;
+		MV1DetachAnim(m_modelHandle, m_oldAnimationIndex);
+		m_oldAnimationIndex = -1;
 	}
 
 	// 現在のアニメーション状態を保持する
-	mnOldAnimationIndex = mnAnimationIndex;
-	mfOldAnimationTime = mfAnimationTime;
+	m_oldAnimationIndex = m_animationIndex;
+	m_oldAnimationTime = m_animationTime;
 
 	// アニメーションのアタッチ
-	mnAnimationIndex = MV1AttachAnim(mnModelHandle, (int)state);
+	m_animationIndex = MV1AttachAnim(m_modelHandle, (int)state);
 
 	// 再生時間の初期化
-	mfAnimationTime = 0.0f;
+	m_animationTime = 0.0f;
 
 	// ブレンド状態を初期化
 	// ブレンド率は、古いモーションが有効でない場合は1.0f（ブレンドしない状態）にしておく
-	mfAnimBlendRate = (mnOldAnimationIndex == -1 ? 1.0f : 0.0f);  //→→if (mnOldAnimationIndex == -1)
+	m_animationBlendRate = (m_oldAnimationIndex == -1 ? 1.0f : 0.0f);  //→→if (m_oldAnimationIndex == -1)
                                                                        	//{
-	                                                                    //	mfAnimBlendRate = 1.0f;
+	                                                                    //	m_animationBlendRate = 1.0f;
 	                                                                    //}
 	                                                                    //else 
 	                                                                    //{
-	                                                                    //	mfAnimBlendRate = 0.0f;
+	                                                                    //	m_animationBlendRate = 0.0f;
 	                                                                    //}
 
 
 
 }
 
-// アニメーションのブレンド設定
 void ModelAnimation::SetAnimationBlend(bool isBlend)
 {
 	if (isBlend)  // ブレンドする場合
 	{
 		// ブレンド率は、古いモーションが有効でない場合は1.0f（ブレンドしない状態）にしておく
-		mfAnimBlendRate = (mnOldAnimationIndex == -1 ? 1.0f : 0.0f);
+		m_animationBlendRate = (m_oldAnimationIndex == -1 ? 1.0f : 0.0f);
 	}
 	else    // ブレンドしない場合
 	{
 		// ブレンドしない状態にする
-		mfAnimBlendRate = 1.0f;
+		m_animationBlendRate = 1.0f;
 
 		// ブレンドする必要がないので、古いアニメーションはデタッチしておく
-		if (mnOldAnimationIndex != -1)
+		if (m_oldAnimationIndex != -1)
 		{
-			MV1DetachAnim(mnModelHandle, mnOldAnimationIndex);
-			mnOldAnimationIndex = -1;
+			MV1DetachAnim(m_modelHandle, m_oldAnimationIndex);
+			m_oldAnimationIndex = -1;
 		}
 	}
 }

@@ -11,18 +11,18 @@ public:
 	static InputManager& GetInstance();
 
 	// キーが押された瞬間（立ち上がりエッジ）の検知
-	// 入力: KeyCode(DXライブラリのキーコード) / 出力: 押下瞬間なら1、それ以外は0 / 副作用: 前フレーム状態バッファを更新
-	int CheckDownKey(int KeyCode);
+	// 入力: keyCode(DXライブラリのキーコード) / 出力: 押下瞬間なら1、それ以外は0 / 副作用: 前フレーム状態バッファを更新
+	int CheckDownKey(int keyCode);
 
 	// キーが離された瞬間（立ち下がりエッジ）の検知
-	// 入力: KeyCode(DXライブラリのキーコード) / 出力: 離された瞬間なら1、それ以外は0 / 副作用: 前フレーム状態バッファを更新
-	int CheckUpKey(int KeyCode);
+	// 入力: keyCode(DXライブラリのキーコード) / 出力: 離された瞬間なら1、それ以外は0 / 副作用: 前フレーム状態バッファを更新
+	int CheckUpKey(int keyCode);
 
 	// キーが押下され続けている状態の検知
-	// 入力: KeyCode(DXライブラリのキーコード) / 出力: 押下中なら1、それ以外は0 / 副作用: なし
-	int CheckPressKey(int KeyCode);
+	// 入力: keyCode(DXライブラリのキーコード) / 出力: 押下中なら1、それ以外は0 / 副作用: なし
+	int CheckPressKey(int keyCode);
 
-	// FPS視点操作用のマウスカーソル固定および表示状態の切り替え
+	// ----FPS視点操作用のマウスカーソル固定および表示状態の切り替え----
 	// 入力: enable(trueで固定/非表示、falseで解除/表示) / 出力: なし / 副作用: OSカーソル表示設定および画面中央への強制移動
 	void EnableMouseLock(bool enable);
 
@@ -49,10 +49,10 @@ public:
 
 	bool IsMouseLocked() const { return m_isLocked; }
 
-	float GetMouseX() { return MouseX; }
-	float GetMouseY() { return MouseY; }
-	float GetDeltaX() { return DeltaX; }
-	float GetDeltaY() { return DeltaY; }
+	float GetMouseX() { return m_mouseX; }
+	float GetMouseY() { return m_mouseY; }
+	float GetDeltaX() { return m_deltaX; }
+	float GetDeltaY() { return m_deltaY; }
 
 private:
 	// コンストラクタ
@@ -67,18 +67,18 @@ private:
 	InputManager&& operator=(InputManager&&) = delete;       // ムーブ代入の禁止
 
 private:
-	int mDownBuffer[256] = { 0 };      // 前フレームのキー押下状態（立ち上がりエッジ検知用）
-	int mUpBuffer[256] = { 0 };        // 前フレームのキー押下状態（立ち下がりエッジ検知用）
+	int m_downBuffer[256] = { 0 };      // 前フレームのキー押下状態（立ち上がりエッジ検知用）
+	int m_upBuffer[256] = { 0 };        // 前フレームのキー押下状態（立ち下がりエッジ検知用）
 
-	float MouseX = 0.0f;       // マウスのX移動量
-	float MouseY = 0.0f;       // マウスのY移動量
-	float DeltaX = 0.0f;       // フレーム間のX軸移動差分（感度適用済み）
-	float DeltaY = 0.0f;       // フレーム間のY軸移動差分（感度適用済み）
-	int CurrentMouseInput = 0;     // 現フレームのマウス入力ビットフラグ
-	int PreviousMouseInput = 0;    // 前フレームのマウス入力ビットフラグ
-	const int m_centerX = Utility::SCREEN_WIDTH / 4;
-	const int m_centerY = Utility::SCREEN_HEIGHT / 4;
-	float MouseSensitivity = 0.004f; // マウス移動量から回転角への変換係数
+	float m_mouseX = 0.0f;       // マウスのX移動量
+	float m_mouseY = 0.0f;       // マウスのY移動量
+	float m_deltaX = 0.0f;       // フレーム間のX軸移動差分（感度適用済み）
+	float m_deltaY = 0.0f;       // フレーム間のY軸移動差分（感度適用済み）
+	int m_currentMouseInput = 0;     // 現フレームのマウス入力ビットフラグ
+	int m_previousMouseInput = 0;    // 前フレームのマウス入力ビットフラグ
+	const int CenterX = Utility::SCREEN_WIDTH / 4;
+	const int CenterY = Utility::SCREEN_HEIGHT / 4;
+	float m_mouseSensitivity = 0.004f; // マウス移動量から回転角への変換係数
 	bool m_isLocked = false;
 
 	// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置

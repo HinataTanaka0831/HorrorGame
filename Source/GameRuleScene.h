@@ -30,14 +30,14 @@ public:
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> mpBackButton = nullptr;      // タイトルへ戻るボタン
+	std::unique_ptr<Button> m_backButton = nullptr;      // タイトルへ戻るボタン
 	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150;   // ボタン配置基準X座標
 	const int BackY = 900;                               // 戻るボタンY座標
-	int noise = -1;                                      // 砂嵐背景画像ハンドル
-	int keyHandle = -1;                                  // WASD移動キーアイコン
-	int key_R_Handle = -1;                               // Rキーアイコン（アイテム取得）
-	int key_F_Handle = -1;                               // Fキーアイコン（アイテム使用）
-	int key_E_Handle = -1;                               // Eキーアイコン（しゃがみ）
-	int mouseHandle = -1;                                // マウス左クリックアイコン（ライトON/OFF）
-	int mouseMoveHandle = -1;                            // マウス移動アイコン（視点回転）
+	int m_noiseHandle = -1;                                      // 砂嵐背景画像ハンドル
+	int m_keyHandle = -1;                                  // WASD移動キーアイコン
+	int m_keyRHandle = -1;                               // Rキーアイコン（アイテム取得）
+	int m_keyFHandle = -1;                               // Fキーアイコン（アイテム使用）
+	int m_keyEHandle = -1;                               // Eキーアイコン（しゃがみ）
+	int m_mouseHandle = -1;                                // マウス左クリックアイコン（ライトON/OFF）
+	int m_mouseMoveHandle = -1;                            // マウス移動アイコン（視点回転）
 };

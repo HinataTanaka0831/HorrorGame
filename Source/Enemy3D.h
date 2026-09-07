@@ -6,13 +6,14 @@
 #include "Object3D.h"
 #include "Model.h"
 
+
 // 徘徊巡回・視界索敵・プレイヤー追跡および捕獲時ジャンプスケア演出を実行する3D敵AIクラス
 class Enemy3D : public Object3D
 {
 public:
 	// 敵AIモデルのロード、パトロールルート初期化、ジャンプスケア用光源の生成
-	// 入力: filename(モデルパス), initPos(初期座標), enemytype(巡回ルート番号), isSeparateAnim(外部分割モーションフラグ) / 出力: なし / 副作用: Model生成、ScareLight生成
-	Enemy3D(std::string filename, VECTOR initPos, int enemytype, bool isSeparateAnim = false);
+	// 入力: fileName(モデルパス), initPosition(初期座標), enemyType(巡回ルート番号), isSeparateAnimation(外部分割モーションフラグ) / 出力: なし / 副作用: Model生成、ScareLight生成
+	Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation = false);
 	~Enemy3D() override;
 
 	// 索敵・移動・旋回・ステージ壁押し出し・ジャンプスケア発動の一括更新
@@ -36,62 +37,62 @@ public:
 	void CollScare();        
 
 	// 巡回パトロールルートの初期設定
-	// 入力: type(ルート番号) / 出力: なし / 副作用: enetypeの更新
-	void SetEnemyType(int type) { enetype = type; } 
+	// 入力: type(ルート番号) / 出力: なし / 副作用: m_enemyTypeの更新
+	void SetEnemyType(int type) { m_enemyType = type; } 
 
 
-	bool GetScare() { return isScare; }              
+	bool GetScare() { return m_isScare; }              
 
-	bool GetfoundPlayer() { return foundPlayer; }
+	bool GetfoundPlayer() { return m_foundPlayer; }
 
-	void SetStopItem(bool stop) { isStopItem = stop; }
+	void SetStopItem(bool stop) { m_isStopItem = stop; }
 
 	// モーションデータの追加登録
-	// 入力: state(ステート), filename(モーションパス) / 出力: なし / 副作用: mpModelへのモーション追加
-	void AddAnimation(AnimationState state, std::string filename);
+	// 入力: state(ステート), fileName(モーションパス) / 出力: なし / 副作用: m_modelへのモーション追加
+	void AddAnimation(AnimationState state, std::string fileName);
 
 
 	// 今後必要であれば move や Attack や Jump 関数などを作る
 
 private:
-	Model* mpModel;  // モデルクラスのポインタ
-	VECTOR playerPos;
+	Model* m_model;  // モデルクラスのポインタ
+	VECTOR m_playerPos = VGet(0.0f, 0.0f, 0.0f);
 
-	float mfAngle;              // 現在の回転値
-	float mfTargetAngle;        // 目標の回転値
+	float m_angle = 0.0f;              // 現在の回転値
+	float m_targetAngle = 0.0f;        // 目標の回転値
 
 	// ↓目標地点を設定するための変数
-	float TargetX;              // 目標X座標
-	float TargetY;              // 目標Y座標
-	float TargetZ;              // 目標Z座標
-	float dx;                   // 目標座標と敵の座標のX距離
-	float dy;                   // 目標座標と敵の座標のY距離
-	float dz;                   // 目標座標と敵の座標のZ距離
+	float m_targetX = 0.0f;              // 目標X座標
+	float m_targetY = 0.0f;              // 目標Y座標
+	float m_targetZ = 0.0f;              // 目標Z座標
+	float m_distanceX = 0.0f;            // 目標座標と敵の座標のX距離
+	float m_distanceY = 0.0f;            // 目標座標と敵の座標のY距離
+	float m_distanceZ = 0.0f;            // 目標座標と敵の座標のZ距離
 
 	// 敵の移動速度（メートル/秒 などはゲーム設定に合わせて調整可）
-	float mSpeed = 5.0f;
+	float m_speed = 5.0f;
 	// 障害物回避時に横にずらす距離
-	float mAvoidanceDist = 0.5f;
+	float m_avoidanceDist = 0.5f;
 
-	int ScareLight;
+	int m_scareLight = 0;
 
-	int mncount;               // カウント変数
-	int currentPoint;          // 現在の目標座標を示す変数
-	int pointcount;            // 目標座標の最大数を表す変数
-	int waitTimer;             // 待機時間
-	int enetype;               // 敵のモデルによって目標地点を変更するための変数
-	int scareTimer;            // ジャンプスケアを行う時間
+	int m_count = 0;               // カウント変数
+	int m_currentPoint = 0;          // 現在の目標座標を示す変数
+	int m_pointcount = 28;            // 目標座標の最大数を表す変数
+	int m_waitTimer = 0;             // 待機時間
+	int m_enemyType = -1;               // 敵のモデルによって目標地点を変更するための変数
+	int m_scareTimer = 0;            // ジャンプスケアを行う時間
 
-	bool isWait;               // 待機状態にするかどうか
-	bool isback;               // 目標地点を全部通ったら
-	bool isScare;
-	bool foundPlayer;         // プレイヤーを見つけたかどうか
-	bool isRun;               // 走るかどうか
-	bool isStopItem;          // 時間止めアイテムを使用したかどうか
+	bool m_isWait = false;              // 待機状態にするかどうか
+	bool m_isback = false;              // 目標地点を全部通ったら
+	bool m_isScare = false;
+	bool m_foundPlayer = false;         // プレイヤーを見つけたかどうか
+	bool m_isRun = false;               // 走るかどうか
+	bool m_isStopItem = false;          // 時間止めアイテムを使用したかどうか
 
-	VECTOR oldPosition;        // 前の座標
-	VECTOR moveVec;            // 移動ベクトル
-	VECTOR currentPos;         // 敵のモデルの位置を設定するため計算したものを保持する変数
+	VECTOR m_oldPosition = VGet(0.0f, 0.0f, 0.0f);        // 前の座標
+	VECTOR m_moveVec = VGet(0.0f, 0.0f, 0.0f);            // 移動ベクトル
+	VECTOR m_currentPos = VGet(0.0f, 0.0f, 0.0f);         // 敵のモデルの位置を設定するため計算したものを保持する変数
 
 	struct Point              // 目標座標を設定するための構造体
 	{
@@ -101,9 +102,9 @@ private:
 	};
 
 
-	const float ROTATE_SPEED = 0.2f;     // 回転速度
+	const float RotateSpeed = 0.2f;     // 回転速度
 
-	const float mnSpeed = 6.0f; // 敵の移動スピード
-	const int waitFram = 60;  // 待機するフレーム数
+	const float Speed = 6.0f; // 敵の移動スピード
+	const int WaitFram = 60;  // 待機するフレーム数
 	const int ITER = 20;
 };

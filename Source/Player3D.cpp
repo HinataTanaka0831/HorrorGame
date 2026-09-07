@@ -11,35 +11,14 @@
 #include "TimeItem.h"
 
 
-Player3D::Player3D(VECTOR initPos)
-	:Object3D(initPos)
-	, isMove(false)
-	, isCrouching(false)
-	, isFreeze(false)
-	, isActiveLight(true)
-	, isUseStopItem(false)
-	, getEscapeItem(false)
-	, getTimeItem(false)
-	, oldPosition(VGet(0.0f, 0.0f, 0.0f))
-	, oldPlayerPosition(mvPosition)
-	, lightModelPosition(VGet(0.0f, 0.0f, 0.0f))
-	, DoorPos(VGet(0.0f, 0.0f, 0.0f))
-	, dis(0.0f)
-	, mfAngle(0.0f)
-	, mfTargetAngle(0.0f)
-	, playerHeight(0.0f)
-	, playerSpeed(0.0f)
-	, gaugeWidth(0)
-	, mncount(0)
-	, RecordDis(0)
-	, AddItemID(0)
-
+Player3D::Player3D(VECTOR initPosition)
+	:Object3D(initPosition)
 {
 	// タグ設定
 	SetTag(Object3D::TagPlayer3D);
 
 	// 懐中電灯のモデルを生成
-	lightHandle = MV1LoadModel("Resource/3D/Linterna/Linterna.mv1");
+	m_lightHandle = MV1LoadModel("Resource/3D/Linterna/Linterna.mv1");
 
 }
 
@@ -47,7 +26,7 @@ Player3D::Player3D(VECTOR initPos)
 Player3D::~Player3D()
 {
 	// 懐中電灯のモデルを削除
-	MV1DeleteModel(lightHandle);
+	MV1DeleteModel(m_lightHandle);
 }
 
 
@@ -70,7 +49,7 @@ void Player3D::Update()
 	HaveLight();
 
 	// ライトのON/OFFを変更
-	SetLightEnable(isActiveLight);
+	SetLightEnable(m_isActiveLight);
 
 
 }
@@ -79,7 +58,7 @@ void Player3D::Update()
 void Player3D::Draw()
 {
 	// 懐中電灯のモデルを描画
-	MV1DrawModel(lightHandle);
+	MV1DrawModel(m_lightHandle);
 }
 
 
@@ -87,14 +66,13 @@ void Player3D::Draw()
 void Player3D::MoveEx()
 {
 	// フリーズさせる
-	if (isFreeze)
+	if (m_isFreeze)
 	{
 		return;
 	}
 
 
-
-	VECTOR moveVec = VGet(0.0f, 0.0f, 0.0f);   // 移動方向
+	VECTOR moveVec = VGet(0.0f, 0.0f, 0.0f);         // 移動方向
 	VECTOR upMoveVector = VGet(0.0f, 0.0f, 0.0f);    // カメラの上方向（奥方向）ベクトル
 	VECTOR leftMoveVector = VGet(0.0f, 0.0f, 0.0f);  // カメラの左方向ベクトル
 	VECTOR downMoveVector = VGet(0.0f, 0.0f, 0.0f);  // カメラの下方向ベクトル
@@ -104,11 +82,11 @@ void Player3D::MoveEx()
 	// カメラの向きから移動ベクトルを求める
 	{
 		// 上方向への移動ベクトルは、カメラの視線方向からY成分を抜いたものとする
-		upMoveVector = VSub(Master::mpCamera->GetLookAtPosition(), Master::mpCamera->GetPosition());
+		upMoveVector = VSub(Master::m_camera->GetLookAtPosition(), Master::m_camera->GetPosition());
 		upMoveVector.y = 0.0f;
 
 		// 下方向
-		downMoveVector = VSub(Master::mpCamera->GetLookAtPosition(), Master::mpCamera->GetPosition());
+		downMoveVector = VSub(Master::m_camera->GetLookAtPosition(), Master::m_camera->GetPosition());
 		downMoveVector.y = 0.0f;
 
 		// 左方向への移動ベクトルは、上方向への移動ベクトルと、Y軸のプラス方向へのベクトルに垂直な方向（外積）
@@ -130,22 +108,22 @@ void Player3D::MoveEx()
 	// プレイヤーのしゃがみ状態の変更処理
 	PlayerSquat();
 
-	if (CheckHitKey(KEY_INPUT_A))  // 左方向
+	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_A))  // 左方向
 	{
 		moveVec = VAdd(moveVec, leftMoveVector);
 	}
 
-	if (CheckHitKey(KEY_INPUT_D))  // 右方向
+	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_D))  // 右方向
 	{
 		moveVec = VAdd(moveVec, VScale(leftMoveVector, -1.0f)); // VScale...掛け算　-1.0fを掛けて反転している
 	}
 
-	if (CheckHitKey(KEY_INPUT_W))  // 奥方向
+	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_W))  // 奥方向
 	{
 		moveVec = VAdd(moveVec, upMoveVector);
 	}
 
-	if (CheckHitKey(KEY_INPUT_S))  // 手前方向
+	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_S))  // 手前方向
 	{
 		moveVec = VAdd(moveVec, VScale(upMoveVector, -1.0f));
 	}
@@ -153,32 +131,32 @@ void Player3D::MoveEx()
 
 
 	// 移動している状態であれば
-	isMove = (moveVec.x != 0.0f || moveVec.z != 0.0f);
-	if (isMove)
+	m_isMove = (moveVec.x != 0.0f || moveVec.z != 0.0f);
+	if (m_isMove)
 	{
 		// 移動方向を正規化しておく
 		moveVec = VNorm(moveVec);
 	}
 
 	// 前の座標を設定
-	oldPosition = mvPosition;
+	m_oldPosition = m_position;
 
 	// 走る処理
-	if (StaminaUpdate(CheckHitKey(KEY_INPUT_LSHIFT)))
+	if (StaminaUpdate(InputManager::GetInstance().CheckPressKey(KEY_INPUT_LSHIFT)))
 	{
 		// 走り状態かつ動いている状態なら
-		if (state == RUN && isMove)
+		if (m_state == Run && m_isMove)
 		{
-			mvPosition = VAdd(mvPosition, VScale(moveVec, playerSpeed * 3.0f));
+			m_position = VAdd(m_position, VScale(moveVec, m_speed * 3.0f));
 
 			// 走りSEを流す時間を増やす
-			RunSETimer++;
+			m_runSETimer++;
 
 			// フレーム以上なら
-			if (RunSETimer >= SEframe_RUN)
+			if (m_runSETimer >= SEframeRUN)
 			{
-				Master::mpSoundManager->PlaySE(SoundManager::SE_Walk);
-				RunSETimer = 0;
+				Master::m_soundManager->PlaySE(SoundManager::SEWalk);
+				m_runSETimer = 0;
 			}
 		}
 		else
@@ -189,18 +167,18 @@ void Player3D::MoveEx()
 	else  // 歩き処理
 	{
 		// 歩き状態かつ動いている状態なら
-		if (state == WALK && isMove)
+		if (m_state == Walk && m_isMove)
 		{
-			mvPosition = VAdd(mvPosition, VScale(moveVec, playerSpeed));
+			m_position = VAdd(m_position, VScale(moveVec, m_speed));
 
 			// 歩きSEを流す時間を増やす
-			WalkSETimer++;
+			m_walkSETimer++;
 
 			// フレーム以上なら
-			if (WalkSETimer >= SEframe_Walk)
+			if (m_walkSETimer >= SEframeWalk)
 			{
-				Master::mpSoundManager->PlaySE(SoundManager::SE_Walk);
-				WalkSETimer = 0;
+				Master::m_soundManager->PlaySE(SoundManager::SEWalk);
+				m_walkSETimer = 0;
 			}
 		}
 	}
@@ -209,7 +187,7 @@ void Player3D::MoveEx()
 
 	// 足跡の記録処理 //
    // 敵の情報を取得
-	Object3D* eobj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
+	Object3D* eobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
 
 	if (eobj != nullptr)
 	{
@@ -224,14 +202,14 @@ void Player3D::MoveEx()
 			if (found)
 			{
 				// ベクトルのサイズを取得・距離を計測
-				dis = VSize(VSub(mvPosition, oldPlayerPosition));
+				m_distance = VSize(VSub(m_position, m_oldPlayerPosition));
 
 				// 距離が一定距離以上なら
-				if (dis >= 25.0f)
+				if (m_distance >= 25.0f)
 				{
 					// プレイヤーの座標を保存
-					playerRecord.push_back(mvPosition);
-					oldPlayerPosition = mvPosition;
+					m_playerRecord.push_back(m_position);
+					m_oldPlayerPosition = m_position;
 				}
 
 			}
@@ -245,19 +223,19 @@ void Player3D::MoveEx()
 	VECTOR hitPos = VGet(0.0f, 0.0f, 0.0f);
 	bool isHit = false;
 	int count = 0;
-	auto obj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+	auto obj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
 	if (obj != nullptr)
 	{
 		Stage* pStage = dynamic_cast<Stage*>(obj);
 		if (pStage != nullptr)
 		{
 			// ステージとプレイヤーのカプセルが当たっている場合 (ステージの地面とプレイヤーとの当たり判定処理)
-			if (pStage->CheckHit_Capsule(mvPosition, VAdd(mvPosition, VGet(0.0f, playerHeight, 0.0f)), 40.0f))
+			if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
 			{
 				// 当たっているであろうポリゴンとの接触点を求める
 				hitPos = pStage->CheckHit_Line(
-					VAdd(mvPosition, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
-					VAdd(mvPosition, VGet(0.0f, -50.0f, 0.0f))  // プレイヤーの少し下あたりを線分として指定
+					VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
+					VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))  // プレイヤーの少し下あたりを線分として指定
 				);
 
 
@@ -270,19 +248,19 @@ void Player3D::MoveEx()
 			// 壁との当たり判定とスライド処理（ダッシュ対応版）
 			// ---------------------------------------------------------
 
-			// ① すでに「歩き・ダッシュ処理」で計算された最新の mvPosition をそのまま「目標位置」とします
-			// （ここで playerSpeed を掛け直さないことで、ダッシュの速度移動量が正しく反映されます）
-			VECTOR nextPos = mvPosition;
+			// ① すでに「歩き・ダッシュ処理」で計算された最新の m_position をそのまま「目標位置」とします
+			// （ここで m_playerSpeed を掛け直さないことで、ダッシュの速度移動量が正しく反映されます）
+			VECTOR nextPosition = m_position;
 
 			// ② スライド・すり抜け防止のための最大5回ループ
 			const int SLIDE_MAX_ITERATION = 15;
 
 			for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
 			{
-				// 目標位置（nextPos）でカプセルを作り、ステージの壁と当たっているかチェック
-				// ※ Y座標の playerHeight や 90.0f の数値は、敵に使う場合は敵のサイズ（70.0f等）に合わせてください
-				VECTOR capBottom = VAdd(nextPos, VGet(0.0f, playerHeight, 0.0f));
-				VECTOR capTop = VAdd(nextPos, VGet(0.0f, 90.0f, 0.0f));
+				// 目標位置（nextPosition）でカプセルを作り、ステージの壁と当たっているかチェック
+				// ※ Y座標の m_playerHeight や 90.0f の数値は、敵に使う場合は敵のサイズ（70.0f等）に合わせてください
+				VECTOR capBottom = VAdd(nextPosition, VGet(0.0f, m_playerHeight, 0.0f));
+				VECTOR capTop = VAdd(nextPosition, VGet(0.0f, 90.0f, 0.0f));
 
 
 				// -------------------------------------------------
@@ -291,13 +269,13 @@ void Player3D::MoveEx()
 				if (pStage->CheckHit_Capsule(capBottom, capTop, 40.0f))
 				{
 					// ① まずは現在の壁の法線で勢いを打ち消す（1 回だけ）
-					VECTOR movePath = VSub(nextPos, oldPosition);
+					VECTOR movePath = VSub(nextPosition, m_oldPosition);
 					VECTOR firstNorm = VNorm(pStage->GetNormal());
 					float  dot = VDot(movePath, firstNorm);
 					if (dot < 0.0f)
 					{
 						VECTOR pushBack = VScale(firstNorm, -dot);
-						nextPos = VAdd(nextPos, pushBack);
+						nextPosition = VAdd(nextPosition, pushBack);
 						capBottom = VAdd(capBottom, pushBack);
 						capTop = VAdd(capTop, pushBack);
 					}
@@ -320,7 +298,7 @@ void Player3D::MoveEx()
 						VECTOR pushDir = VNorm(summed);
 
 						// 合成法線方向へ 1.0f だけ押し出す
-						nextPos = VAdd(nextPos, VScale(pushDir, 1.0f));
+						nextPosition = VAdd(nextPosition, VScale(pushDir, 1.0f));
 						capBottom = VAdd(capBottom, VScale(pushDir, 1.0f));
 						capTop = VAdd(capTop, VScale(pushDir, 1.0f));
 					}
@@ -328,12 +306,12 @@ void Player3D::MoveEx()
 			}
 
 			// 最終的な安全な位置を反映
-			mvPosition = nextPos;
+			m_position = nextPosition;
 
 			if (isHit)
 			{
 				// 地面に沿って歩いている状態として、Y座標をステージに合わせる
-				mvPosition.y = hitPos.y;
+				m_position.y = hitPos.y;
 
 			}
 
@@ -344,22 +322,22 @@ void Player3D::MoveEx()
 		// 脱出口との当たり判定をする
 		VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
 		bool ishit = false;
-		auto object = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
+		auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
 		if (object != nullptr)
 		{
-			DoorPos = object->GetPosition();
+			m_doorPos = object->GetPosition();
 
 			Exitdoor* pDoor = dynamic_cast<Exitdoor*>(object);
 			if (pDoor != nullptr)
 			{
 				// ステージとプレイヤーのカプセルが当たっている場合
-				if (pDoor->CheckHit_Capsule(mvPosition, VAdd(mvPosition, VGet(0.0f, playerHeight, 0.0f)), 40.0f))
+				if (pDoor->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
 				{
 
 					// 当たっているであろうポリゴンとの接触点を求める
 					hitPosition = pDoor->CheckHit_Line(
-						VAdd(mvPosition, VGet(0.0f, playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
-						VAdd(mvPosition, VGet(0.0f, -playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
+						VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
+						VAdd(m_position, VGet(0.0f, -m_playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
 					);
 
 					// 当たった判定を取っておく
@@ -380,7 +358,7 @@ void Player3D::MoveEx()
 					float a = VDot(VScale(moveVec, -1.0f), nurm); // 移動方向ベクトルの反対方向と、脱出口の法線との内積を求める
 					slider = VAdd(moveVec, VScale(nurm, a));   // 壁沿いベクトルを計算
 
-					mvPosition = VAdd(oldPosition, VScale(slider, playerSpeed));
+					m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
 
 				}
 
@@ -398,31 +376,31 @@ void Player3D::MoveEx()
 void Player3D::PlayerSquat()
 {
 	// Eキーを押した場合
-	if (CheckHitKey(KEY_INPUT_E))
+	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_E))
 	{
 		// しゃがみ状態
-		isCrouching = true;
+		m_isCrouching = true;
 	}
 	else
 	{
 		// しゃがみ状態ではない
-		isCrouching = false;
+		m_isCrouching = false;
 	}
 
 	// しゃがみ状態ならば
-	if (isCrouching)
+	if (m_isCrouching)
 	{
 		// プレイヤーの高さを変更
-		playerHeight = 60.0f;
+		m_playerHeight = 60.0f;
 		// プレイヤーのスピードを変更
-		playerSpeed = 3.0f;
+		m_speed = 3.0f;
 
 	}
 	else
 	{
 		// 初期値と同じ
-		playerHeight = 80.0f;
-		playerSpeed = 6.0f;
+		m_playerHeight = 80.0f;
+		m_speed = 6.0f;
 	}
 
 }
@@ -431,60 +409,59 @@ void Player3D::HaveLight()
 {
 
 	// ライトモデルの光らせる位置を取得
-	VECTOR lightPosition = MV1GetFramePosition(lightHandle, 0);
+	VECTOR lightPosition = MV1GetFramePosition(m_lightHandle, 0);
 
 	// カメラの座標を取得
-	VECTOR camPos = Master::mpCamera->GetPosition();
+	VECTOR camPos = Master::m_camera->GetPosition();
 
 	// ワールド座標の上方向
 	VECTOR worldUp = VGet(0.0f, 1.0f, 0.0f);
 
 	// カメラの注視点を取得
-	VECTOR camLook = Master::mpCamera->GetLookAtPosition();
+	VECTOR camLook = Master::m_camera->GetLookAtPosition();
 
 	//// カメラの向きを取得
-	VECTOR camDir = VNorm(VSub(camLook, camPos));
+	VECTOR camDirection = VNorm(VSub(camLook, camPos));
 
 	// カメラの右方向を取得
-	VECTOR camRight = VNorm(VCross(worldUp, camDir));
+	VECTOR camRight = VNorm(VCross(worldUp, camDirection));
 
 	// カメラの上方向を取得
-	VECTOR camUp = VNorm(VCross(camDir, camRight));
-
+	VECTOR camUp = VNorm(VCross(camDirection, camRight));
 
 	// ライトのモデルの位置を設定
-	lightModelPosition = camPos;
-	lightModelPosition = VAdd(lightModelPosition, VScale(camDir, 100.0f));
-	lightModelPosition = VAdd(lightModelPosition, VScale(camRight, 85.0f));
-	lightModelPosition = VAdd(lightModelPosition, VScale(camUp, -310.0f));
+	m_lightModelPosition = camPos;
+	m_lightModelPosition = VAdd(m_lightModelPosition, VScale(camDirection, 100.0f));
+	m_lightModelPosition = VAdd(m_lightModelPosition, VScale(camRight, 85.0f));
+	m_lightModelPosition = VAdd(m_lightModelPosition, VScale(camUp, -310.0f));
 
 	// 懐中電灯のモデルの位置を設定
-	MV1SetPosition(lightHandle, lightModelPosition);
+	MV1SetPosition(m_lightHandle, m_lightModelPosition);
 
 
 
 	// ライトモデルを視点を動かしたら同じ方向に回転させる
-	float angle = atan2f(camDir.x, camDir.z);
-	float angle_UpDown = atanf(camDir.y);
-	MV1SetRotationXYZ(lightHandle, VGet(-angle_UpDown, angle, 0.0f));
+	float angle = atan2f(camDirection.x, camDirection.z);
+	float angleUpDown = atanf(camDirection.y);
+	MV1SetRotationXYZ(m_lightHandle, VGet(-angleUpDown, angle, 0.0f));
 
 	// ディフューズカラー（オレンジっぽい光）
 	SetLightDifColor(GetColorF(1.0f, 0.8f, 0.4f, 0.0f)); //R,G,B
 
 	// ライトをスポットライトに変更する
 	ChangeLightTypeSpot(
-	lightPosition,// ライト位置
-	camDir,       // カメラの向き
+	lightPosition,      // ライト位置
+	camDirection,       // カメラの向き
 	DX_PI_F / 3.5f, 
 	DX_PI_F / 2.0f, 
-	2000.0f,      // 有効距離
-	0.05f,        // 減衰係数1
-	0.00020f,   // 減衰係数2 0.00020f
-	0.0f         // 減衰係数3
+	2000.0f,            // 有効距離
+	0.05f,              // 減衰係数1
+	0.00020f,           // 減衰係数2
+	0.0f                // 減衰係数3
 	);
 
 
-	Object3D* Eobj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
+	Object3D* Eobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
 	if (Eobj != nullptr)
 	{
 		Enemy3D* Ene = dynamic_cast<Enemy3D*>(Eobj);
@@ -494,11 +471,7 @@ void Player3D::HaveLight()
 
 			if (getScare)
 			{
-				//SetLightPosition(VAdd(camPos, VScale(camDir, -400.0f)));
-
-				//SetLightDirection(camDir);
-
-				isActiveLight = false;
+				m_isActiveLight = false;
 			}
 
 
@@ -507,7 +480,7 @@ void Player3D::HaveLight()
 			if (InputManager::GetInstance().CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 			{
 				// ライトを点ける
-				isActiveLight = true;
+				m_isActiveLight = true;
 			}
 
 
@@ -517,7 +490,7 @@ void Player3D::HaveLight()
 				if (InputManager::GetInstance().CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 				{
 					// ライトを消す
-					isActiveLight = false;
+					m_isActiveLight = false;
 				}
 
 			}
@@ -533,38 +506,43 @@ void Player3D::HaveLight()
 void Player3D::ItemCollision()
 {
 	// 脱出アイテムの情報を取得
-	auto pObj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEscapeItem);
+	auto pObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEscapeItem);
 
 	for (int i = 0; i < pObj.size(); i++)
 	{
 		auto Escape = pObj[i];
 
-		if (Escape != nullptr)
+		if (Escape == nullptr)
 		{
+			continue;
+		}
+
 				// 当たり判定
 				if (Collision::CheckCircleToCircle(
-					mvPosition,
+					m_position,
 					60.0f,
 					Escape->GetPosition(),
 					90.0f)
 					)
 				{
 
-					if (!getEscapeItem && !getTimeItem)
+					if (!m_getEscapeItem && !m_getTimeItem)
 					{
 						// 近づいたら表示
-						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), FontHandle);
+						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), m_fontHandle);
 					}
 
 					// Rキーを押した場合
-					if (CheckHitKey(KEY_INPUT_R))
+					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
 					{
-						getEscapeItem = true;
+						m_getEscapeItem = true;
 
 						EscapeItem* pEscape = dynamic_cast<EscapeItem*>(Escape);
 						
-						if (pEscape != nullptr)
+						if (pEscape == nullptr)
 						{
+							continue;
+						}
 
 							// 脱出アイテムをインベントリに追加
 							AddItem(pEscape->escape);
@@ -572,51 +550,53 @@ void Player3D::ItemCollision()
 							pEscape->SetDeleteFlag(true);
 
 							// ItemIDを1にする
-							AddItemID = 1;
-
-						}
+							m_addItemID = 1;
+						
 
 					}
 
 				}
 
-		}
 
 	}
 
 
 	// 時間止めアイテムの情報を取得
-	auto pobj = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagTimeItem);
+	auto pobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagTimeItem);
 
 	for (int i = 0; i < pobj.size(); i++)
 	{
 		auto StopTime = pobj[i];
 
-		if (StopTime != nullptr)
+		if (StopTime == nullptr)
 		{
+			continue;
+		}
 				if (Collision::CheckCircleToCircle(
-					mvPosition,
+					m_position,
 					60.0f,
 					StopTime->GetPosition(),
 					90.0f)
 					)
 				{
-					if (!getTimeItem && !getEscapeItem)
+					if (!m_getTimeItem && !m_getEscapeItem)
 					{
 						// 近づいたら表示
-						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), FontHandle);
+						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), m_fontHandle);
 					}
 
 					// もしRキーを押したら
-					if (CheckHitKey(KEY_INPUT_R))
+					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
 					{
-						getTimeItem = true;
+						m_getTimeItem = true;
 
 
 						TimeItem* pTimeItem = dynamic_cast<TimeItem*>(StopTime);
 
-						if (pTimeItem != nullptr)
+						if (pTimeItem == nullptr)
 						{
+							continue;
+						}
 
 							// 時間止めアイテムをインベントリに追加
 							AddItem(pTimeItem->stoptime);
@@ -624,15 +604,16 @@ void Player3D::ItemCollision()
 							pTimeItem->SetDeleteFlag(true);
 
 							// ItemIDを2にする
-							AddItemID = 2;
+							m_addItemID = 2;
 
 
-						}
+						
+
 
 					}
 				}
 			
-		}
+		
 	}
 
 
@@ -642,64 +623,63 @@ void Player3D::ItemCollision()
 
 void Player3D::UseItem()
 {
-	if (AddItemID == 1)
+	if (m_addItemID == 1)
 	{
-		auto door = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
+		auto door = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
 		if (door != nullptr)
 		{
 			Exitdoor* ExitDoor = dynamic_cast<Exitdoor*>(door);
 
-			if (ExitDoor != nullptr)
+			if (ExitDoor == nullptr)
 			{
+				return;
+			}
 				// 当たり判定
 				if (Collision::CheckCircleToCircle(
-					mvPosition,
+					m_position,
 					100.0f,
 					ExitDoor->GetPosition(),
 					100.0f)
 					)
 				{
 					// 脱出アイテムを持っていたら
-					if (getEscapeItem)
+					if (m_getEscapeItem)
 					{
-						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), FontHandle);
+						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), m_fontHandle);
 					}
 
 					// Fキーを押した場合
-					if (CheckHitKey(KEY_INPUT_F))
+					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_F))
 					{
 						LoseItem();
 
 						// 脱出アイテムを持っていない
-						getEscapeItem = false;
+						m_getEscapeItem = false;
 					}
 
-
-
-
 				}
-			}
+			
 
 		}
 	}
 
 	// 時間止めアイテムを持っていたら
-	if (getTimeItem)
+	if (m_getTimeItem)
 	{
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), FontHandle);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), m_fontHandle);
 	}
 
-	if (AddItemID == 2)
+	if (m_addItemID == 2)
 	{
-		if (CheckHitKey(KEY_INPUT_F))
+		if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_F))
 		{
-			if (!isUseStopItem)
+			if (!m_isUseStopItem)
 			{
 				LoseItem();
 			}
 
 			// 時間止めアイテムを持っていない
-			getTimeItem = false;
+			m_getTimeItem = false;
 		}
 	}
 
@@ -708,27 +688,22 @@ void Player3D::UseItem()
 void Player3D::ItemBox()
 {
 	// アイテムインベントリにアイテムがある場合
-	for (size_t i = 0; i < items.size(); i++)
+	for (size_t i = 0; i < m_items.size(); i++)
 	{
-		x = HUD_X + (int)i * (ItemSize + ItemMargin);
+		m_itemBoxX = DrawX + (int)i * (ItemSize + ItemMargin);
 
-		y = HUD_Y;
+		m_itemBoxY = DrawY;
 
 		// アイテムボックスの枠
-		DrawBox(x, y, x + ItemSize, y + ItemSize, GetColor(200, 200, 200), false);
+		DrawBox(m_itemBoxX, m_itemBoxY, m_itemBoxX + ItemSize, m_itemBoxY + ItemSize, GetColor(200, 200, 200), false);
 
+		// アイテム名の表示
+		DrawStringToHandle(m_itemBoxX + 5, m_itemBoxY - 45, m_items[i].name, GetColor(255, 255, 255), m_fontHandle);
 
 		// アイテム画像の表示
-		DrawGraph(x + 50, y, items[i].image, true);
+		DrawGraph(m_itemBoxX + 50, m_itemBoxY, m_items[i].image, true);
 
 	}
-
-	selX = HUD_X + currentItemIndex * (ItemSize + ItemMargin);
-
-	selY = HUD_Y;
-
-	// アイテムの現在選択している所を枠で囲む
-	DrawBox(selX, selY, selX + ItemSize, selY + ItemSize, GetColor(0, 255, 0), false);
 
 }
 
@@ -736,9 +711,9 @@ void Player3D::ItemBox()
 bool Player3D::AddItem(const ItemData item)
 {
 	// アイテムのサイズが最大数より少ない場合構造体に情報を追加する
-	if (items.size() < maxSize)
+	if (m_items.size() < MaxSize)
 	{
-		items.push_back(item);
+		m_items.push_back(item);
 
 		return true;
 
@@ -755,31 +730,31 @@ bool Player3D::AddItem(const ItemData item)
 void Player3D::LoseItem()
 {
 	// アイテムのサイズが最大数より小さい場合何もしない
-	if (items.size() < maxSize)
+	if (m_items.size() < MaxSize)
 	{
 		return;
 	}
 
 
-	for (size_t i = 0; i < items.size(); i++)
+	for (size_t i = 0; i < m_items.size(); i++)
 	{
 		// アイテム番号が1の場合アイテムを脱出口で使用したときの処理を呼び出す
-		if (items[i].id == 1)
+		if (m_items[i].id == 1)
 		{
 			EscapeItem::Escape();
 
 		}
 
 		// アイテム番号が 2 の場合のアイテムを使用したときの処理を呼び出す
-		if (items[i].id == 2)
+		if (m_items[i].id == 2)
 		{
 			// アイテムを使用
-			isUseStopItem = true;
+			m_isUseStopItem = true;
 
 		}
 
 		// アイテムの情報を削除する
-		items.clear();
+		m_items.clear();
 		
 
 	}
@@ -790,14 +765,14 @@ void Player3D::DrawStamina()
 {
 	int r = 20, g = 150, b = 20;
 
-	if ((float)stamina <= 0.5f)
+	if ((float)m_stamina <= 0.5f)
 	{
 		int noise = GetRand(30) - 20;
 		r = max(0, min(255, r + noise));
 
-		int shake = 2 + (int)((0.2f - (float)stamina) * 20);
-		stamina_X += GetRand(shake * 2) - shake;
-		stamina_Y += GetRand(shake * 2) - shake;
+		int shake = 2 + (int)((0.2f - (float)m_stamina) * 20);
+		m_staminaX += GetRand(shake * 2) - shake;
+		m_staminaY += GetRand(shake * 2) - shake;
 
 		float flicker = (float)sin(GetNowCount() * 0.02f);
 		int alpha = 180 + (int)(75 * abs(flicker));
@@ -806,20 +781,20 @@ void Player3D::DrawStamina()
 	}
 	else
 	{
-		stamina_X = Utility::SCREEN_WIDTH / 2 - 260; // スタミナゲージのX座標
-		stamina_Y = Utility::SCREEN_HEIGHT / 2 + 430; // スタミナゲージのY座標
+		m_staminaX = Utility::SCREEN_WIDTH / 2 - 260; // スタミナゲージのX座標
+		m_staminaY = Utility::SCREEN_HEIGHT / 2 + 430; // スタミナゲージのY座標
 
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
 
 	// スタミナゲージの枠
-	DrawBox(stamina_X, stamina_Y, stamina_X + width, stamina_Y + height, GetColor(0, 0, 0), true);
+	DrawBox(m_staminaX, m_staminaY, m_staminaX + m_width, m_staminaY + m_height, GetColor(0, 0, 0), true);
 
-	// スタミナゲージ（緑）
-	DrawBox(stamina_X, stamina_Y, stamina_X + gaugeWidth, stamina_Y + height, GetColor(r, g, b), true);
+	// スタミナゲージ
+	DrawBox(m_staminaX, m_staminaY, m_staminaX + m_gaugeWidth, m_staminaY + m_height, GetColor(r, g, b), true);
 
 	// 枠線
-	DrawBox(stamina_X, stamina_Y, stamina_X + width, stamina_Y + height, GetColor(255, 255, 255), false);
+	DrawBox(m_staminaX, m_staminaY, m_staminaX + m_width, m_staminaY + m_height, GetColor(255, 255, 255), false);
 
 }
 
@@ -827,21 +802,21 @@ void Player3D::DrawStamina()
 bool Player3D::StaminaUpdate(bool isKeyProsses)
 {
 	// 現在値に応じたスタミナゲージの幅
-	gaugeWidth = (int)((float)stamina / staminaMAX * width);
+	m_gaugeWidth = (int)((float)m_stamina / MaxStamina * m_width);
 
 
 	// 走りキーを押して移動しているならならスタミナゲージを減らす
-	if (isKeyProsses && stamina > 0 && isMove)
+	if (isKeyProsses && m_stamina > 0 && m_isMove)
 	{
 		// 走り状態にする
-		state = RUN;
+		m_state = Run;
 		// スタミナゲージを減らす
-		stamina--;
+		m_stamina--;
 
 		// 0以下なら歩き状態にする
-		if (stamina <= 0)
+		if (m_stamina <= 0)
 		{
-			state = WALK;
+			m_state = Walk;
 		}
 
 		return true;
@@ -849,12 +824,12 @@ bool Player3D::StaminaUpdate(bool isKeyProsses)
 	else
 	{
 		// 歩き状態にする
-		state = WALK;
+		m_state = Walk;
 
 		// 現在のスタミナゲージが最大値より少ない場合スタミナを増やす
-		if (stamina < staminaMAX)
+		if (m_stamina < MaxStamina)
 		{
-			stamina++;
+			m_stamina++;
 		}
 		return false;
 	}

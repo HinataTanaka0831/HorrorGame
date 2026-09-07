@@ -22,8 +22,8 @@ public:
 
 public:
 	// 座標初期化およびシーンObjectManagerへの自動登録
-	// 入力: initPos(初期3Dワールド座標) / 出力: なし / 副作用: シーンObjectManagerへの登録
-	Object3D(VECTOR initPos); 
+	// 入力: initPosition(初期3Dワールド座標) / 出力: なし / 副作用: シーンObjectManagerへの登録
+	Object3D(VECTOR initPosition); 
 	virtual ~Object3D();      
 
 	// 毎フレームの状態更新
@@ -37,29 +37,29 @@ public:
 public:  // ゲッター・セッター
 
 	// 座標
-	void SetPosition(VECTOR pos) { mvPosition = pos; }
-	VECTOR GetPosition() { return mvPosition; }
+	void SetPosition(VECTOR position) { m_position = position; }
+	VECTOR GetPosition() { return m_position; }
 
 	// 回転
-	void SetRotation(VECTOR rot) { mvRotation = rot; }
-	VECTOR GetRotation() { return mvRotation; }
+	void SetRotation(VECTOR rotation) { m_rotation = rotation; }
+	VECTOR GetRotation() { return m_rotation; }
 
 	// 削除フラグ
-	void SetDeleteFlag(bool flag) { mbDeleteFlag = flag; }
-	bool IsDeleteFlag() { return mbDeleteFlag; }
+	void SetDeleteFlag(bool flag) { m_deleteFlag = flag; }
+	bool IsDeleteFlag() { return m_deleteFlag; }
 
 	// タグ
-	void SetTag(Tag3D tag) { mnTag = tag; }
-	Tag3D GetTag() { return mnTag; }
+	void SetTag(Tag3D tag) { m_tag = tag; }
+	Tag3D GetTag() { return m_tag; }
 
 
 protected:
-	VECTOR mvPosition;   // 座標
-	VECTOR mvRotation;   // 回転
+	VECTOR m_position;   // 座標
+	VECTOR m_rotation;   // 回転
 
 
 private:
-	bool mbDeleteFlag;   // 削除フラグ
-	Tag3D mnTag;         // タグ
-	float mfCurrentCameraDistance;     // 現在のカメラとの距離
+	bool m_deleteFlag;   // 削除フラグ
+	Tag3D m_tag;         // タグ
+	float m_currentCameraDistance;     // 現在のカメラとの距離
 };

@@ -13,8 +13,8 @@ public:
 
 public:
 	// 時間停止アイテム3DモデルのロードおよびHUDフォント初期化
-	// 入力: filename(モデルパス), initPos(配置座標), isSeparateAnim(分割モーションフラグ) / 出力: なし / 副作用: Model生成、TagTimeItem設定
-	TimeItem(std::string filename, VECTOR initPos, bool isSeparateAnim = false);
+	// 入力: fileName(モデルパス), initPosition(配置座標), isSeparateAnimation(分割モーションフラグ) / 出力: なし / 副作用: Model生成、TagTimeItem設定
+	TimeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
 	~TimeItem() override;
 
 	// タイマー経過による敵AI停止制御およびモデル更新
@@ -34,16 +34,16 @@ public:
 	void DrawTimer();
 
 private:
-	Model* mpModel;
+	Model* m_model;
 
-	static int waitTimer;           // 停止タイマー（フレーム単位でカウントアップ）
-	static bool isTimerActive;      // タイマーが動作中かどうか
-	static int lastProcessedFrame;  // 最後に処理したフレーム番号（1フレーム1回処理用）
+	static int m_waitTimer;           // 停止タイマー（フレーム単位でカウントアップ）
+	static bool m_isTimerActive;      // タイマーが動作中かどうか
+	static int m_lastProcessedFrame;  // 最後に処理したフレーム番号（1フレーム1回処理用）
 
 	// 20秒間 × 60FPS = 1200フレーム
 	static const int WaitFrame = 1200;  // 20秒間（60FPS × 20秒）
 
 	// 残り時間表示用のフォントハンドル
-	static int timerFontHandle;
+	static int m_timerFontHandle;
 
 };

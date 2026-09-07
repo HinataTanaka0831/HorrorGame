@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include "GameOverScene.h"
-#include "DxLib.h"
 #include "Master.h"
 #include "InputManager.h"
 #include "EscapeItem.h"
@@ -21,14 +20,14 @@ GameOverScene::~GameOverScene()
 
 void GameOverScene::Initialize()
 {
-	if (mpRetoryButton == nullptr)
+	if (m_retoryButton == nullptr)
 	{
-		mpRetoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		m_retoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
 	}
 
-	if (mpTitleButton == nullptr)
+	if (m_titleButton == nullptr)
 	{
-		mpTitleButton = std::make_unique<Button>(DrawX, TitleY - 10, DrawX + 250, TitleY + 60, "タイトルへ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		m_titleButton = std::make_unique<Button>(DrawX, TitleY - 10, DrawX + 250, TitleY + 60, "タイトルへ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
 	}
 
 	// Mouseのロックを解除
@@ -39,31 +38,31 @@ void GameOverScene::Initialize()
 void GameOverScene::Update()
 {
 	// BGMの再生
-	Master::mpSoundManager->PlayBGM(SoundManager::BGM_RESULT);
+	Master::m_soundManager->PlayBGM(SoundManager::BGMResult);
 
 	// ボタンの更新処理を呼ぶ
-	if (mpRetoryButton)
+	if (m_retoryButton)
 	{
-		mpRetoryButton->Update();
+		m_retoryButton->Update();
 
-		if (mpRetoryButton->IsClick())
+		if (m_retoryButton->IsClick())
 		{
 			// SE再生
-			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_3D);
+			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_sceneManager->SetNextScene(SceneManager::SceneGame3D);
 		}
 
 	}
 
-	if (mpTitleButton)
+	if (m_titleButton)
 	{
-		mpTitleButton->Update();
+		m_titleButton->Update();
 
-		if (mpTitleButton->IsClick())
+		if (m_titleButton->IsClick())
 		{
 			// SE再生
-			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_TITLE);
+			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_sceneManager->SetNextScene(SceneManager::SceneTitle);
 		}
 	}
 
@@ -82,26 +81,26 @@ void GameOverScene::Draw()
 
 		char Buf[256];
 		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
-		noise = LoadGraph(Buf);
+		m_noiseHandle = LoadGraph(Buf);
 
 		// 背景の色を設定
 		SetBackgroundColor(0, 0, 0);
 
 		// 背景の表示
-		DrawGraph(0, 0, noise, true);
+		DrawGraph(0, 0, m_noiseHandle, true);
 
 		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), fontSize140);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), m_fontSize140);
 
 		// ボタンの表示
-		if (mpRetoryButton)
+		if (m_retoryButton)
 		{
-			mpRetoryButton->Draw();
+			m_retoryButton->Draw();
 		}
 
-		if (mpTitleButton)
+		if (m_titleButton)
 		{
-			mpTitleButton->Draw();
+			m_titleButton->Draw();
 		}
 
 		// 裏画面の内容を表画面に映す
@@ -116,8 +115,8 @@ void GameOverScene::Draw()
 void GameOverScene::Finalize()
 {
 	// 画像を削除
-	DeleteGraph(noise);
+	DeleteGraph(m_noiseHandle);
 
 	// BGM停止
-	Master::mpSoundManager->StopBGM();
+	Master::m_soundManager->StopBGM();
 }

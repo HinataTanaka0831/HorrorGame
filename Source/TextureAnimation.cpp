@@ -2,22 +2,20 @@
 
 TextureAnimation::TextureAnimation(
 	VECTOR position,
-	std::string filename,
+	std::string fileName,
 	int allNum,
 	int xNum,
 	int yNum,
 	int interval
 )
-	: mvPosition()
-	, mnCounter(0)
-	, mnInterval(interval)
-	, mnCurrentNum(0)
-	, mnAllNum(allNum)
+	: m_position(position)
+	, m_interval(interval)
+	, m_allNum(allNum)
 {
-	mnHandleList = new int[allNum];
+	m_handleList = new int[allNum];
 
 	// 画像ファイル読み込み
-	int handle = LoadGraph(filename.c_str());
+	int handle = LoadGraph(fileName.c_str());
 	if (handle == -1)
 	{
 		return;   // 読み込み失敗していたら以降は処理しない
@@ -29,13 +27,13 @@ TextureAnimation::TextureAnimation(
 
 	// テクスチャの分割読み込み
 	int success = LoadDivGraph(
-		filename.c_str(),
+		fileName.c_str(),
 		allNum,
 		xNum,
 		yNum,
 		sizeX / xNum,
 		sizeY / yNum,
-		mnHandleList
+		m_handleList
 	);
 }
 
@@ -47,19 +45,19 @@ TextureAnimation::~TextureAnimation()
 void TextureAnimation::Update()
 {
 	// カウンタをインクリメント
-	mnCounter++;
-	if (mnCounter % mnInterval == 0)
+	m_counter++;
+	if (m_counter % m_interval == 0)
 	{
-		mnCounter = 0;   // カウンタを戻す
-		mnCurrentNum++;  // テクスチャ番号を進める
-		if (mnCurrentNum >= mnAllNum)  // 分割数を超えるならループさせる
+		m_counter = 0;   // カウンタを戻す
+		m_currentNum++;  // テクスチャ番号を進める
+		if (m_currentNum >= m_allNum)  // 分割数を超えるならループさせる
 		{
-			mnCurrentNum = 0;   // ループさせる
+			m_currentNum = 0;   // ループさせる
 		}
 	}
 }
 
 void TextureAnimation::Draw()
 {
-	DrawGraph((int)mvPosition.x, (int)mvPosition.y, mnHandleList[mnCurrentNum], true);
+	DrawGraph((int)m_position.x, (int)m_position.y, m_handleList[m_currentNum], true);
 }

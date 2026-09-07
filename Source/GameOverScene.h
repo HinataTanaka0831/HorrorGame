@@ -31,11 +31,11 @@ public:
 	// 入力: なし / 出力: なし / 副作用: 画像削除、BGM停止
 	void Finalize() override;
 private:
-	std::unique_ptr<Button> mpRetoryButton = nullptr;  // リトライ（3Dシーン再開始）ボタン
-	std::unique_ptr<Button> mpTitleButton = nullptr;   // タイトル画面へ戻るボタン
-	int noise = -1;                                    // 砂嵐背景画像ハンドル
+	std::unique_ptr<Button> m_retoryButton = nullptr;  // リトライ（3Dシーン再開始）ボタン
+	std::unique_ptr<Button> m_titleButton = nullptr;   // タイトル画面へ戻るボタン
+	int m_noiseHandle = -1;                                    // 砂嵐背景画像ハンドル
 
 	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150;       // ボタン配置基準X座標
-	static const int RetoryY = 650;                    // リトライボタンY座標
-	static const int TitleY = 750;                     // タイトルボタンY座標
+	const int RetoryY = 650;                    // リトライボタンY座標
+	const int TitleY = 750;                     // タイトルボタンY座標
 };

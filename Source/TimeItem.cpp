@@ -12,31 +12,31 @@
 // static変数の定義（クラスの外で1回だけ定義する）
 // static変数は全てのTimeItemインスタンスで共有される
 // =====================================================
-int  TimeItem::waitTimer         = 0;     // 停止タイマー（0からカウントアップ）
-bool TimeItem::isTimerActive     = false; // タイマーが動作中かどうか
-int  TimeItem::timerFontHandle   = -1;    // フォントハンドル（未作成は-1）
+int  TimeItem::m_waitTimer         = 0;     // 停止タイマー（0からカウントアップ）
+bool TimeItem::m_isTimerActive     = false; // タイマーが動作中かどうか
+int  TimeItem::m_timerFontHandle   = -1;    // フォントハンドル（未作成は-1）
 
 
-TimeItem::TimeItem(std::string filename, VECTOR initPos, bool isSeparateAnim)
-    :Item(initPos)
+TimeItem::TimeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
+    :Item(initPosition)
 {
 	SetTag(Object3D::TagTimeItem);
 
-	mpModel = new Model(filename, initPos, isSeparateAnim);
+	m_model = new Model(fileName, initPosition, isSeparateAnimation);
 
 	// フォントハンドルをまだ作っていなければ作成する
 	// （最初のTimeItemが生成されたときに1回だけ作る）
-	if (timerFontHandle == -1)
+	if (m_timerFontHandle == -1)
 	{
-		timerFontHandle = CreateFontToHandle(NULL, 50, -1, DX_FONTTYPE_ANTIALIASING);
+		m_timerFontHandle = CreateFontToHandle(NULL, 50, -1, DX_FONTTYPE_ANTIALIASING);
 	}
 }
 
 TimeItem::~TimeItem()
 {
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		delete mpModel;
+		delete m_model;
 	}
 }
 
@@ -45,22 +45,20 @@ void TimeItem::Update()
 	// 敵の動きを止める処理
 	StopTime();
 
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->SetPosition(mvPosition);
-		mpModel->Update();
+		m_model->SetPosition(m_position);
+		m_model->Update();
 	}
 
 }
 
 void TimeItem::Draw()
 {
-
-	if (mpModel != nullptr)
+	if (m_model != nullptr)
 	{
-		mpModel->Draw();
+		m_model->Draw();
 	}
-
 }
 
 void TimeItem::StopTime()
@@ -69,7 +67,7 @@ void TimeItem::StopTime()
 	// -------------------------------------------------
 	// プレイヤーを取得する
 	// -------------------------------------------------
-	auto player = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+	auto player = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	Player3D* pPlayer = dynamic_cast<Player3D*>(player);
 
 	if (pPlayer == nullptr)
@@ -83,16 +81,16 @@ void TimeItem::StopTime()
 	// -------------------------------------------------
 	// アイテム使用直後：タイマーを開始する
 	// -------------------------------------------------
-	if (isUseStopItem && !isTimerActive)
+	if (isUseStopItem && !m_isTimerActive)
 	{
 		// タイマーを開始状態にする
-		isTimerActive = true;
+		m_isTimerActive = true;
 
 		// タイマーを0にリセット
-		waitTimer = 0;
+		m_waitTimer = 0;
 
 		// 全ての敵の動きを止める
-		auto eobjList = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
+		auto eobjList = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
 		for (int i = 0; i < eobjList.size(); i++)
 		{
 			auto eobj = eobjList[i];
@@ -111,20 +109,20 @@ void TimeItem::StopTime()
 	// -------------------------------------------------
 	// タイマー動作中：カウントアップして残り時間を管理する
 	// -------------------------------------------------
-	if (isTimerActive)
+	if (m_isTimerActive)
 	{
 		// タイマーを1フレーム分進める
-		waitTimer++;
+		m_waitTimer++;
 
 		// 20秒（1200フレーム）経過したかチェック
-		if (waitTimer >= WaitFrame)
+		if (m_waitTimer >= WaitFrame)
 		{
 			// -----------------------------------------
 			// 時間切れ！敵の動きを再開する
 			// -----------------------------------------
 
 			// 全ての敵の動きを再開する
-			auto eobjList = Master::mpSceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
+			auto eobjList = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
 			for (int i = 0; i < (int)eobjList.size(); i++)
 			{
 				auto eobj = eobjList[i];
@@ -143,10 +141,10 @@ void TimeItem::StopTime()
 			pPlayer->SetUseStopItem(false);
 
 			// タイマーをリセット
-			waitTimer = 0;
+			m_waitTimer = 0;
 
 			// タイマーを停止状態にする
-			isTimerActive = false;
+			m_isTimerActive = false;
 		}
 	}
 }
@@ -154,7 +152,7 @@ void TimeItem::StopTime()
 void TimeItem::DrawTimer()
 {
 	// タイマーが動いていないなら何も表示しない
-	if (!isTimerActive)
+	if (!m_isTimerActive)
 	{
 		return;
 	}
@@ -163,7 +161,7 @@ void TimeItem::DrawTimer()
 	// 残り時間を計算する（フレーム数 → 秒数に変換）
 	// -------------------------------------------------
 	// WaitFrame（1200）から現在のタイマー値を引いて、60で割ると残り秒数になる
-	int remainingFrames = WaitFrame - waitTimer;       // 残りフレーム数
+	int remainingFrames = WaitFrame - m_waitTimer;       // 残りフレーム数
 	int remainingSeconds = remainingFrames / 60;       // 残り秒数（小数切り捨て）
 
 	// 0秒以下にならないようにする
@@ -193,6 +191,6 @@ void TimeItem::DrawTimer()
 	}
 
 	// 「敵停止中：残り○○秒」と表示する
-	DrawFormatStringToHandle(drawX, drawY, color, timerFontHandle,
+	DrawFormatStringToHandle(drawX, drawY, color, m_timerFontHandle,
 		"敵停止中：残り %d 秒", remainingSeconds);
 }

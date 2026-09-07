@@ -4,31 +4,31 @@
 Scene::Scene()
 {
 	// オブジェクトマネージャーの生成
-	mpObjectManager = new ObjectManager();
+	m_objectManager = new ObjectManager();
 }
 
 Scene::~Scene()
 {
-	if (mpObjectManager != nullptr)
+	if (m_objectManager != nullptr)
 	{
-		delete mpObjectManager;
+		delete m_objectManager;
 	}
 }
 
 void Scene::Update()
 {
-	if (mpObjectManager != nullptr)
+	if (m_objectManager != nullptr)
 	{
-		mpObjectManager->Update();
+		m_objectManager->Update();
 	}
 
 }
 
 void Scene::Draw()
 {
-	if (mpObjectManager != nullptr)
+	if (m_objectManager != nullptr)
 	{
-		mpObjectManager->Draw();
+		m_objectManager->Draw();
 	}
 
 }

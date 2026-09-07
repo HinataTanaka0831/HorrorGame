@@ -34,7 +34,7 @@ public:
 
 public:         // 2D系の関数宣言
 	// 2Dオブジェクトのリスト登録
-	// 入力: object2D(追加するオブジェクトポインタ) / 出力: なし / 副作用: mObject2DListへの追加
+	// 入力: object2D(追加するオブジェクトポインタ) / 出力: なし / 副作用: m_object2DListへの追加
 	void AddObject(Object2D* object2D);
 
 	// 登録された全2Dオブジェクトのメモリ解放
@@ -55,7 +55,7 @@ public:         // 2D系の関数宣言
 
 public:      // 3D系の関数宣言
 	// 3Dオブジェクトのリスト登録
-	// 入力: object3D(追加するオブジェクトポインタ) / 出力: なし / 副作用: mObject3DListへの追加
+	// 入力: object3D(追加するオブジェクトポインタ) / 出力: なし / 副作用: m_object3DListへの追加
 	void AddObject(Object3D* object3D);
 
 	// 登録された全3Dオブジェクトのメモリ解放
@@ -77,6 +77,6 @@ public:      // 3D系の関数宣言
 
 
 private:
-	std::list<Object2D*> mObject2DList;         // 2Dオブジェクトを管理するリスト
-	std::list<Object3D*> mObject3DList;         // 3Dオブジェクトを管理するリスト
+	std::list<Object2D*> m_object2DList;         // 2Dオブジェクトを管理するリスト
+	std::list<Object3D*> m_object3DList;         // 3Dオブジェクトを管理するリスト
 };

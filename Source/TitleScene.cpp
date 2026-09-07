@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include "TitleScene.h"
-#include "DxLib.h"
 #include "Master.h"
 #include "InputManager.h"
 #include "Enemy3D.h"
@@ -29,24 +28,24 @@ void TitleScene::Initialize()
 	// などをここで行う
 	// ->タイトル画面で必要なオブジェクトをここで生成する
 
-	if (enemyPictureHandle == -1)
+	if (m_enemyPictureHandle == -1)
 	{
-		enemyPictureHandle = LoadGraph("Resource/3D_UI/TitleScene_EnemyPicture.png");
+		m_enemyPictureHandle = LoadGraph("Resource/3D_UI/TitleScene_EnemyPicture.png");
 	}
 
-	if (mpPlayButton == nullptr)
+	if (m_playButton == nullptr)
 	{
-		mpPlayButton = std::make_unique<Button>(DrawX, PlayY - 10, DrawX + 250, PlayY + 60, " プレイ ", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		m_playButton = std::make_unique<Button>(DrawX, PlayY - 10, DrawX + 250, PlayY + 60, " プレイ ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
 	}
 
-	if (mpPlayRuleButton == nullptr)
+	if (m_playRuleButton == nullptr)
 	{
-		mpPlayRuleButton = std::make_unique<Button>(DrawX, PlayRuleY - 10, DrawX + 250, PlayRuleY + 60, "操作方法", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		m_playRuleButton = std::make_unique<Button>(DrawX, PlayRuleY - 10, DrawX + 250, PlayRuleY + 60, "操作方法", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
 	}
 
-	if (mpQuitButton == nullptr)
+	if (m_quitButton == nullptr)
 	{
-		mpQuitButton = std::make_unique<Button>(DrawX, QuitY - 10, DrawX + 250, QuitY + 60, "終了", GetColor(255, 126, 115), GetColor(250, 250, 250), fontSize20);
+		m_quitButton = std::make_unique<Button>(DrawX, QuitY - 10, DrawX + 250, QuitY + 60, "終了", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
 	}
 
 	// Mouseのロックを解除
@@ -59,42 +58,42 @@ void TitleScene::Initialize()
 void TitleScene::Update()
 {
 	// BGMの再生
-	Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
+	Master::m_soundManager->PlayBGM(SoundManager::BGMTitle);
 
 	// ボタンの更新処理を呼ぶ
-	if (mpPlayButton)
+	if (m_playButton)
 	{
-		mpPlayButton->Update();
+		m_playButton->Update();
 
-		if (mpPlayButton->IsClick())
+		if (m_playButton->IsClick())
 		{
 			// SE再生
-			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_3D);
+			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_sceneManager->SetNextScene(SceneManager::SceneGame3D);
 		}
 	}
 
-	if (mpPlayRuleButton)
+	if (m_playRuleButton)
 	{
-		mpPlayRuleButton->Update();
+		m_playRuleButton->Update();
 
-		if (mpPlayRuleButton->IsClick())
+		if (m_playRuleButton->IsClick())
 		{
 			// SE再生
-			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-			Master::mpSceneManager->SetNextScene(SceneManager::SCENE_GAME_RULE);
+			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_sceneManager->SetNextScene(SceneManager::SceneGameRule);
 		}
 	}
 
-	if (mpQuitButton)
+	if (m_quitButton)
 	{
-		mpQuitButton->Update();
+		m_quitButton->Update();
 
-		if (mpQuitButton->IsClick())
+		if (m_quitButton->IsClick())
 		{
 			// SE再生
-			Master::mpSoundManager->PlaySE(SoundManager::SE_DECIDE);
-			Master::mpSceneManager->RequestQuit();
+			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_sceneManager->RequestQuit();
 		}
 	}
 
@@ -111,35 +110,35 @@ void TitleScene::Draw()
 
 		char Buf[256];
 		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
-		noise = LoadGraph(Buf);
+		m_noiseHandle = LoadGraph(Buf);
 
 		// 背景の色を設定
 		SetBackgroundColor(0, 0, 0);
 
 		// 敵の画像を表示
-		DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, enemyPictureHandle, true);
+		DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, m_enemyPictureHandle, true);
 
 		// 背景の表示
-		DrawGraph(0, 0, noise, true);
+		DrawGraph(0, 0, m_noiseHandle, true);
 
 		// ボタンの表示
-		if (mpPlayButton)
+		if (m_playButton)
 		{
-			mpPlayButton->Draw();
+			m_playButton->Draw();
 		}
 
-		if (mpPlayRuleButton)
+		if (m_playRuleButton)
 		{
-			mpPlayRuleButton->Draw();
+			m_playRuleButton->Draw();
 		}
 
-		if (mpQuitButton)
+		if (m_quitButton)
 		{
-			mpQuitButton->Draw();
+			m_quitButton->Draw();
 		}
 
 		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 2 - 330, "呪われた校舎", GetColor(255, 0, 0), fontSize130);
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 2 - 330, "呪われた校舎", GetColor(255, 0, 0), m_fontSize130);
 
 		// 裏画面の内容を表画面に映す
 		ScreenFlip();
@@ -156,12 +155,12 @@ void TitleScene::Draw()
 void TitleScene::Finalize()
 {
 	// 画像を削除
-	DeleteGraph(noise);
-	if (enemyPictureHandle != -1)
+	DeleteGraph(m_noiseHandle);
+	if (m_enemyPictureHandle != -1)
 	{
-		DeleteGraph(enemyPictureHandle);
+		DeleteGraph(m_enemyPictureHandle);
 	}
 
 	// BGM停止
-	Master::mpSoundManager->StopBGM();
+	Master::m_soundManager->StopBGM();
 }
