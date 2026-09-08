@@ -19,12 +19,12 @@ GameRuleScene::~GameRuleScene()
 void GameRuleScene::Initialize()
 {
 	// âÊëúÇê∂ê¨
-	if (m_keyHandle == -1) m_keyHandle = LoadGraph("Resource/3D_UI/playRule_Key_UI.png");
-	if (m_keyRHandle == -1) m_keyRHandle = LoadGraph("Resource/3D_UI/playRule_Key_R_UI.png");
-	if (m_keyFHandle == -1) m_keyFHandle = LoadGraph("Resource/3D_UI/playRule_Key_F_UI.png");
-	if (m_keyEHandle == -1) m_keyEHandle = LoadGraph("Resource/3D_UI/playRule_Key_E_UI.png");
-	if (m_mouseHandle == -1) m_mouseHandle = LoadGraph("Resource/3D_UI/playRule_Mouse_UI.png");
-	if (m_mouseMoveHandle == -1) m_mouseMoveHandle = LoadGraph("Resource/3D_UI/playRule_MouseMove_UI.png");
+	if (m_keyHandle == -1) m_keyHandle = LoadGraph("Resource/UI/playRule_Key_UI.png");
+	if (m_keyRHandle == -1) m_keyRHandle = LoadGraph("Resource/UI/playRule_Key_R_UI.png");
+	if (m_keyFHandle == -1) m_keyFHandle = LoadGraph("Resource/UI/playRule_Key_F_UI.png");
+	if (m_keyEHandle == -1) m_keyEHandle = LoadGraph("Resource/UI/playRule_Key_E_UI.png");
+	if (m_mouseHandle == -1) m_mouseHandle = LoadGraph("Resource/UI/playRule_Mouse_UI.png");
+	if (m_mouseMoveHandle == -1) m_mouseMoveHandle = LoadGraph("Resource/UI/playRule_MouseMove_UI.png");
 
 	if (m_backButton == nullptr)
 	{
@@ -63,7 +63,7 @@ void GameRuleScene::Draw()
 		ClearDrawScreen();
 
 		char Buf[256];
-		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
+		sprintf(Buf, "Resource/UI/sandStorm%d.png", i);
 		m_noiseHandle = LoadGraph(Buf);
 
 		// îwåiÇÃêFÇê›íË

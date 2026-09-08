@@ -9,7 +9,7 @@
 class EscapeItem : public Item
 {
 public:
-	ItemData escape = { 1, LoadGraph("Resource/3D_UI/escapeItem.png"), "おふだ" };  // EscapeItem のデータ
+	ItemData escape = { 1, LoadGraph("Resource/UI/ui_escapeItem.png"), "おふだ" };  // EscapeItem のデータ
 	static int NowNeedItem;  // 現在までに取得・消費された脱出アイテム数
 
 public:

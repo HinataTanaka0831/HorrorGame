@@ -9,7 +9,7 @@
 class TimeItem : public Item
 {
 public:
-	ItemData stoptime = { 2, LoadGraph("Resource/3D_UI/TimeItem.png"), "時間停止" }; // TimeItem のデータ
+	ItemData stoptime = { 2, LoadGraph("Resource/UI/ui_timeItem.png"), "時間停止" }; // TimeItem のデータ
 
 public:
 	// 時間停止アイテム3DモデルのロードおよびHUDフォント初期化
