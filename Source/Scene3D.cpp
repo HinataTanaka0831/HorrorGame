@@ -47,10 +47,10 @@ void Scene3D::Initialize()
 	loader.ExecuteScene3D();
 
 	// 画像の生成
-	if (m_playerCrouchingHandle == -1) m_playerCrouchingHandle = LoadGraph("Resource/3D_UI/Player_Crouching.png");
+	if (m_playerCrouchingHandle == -1) m_playerCrouchingHandle = LoadGraph("Resource/UI/ui_playerCrouching.png");
 
 	// 画像の生成
-	if (m_playerMoveHandle == -1) m_playerMoveHandle = LoadGraph("Resource/3D_UI/Player_Move.png");
+	if (m_playerMoveHandle == -1) m_playerMoveHandle = LoadGraph("Resource/UI/ui_playerMove.png");
 
 	EscapeItem::NowNeedItem = 0;  // 脱出のために必要なアイテム数を
 }

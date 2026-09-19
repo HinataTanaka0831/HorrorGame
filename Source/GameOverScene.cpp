@@ -80,7 +80,7 @@ void GameOverScene::Draw()
 		ClearDrawScreen();
 
 		char Buf[256];
-		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
+		sprintf(Buf, "Resource/UI/sandStorm%d.png", i);
 		m_noiseHandle = LoadGraph(Buf);
 
 		// ”wŒi‚ÌF‚ğİ’è

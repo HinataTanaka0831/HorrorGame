@@ -51,9 +51,6 @@
     <ClCompile Include="Source\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Resource\Player.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Source\AttachmentModel.h" />
     <ClInclude Include="Source\Button.h" />
     <ClInclude Include="Source\Camera.h" />

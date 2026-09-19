@@ -28,11 +28,6 @@ void TitleScene::Initialize()
 	// などをここで行う
 	// ->タイトル画面で必要なオブジェクトをここで生成する
 
-	if (m_enemyPictureHandle == -1)
-	{
-		m_enemyPictureHandle = LoadGraph("Resource/3D_UI/TitleScene_EnemyPicture.png");
-	}
-
 	if (m_playButton == nullptr)
 	{
 		m_playButton = std::make_unique<Button>(DrawX, PlayY - 10, DrawX + 250, PlayY + 60, " プレイ ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
@@ -109,14 +104,14 @@ void TitleScene::Draw()
 		ClearDrawScreen();
 
 		char Buf[256];
-		sprintf(Buf, "Resource/3D_UI/sandStorm%d.png", i);
+		sprintf(Buf, "Resource/UI/sandStorm%d.png", i);
 		m_noiseHandle = LoadGraph(Buf);
 
 		// 背景の色を設定
 		SetBackgroundColor(0, 0, 0);
 
-		// 敵の画像を表示
-		DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, m_enemyPictureHandle, true);
+		//// 敵の画像を表示
+		//DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, m_enemyPictureHandle, true);
 
 		// 背景の表示
 		DrawGraph(0, 0, m_noiseHandle, true);
@@ -156,10 +151,6 @@ void TitleScene::Finalize()
 {
 	// 画像を削除
 	DeleteGraph(m_noiseHandle);
-	if (m_enemyPictureHandle != -1)
-	{
-		DeleteGraph(m_enemyPictureHandle);
-	}
 
 	// BGM停止
 	Master::m_soundManager->StopBGM();

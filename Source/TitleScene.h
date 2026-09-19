@@ -43,5 +43,5 @@ private:
 	const int PlayRuleY = 750;                           // 操作方法ボタンY座標
 	const int QuitY = 850;                               // 終了ボタンY座標
 	int m_noiseHandle = -1;                                    // 砂嵐エフェクト画像ハンドル
-	int m_enemyPictureHandle = -1;                       // 敵立ち絵グラフィックハンドル};
+	//int m_enemyPictureHandle = -1;                       // 敵立ち絵グラフィックハンドル};
 };
