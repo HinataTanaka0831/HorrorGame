@@ -28,6 +28,11 @@ void TitleScene::Initialize()
 	// などをここで行う
 	// ->タイトル画面で必要なオブジェクトをここで生成する
 
+	if (m_textureAnimation == nullptr)
+	{
+		m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/sandStorm.png", 9, 3, 3, 4);
+	}
+
 	if (m_playButton == nullptr)
 	{
 		m_playButton = std::make_unique<Button>(DrawX, PlayY - 10, DrawX + 250, PlayY + 60, " プレイ ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
@@ -46,14 +51,17 @@ void TitleScene::Initialize()
 	// Mouseのロックを解除
 	InputManager::GetInstance().EnableMouseLock(false);
 	
-	// BGM再生
-	//Master::mpSoundManager->PlayBGM(SoundManager::BGM_TITLE);
 }
 
 void TitleScene::Update()
 {
 	// BGMの再生
 	Master::m_soundManager->PlayBGM(SoundManager::BGMTitle);
+
+	if (m_textureAnimation)
+	{
+		m_textureAnimation->Update();
+	}
 
 	// ボタンの更新処理を呼ぶ
 	if (m_playButton)
@@ -98,60 +106,37 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	for (int i = 1; i < 7; i++)
+	// 砂嵐アニメーションの描画
+	if (m_textureAnimation)
 	{
-		// 画面をクリア
-		ClearDrawScreen();
-
-		char Buf[256];
-		sprintf(Buf, "Resource/UI/sandStorm%d.png", i);
-		m_noiseHandle = LoadGraph(Buf);
-
-		// 背景の色を設定
-		SetBackgroundColor(0, 0, 0);
-
-		//// 敵の画像を表示
-		//DrawGraph(Utility::SCREEN_WIDTH / 2 + 350, Utility::SCREEN_HEIGHT / 2 - 200, m_enemyPictureHandle, true);
-
-		// 背景の表示
-		DrawGraph(0, 0, m_noiseHandle, true);
-
-		// ボタンの表示
-		if (m_playButton)
-		{
-			m_playButton->Draw();
-		}
-
-		if (m_playRuleButton)
-		{
-			m_playRuleButton->Draw();
-		}
-
-		if (m_quitButton)
-		{
-			m_quitButton->Draw();
-		}
-
-		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 2 - 330, "呪われた校舎", GetColor(255, 0, 0), m_fontSize130);
-
-		// 裏画面の内容を表画面に映す
-		ScreenFlip();
+		m_textureAnimation->Draw();
 	}
 
+	// ボタンの表示
+	if (m_playButton)
+	{
+		m_playButton->Draw();
+	}
 
+	if (m_playRuleButton)
+	{
+		m_playRuleButton->Draw();
+	}
+
+	if (m_quitButton)
+	{
+		m_quitButton->Draw();
+	}
+
+	// 文字列の表示
+	DrawStringToHandle(Utility::SCREEN_WIDTH / 4 - 250, Utility::SCREEN_HEIGHT / 2 - 330, "呪われた校舎", GetColor(255, 0, 0), m_fontSize130);
 
 	// 基底クラスの描画処理を呼び出す
 	Scene::Draw();
-
-
 }
 
 void TitleScene::Finalize()
 {
-	// 画像を削除
-	DeleteGraph(m_noiseHandle);
-
 	// BGM停止
 	Master::m_soundManager->StopBGM();
 }

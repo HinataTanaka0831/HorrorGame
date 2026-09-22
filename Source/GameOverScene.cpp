@@ -4,6 +4,7 @@
 #include "Master.h"
 #include "InputManager.h"
 #include "EscapeItem.h"
+#include "TextureAnimation.h"
 #include "Button.h"
 
 
@@ -20,6 +21,11 @@ GameOverScene::~GameOverScene()
 
 void GameOverScene::Initialize()
 {
+	if (m_textureAnimation == nullptr)
+	{
+		m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/sandStorm.png", 9, 3, 3, 4);
+	}
+
 	if (m_retoryButton == nullptr)
 	{
 		m_retoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
@@ -39,6 +45,11 @@ void GameOverScene::Update()
 {
 	// BGMの再生
 	Master::m_soundManager->PlayBGM(SoundManager::BGMResult);
+
+	if (m_textureAnimation)
+	{
+		m_textureAnimation->Update();
+	}
 
 	// ボタンの更新処理を呼ぶ
 	if (m_retoryButton)
@@ -74,37 +85,25 @@ void GameOverScene::Update()
 
 void GameOverScene::Draw()
 {
-	for (int i = 1; i < 7; i++)
+
+	// 砂嵐アニメーションの描画
+	if (m_textureAnimation)
 	{
-		// 画面をクリア
-		ClearDrawScreen();
+		m_textureAnimation->Draw();
+	}
 
-		char Buf[256];
-		sprintf(Buf, "Resource/UI/sandStorm%d.png", i);
-		m_noiseHandle = LoadGraph(Buf);
+	// 文字列の表示
+	DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), m_fontSize140);
 
-		// 背景の色を設定
-		SetBackgroundColor(0, 0, 0);
+	// ボタンの表示
+	if (m_retoryButton)
+	{
+		m_retoryButton->Draw();
+	}
 
-		// 背景の表示
-		DrawGraph(0, 0, m_noiseHandle, true);
-
-		// 文字列の表示
-		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), m_fontSize140);
-
-		// ボタンの表示
-		if (m_retoryButton)
-		{
-			m_retoryButton->Draw();
-		}
-
-		if (m_titleButton)
-		{
-			m_titleButton->Draw();
-		}
-
-		// 裏画面の内容を表画面に映す
-		ScreenFlip();
+	if (m_titleButton)
+	{
+		m_titleButton->Draw();
 	}
 
 	// 基底クラスの描画処理を呼び出す
@@ -114,9 +113,6 @@ void GameOverScene::Draw()
 
 void GameOverScene::Finalize()
 {
-	// 画像を削除
-	DeleteGraph(m_noiseHandle);
-
 	// BGM停止
 	Master::m_soundManager->StopBGM();
 }
