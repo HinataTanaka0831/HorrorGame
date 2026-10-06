@@ -6,8 +6,9 @@
 Model::Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
 	: m_position(initPosition)
 	, m_rotation(VGet(0.0f, 0.0f, 0.0f))
-	, m_attachment(nullptr)
 	, m_scale(1.0f)
+	, m_attachment(nullptr)
+	, m_handle(-1)
 	, m_changeTextureHandle(-1)
 {
 	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ

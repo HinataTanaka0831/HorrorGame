@@ -70,12 +70,11 @@ public:
 	void AddAnimation(AnimationState state, std::string fileName);
 
 private:
-	int m_handle;  // 読み込んだモデルのハンドル
 	VECTOR m_position;  // 座標
 	VECTOR m_rotation;  // 回転
 	float m_scale;
 	int m_changeTextureHandle;
-
+	int m_handle;                   // 読み込んだモデルのハンドル
 	ModelAnimation* m_animation;    // モデルアニメーションクラスのポインタ
 
 	// Mixamo用

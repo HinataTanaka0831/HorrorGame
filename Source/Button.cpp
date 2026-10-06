@@ -1,7 +1,8 @@
 ﻿#include "Button.h"
 
 Button::Button(int x1, int y1, int x2, int y2, std::string name, int color, int changeColor, int fontHandle)
-	: m_x1(x1)
+	: m_input(InputManager::GetInstance())
+	, m_x1(x1)
 	, m_y1(y1)
 	, m_x2(x2)
 	, m_y2(y2)
@@ -11,6 +12,9 @@ Button::Button(int x1, int y1, int x2, int y2, std::string name, int color, int 
 	, m_fontHandle(fontHandle)
 	, m_stringColor(GetColor(255, 255, 255))
 	, m_scale(1.0f)
+	, m_isHover(false)
+	, m_isEnabled(true)
+	, m_isClicked(false)
 {
 }
 

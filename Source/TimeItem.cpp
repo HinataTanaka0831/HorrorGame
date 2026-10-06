@@ -18,7 +18,8 @@ int  TimeItem::m_timerFontHandle   = -1;    // フォントハンドル（未作
 
 
 TimeItem::TimeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
-    :Item(initPosition)
+	:Item(initPosition)
+	, m_model(nullptr)
 {
 	SetTag(Object3D::TagTimeItem);
 

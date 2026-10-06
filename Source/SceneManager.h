@@ -63,8 +63,8 @@ public:  // メンバ関数の定義
 	Scene* GetCurrentScene() { return m_currentScene; }
 
 private:
-	SceneType m_sceneType = SceneType::SceneNone;        // 現在実行中のシーン種別
-	SceneType m_nextSceneType = SceneType::SceneNone;    // 遷移予約されている次シーン種別
-	Scene* m_currentScene = nullptr;
-	bool m_quitRequest = false;    // メインループ終了フラグ
+	SceneType m_sceneType;        // 現在実行中のシーン種別
+	SceneType m_nextSceneType;    // 遷移予約されている次シーン種別
+	Scene* m_currentScene;       // 現在シーンのポインタ
+	bool m_quitRequest;          // メインループ終了フラグ
 };

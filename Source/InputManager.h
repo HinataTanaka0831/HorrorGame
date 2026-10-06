@@ -67,19 +67,18 @@ private:
 	InputManager&& operator=(InputManager&&) = delete;       // ムーブ代入の禁止
 
 private:
-	int m_downBuffer[256] = { 0 };      // 前フレームのキー押下状態（立ち上がりエッジ検知用）
-	int m_upBuffer[256] = { 0 };        // 前フレームのキー押下状態（立ち下がりエッジ検知用）
-
-	float m_mouseX = 0.0f;       // マウスのX移動量
-	float m_mouseY = 0.0f;       // マウスのY移動量
-	float m_deltaX = 0.0f;       // フレーム間のX軸移動差分（感度適用済み）
-	float m_deltaY = 0.0f;       // フレーム間のY軸移動差分（感度適用済み）
-	int m_currentMouseInput = 0;     // 現フレームのマウス入力ビットフラグ
-	int m_previousMouseInput = 0;    // 前フレームのマウス入力ビットフラグ
-	const int CenterX = Utility::SCREEN_WIDTH / 4;
-	const int CenterY = Utility::SCREEN_HEIGHT / 4;
-	float m_mouseSensitivity = 0.004f; // マウス移動量から回転角への変換係数
-	bool m_isLocked = false;
+	bool m_isLocked;
+	int m_downBuffer[256];      // 前フレームのキー押下状態（立ち上がりエッジ検知用）
+	int m_upBuffer[256];        // 前フレームのキー押下状態（立ち下がりエッジ検知用）
+	float m_mouseX;            // マウスのX移動量
+	float m_mouseY;            // マウスのY移動量
+	float m_mouseSensitivity; // マウス移動量から回転角への変換係数
+	float m_deltaX;           // フレーム間のX軸移動差分（感度適用済み）
+	float m_deltaY;          // フレーム間のY軸移動差分（感度適用済み）
+	int m_currentMouseInput;     // 現フレームのマウス入力ビットフラグ
+	int m_previousMouseInput;    // 前フレームのマウス入力ビットフラグ
+	const int CenterX;
+	const int CenterY;
 
 	// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置
 	// 入力: なし / 出力: なし / 副作用: OSマウスカーソル座標の変更

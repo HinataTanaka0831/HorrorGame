@@ -55,44 +55,41 @@ public:
 	// 今後必要であれば move や Attack や Jump 関数などを作る
 
 private:
+	const float RotateSpeed;     // 回転速度
+	const float Speed;          // 敵の移動スピード
+	const int WaitFram;           // 待機するフレーム数
+	const int ITER;
+
 	Model* m_model;  // モデルクラスのポインタ
-	VECTOR m_playerPos = VGet(0.0f, 0.0f, 0.0f);
-
-	float m_angle = 0.0f;              // 現在の回転値
-	float m_targetAngle = 0.0f;        // 目標の回転値
-
-	// ↓目標地点を設定するための変数
-	float m_targetX = 0.0f;              // 目標X座標
-	float m_targetY = 0.0f;              // 目標Y座標
-	float m_targetZ = 0.0f;              // 目標Z座標
-	float m_distanceX = 0.0f;            // 目標座標と敵の座標のX距離
-	float m_distanceY = 0.0f;            // 目標座標と敵の座標のY距離
-	float m_distanceZ = 0.0f;            // 目標座標と敵の座標のZ距離
-
-	// 敵の移動速度（メートル/秒 などはゲーム設定に合わせて調整可）
-	float m_speed = 5.0f;
-	// 障害物回避時に横にずらす距離
-	float m_avoidanceDist = 0.5f;
-
-	int m_scareLight = 0;
-
-	int m_count = 0;               // カウント変数
-	int m_currentPoint = 0;          // 現在の目標座標を示す変数
-	int m_pointcount = 28;            // 目標座標の最大数を表す変数
-	int m_waitTimer = 0;             // 待機時間
-	int m_enemyType = -1;               // 敵のモデルによって目標地点を変更するための変数
-	int m_scareTimer = 0;            // ジャンプスケアを行う時間
-
-	bool m_isWait = false;              // 待機状態にするかどうか
-	bool m_isback = false;              // 目標地点を全部通ったら
-	bool m_isScare = false;
-	bool m_foundPlayer = false;         // プレイヤーを見つけたかどうか
-	bool m_isRun = false;               // 走るかどうか
-	bool m_isStopItem = false;          // 時間止めアイテムを使用したかどうか
-
 	VECTOR m_oldPosition = VGet(0.0f, 0.0f, 0.0f);        // 前の座標
 	VECTOR m_moveVec = VGet(0.0f, 0.0f, 0.0f);            // 移動ベクトル
 	VECTOR m_currentPos = VGet(0.0f, 0.0f, 0.0f);         // 敵のモデルの位置を設定するため計算したものを保持する変数
+	VECTOR m_playerPos = VGet(0.0f, 0.0f, 0.0f);          // プレイヤーの座標を取得するためのベクトル
+
+	float m_angle = 0.0f;                                // 現在の回転値
+	float m_targetAngle = 0.0f;                          // 目標の回転値
+	float m_targetX = 0.0f;                              // 目標X座標
+	float m_targetY = 0.0f;                              // 目標Y座標
+	float m_targetZ = 0.0f;                              // 目標Z座標
+	float m_distanceX = 0.0f;                            // 目標座標と敵の座標のX距離
+	float m_distanceY = 0.0f;                            // 目標座標と敵の座標のY距離
+	float m_distanceZ = 0.0f;                            // 目標座標と敵の座標のZ距離
+	float m_speed = 5.0f;                            	// 敵の移動速度（メートル/秒 などはゲーム設定に合わせて調整可）
+	float m_avoidanceDist = 0.5f;        	            // 障害物回避時に横にずらす距離
+	int m_scareLight = 0;
+	int m_count = 0;                                   // カウント変数
+	int m_currentPoint = 0;                            // 現在の目標座標を示す変数
+	int m_pointcount = 28;                             // 目標座標の最大数を表す変数
+	int m_waitTimer = 0;                              // 待機時間
+	int m_enemyType = -1;                             // 敵のモデルによって目標地点を変更するための変数
+	int m_scareTimer = 0;                             // ジャンプスケアを行う時間
+	bool m_isWait = false;                            // 待機状態にするかどうか
+	bool m_isback = false;                            // 目標地点を全部通ったら
+	bool m_isScare = false;
+	bool m_foundPlayer = false;                      // プレイヤーを見つけたかどうか
+	bool m_isRun = false;                            // 走るかどうか
+	bool m_isStopItem = false;                       // 時間止めアイテムを使用したかどうか
+
 
 	struct Point              // 目標座標を設定するための構造体
 	{
@@ -101,10 +98,4 @@ private:
 		float pointZ;        // 目標Z座標
 	};
 
-
-	const float RotateSpeed = 0.2f;     // 回転速度
-
-	const float Speed = 6.0f; // 敵の移動スピード
-	const int WaitFram = 60;  // 待機するフレーム数
-	const int ITER = 20;
 };

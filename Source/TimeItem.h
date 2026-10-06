@@ -35,7 +35,6 @@ public:
 
 private:
 	Model* m_model;
-
 	static int m_waitTimer;           // 停止タイマー（フレーム単位でカウントアップ）
 	static bool m_isTimerActive;      // タイマーが動作中かどうか
 	static int m_lastProcessedFrame;  // 最後に処理したフレーム番号（1フレーム1回処理用）

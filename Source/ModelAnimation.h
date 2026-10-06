@@ -35,19 +35,14 @@ public:
 	bool IsLoopFinish() { return m_loopFinish; }         // アニメーションのループが終了しているかどうか
 
 private:
-	int m_modelHandle;      // モデルのハンドル
-
-	float m_animationTime = 0.0f;  // 再生しているアニメーションの現在の再生時間
-	int m_animationIndex = -1;   // 再生しているアニメーションのインデックス
-
-	float m_oldAnimationTime = 0.0f;   // 1つ前のアニメーション再生時間
-	int m_oldAnimationIndex = -1;    // 1つ前のアニメーションのインデックス
-
-	float m_animationBlendRate = 1.0f;      // モーションの切り替わり度合
-
-	AnimationState m_state = AnimationState::AnimationMax; // 現在再生しているアニメーションの番号 
-
-	bool m_loop = true;            // モーションをループさせるかどうか
-	AnimationState m_loopFinishState = AnimationState::AnimationMax;   // ループが終わったときに再生したいアニメーション番号
-	bool m_loopFinish = false;      // モーションループが終わったかどうか
+	int m_modelHandle;                  // モデルのハンドル
+	float m_animationTime;              // 再生しているアニメーションの現在の再生時間
+	int m_animationIndex;               // 再生しているアニメーションのインデックス
+	float m_oldAnimationTime;           // 1つ前のアニメーション再生時間
+	int m_oldAnimationIndex;            // 1つ前のアニメーションのインデックス
+	float m_animationBlendRate;         // モーションの切り替わり度合
+	AnimationState m_state;             // 現在再生しているアニメーションの番号 
+	bool m_loop;                        // モーションをループさせるかどうか
+	AnimationState m_loopFinishState;   // ループが終わったときに再生したいアニメーション番号
+	bool m_loopFinish;                  // モーションループが終わったかどうか
 };

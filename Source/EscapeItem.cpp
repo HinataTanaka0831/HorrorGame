@@ -5,10 +5,11 @@
 #include "ObjectManager.h"
 #include "Exitdoor.h"
 
-int EscapeItem::NowNeedItem = 0;
+int EscapeItem::m_nowNeedItem = 0;
 
 EscapeItem::EscapeItem(std::string fileName, VECTOR initPosition)
 	:Item(initPosition)
+	, m_model(nullptr)
 	
 {
 	// É^ÉOÇÃê›íË
