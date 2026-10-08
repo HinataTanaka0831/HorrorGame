@@ -11,6 +11,10 @@ TextureAnimation::TextureAnimation(
 	: m_position(position)
 	, m_interval(interval)
 	, m_allNum(allNum)
+	, m_counter(0)
+	, m_currentNum(0)
+	, m_handleList(0)
+
 {
 	m_handleList = new int[allNum];
 

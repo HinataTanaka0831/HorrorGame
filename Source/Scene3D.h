@@ -37,17 +37,16 @@ public:
 	void Finalize() override;
 
 private:
-	struct Point {
+	Enemy3D* m_enemy;  // 敵キャラクターのポインタ
+	Enemy3D* m_enemy2; // 敵キャラクターのポインタ
+	SkyBox* m_skybox;  // スカイボックスのポインタ
+	int m_playerCrouchingHandle;      // プレイヤーしゃがみハンドル
+	int m_playerMoveHandle;           // プレイヤー移動ハンドル
+
+	struct Point {              // 脱出用アイテムの出現座標
 
 		VECTOR PointPosition;
 
 	};
-
-	Enemy3D* m_enemy = nullptr;  // 敵キャラクターのポインタ
-	Enemy3D* m_enemy2 = nullptr; // 敵キャラクターのポインタ
-	SkyBox* m_skybox = nullptr;  // スカイボックスのポインタ
-	int m_itemFontHandle = CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING);  // 画面に表示するフォントのハンドル
-	int m_playerCrouchingHandle = -1;      // プレイヤーしゃがみハンドル
-	int m_playerMoveHandle = -1;           // プレイヤー移動ハンドル
 
 };

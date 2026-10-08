@@ -84,70 +84,66 @@ public:
 	std::vector<VECTOR>& GetPlayerRecord() { return m_playerRecord; } // プレイヤーの座標を保持する構造体を取得
 
 private:
-	struct Player {
-		VECTOR position;      // 中心座標
-		float radius;    // 当たり判定の半径
-	};
+	const float RotsteSpeed;                                  // 回転速度
+	const int ITER;                                          // 壁に当たる枚数
+	const int SEframeWalk;                                  // 歩いているときのSEフレーム
+	const int SEframeRUN;                                   // 走っているときのSEフレーム
+	const int FrameLight;                                   // ライトの点滅フレーム
 
-	VECTOR m_doorPos = VGet(0.0f, 0.0f, 0.0f);              // 脱出口の座標を取得するための変数
-	VECTOR m_oldPosition = VGet(0.0f, 0.0f, 0.0f);          // 前の座標
-	VECTOR m_oldPlayerPosition = m_position;                // プレイヤーの前回の座標
-	VECTOR m_lightModelPosition = VGet(0.0f, 0.0f, 0.0f);   // ライトモデルの位置
+	VECTOR m_doorPos;                                       // 脱出口の座標を取得するための変数
+	VECTOR m_oldPosition;                                   // 前の座標
+	VECTOR m_oldPlayerPosition;                             // プレイヤーの前回の座標
+	VECTOR m_lightModelPosition;                            // ライトモデルの位置
 							                            
-	float m_angle = 0.0f;                                   // 現在の回転値
-	float m_targetAngle = 0.0f;                             // 目標の回転値
-	float m_playerHeight = 80.0f;                           // 高さ
-	float m_speed = 70.0f;                                  // 速度
-	float m_distance = 0.0f;                                // 距離
+	float m_angle;                                          // 現在の回転値
+	float m_targetAngle;                                    // 目標の回転値
+	float m_playerHeight;                                   // 高さ
+	float m_speed;                                          // 速度
+	float m_distance;                                       // 距離
 								                         
-	bool m_isMove = false;                                  // 動いているかどうか
-	bool m_isCrouching = false;                             // しゃがんでいるかどうか
-	bool m_isFreeze = false;                                // フリーズさせる
-	bool m_isActiveLight = true;                            // ライトを点けるかどうか
-	int m_lightHandle = -1;                                 // ライトモデルハンドル
-	int m_stamina = 100;                                    // スタミナ
-	const int MaxStamina = 100;                                 // 最大スタミナ
-	int m_staminaX = Utility::SCREEN_WIDTH / 2 - 260;       // スタミナゲージのX座標
-	int m_staminaY = Utility::SCREEN_HEIGHT / 2 + 430;      // スタミナゲージのY座標
-	int m_width = 490;                                      // 幅(スタミナゲージ)
-	int m_height = 30;                                      // 高さ(スタミナゲージ)
-	int m_gaugeWidth = 0;                                   // 現在値に応じたゲージの幅
-	int m_count = 0;                                        // ステージの当たり判定用カウント
-	int m_recordDis = 0;                                    // プレイヤーの保持した座標の距離
-	int m_addItemID = 0;                                    // ID を背一定する変数
-	int m_walkSETimer = 0;                                  // 歩いているときのSEを流す時間
-	int m_runSETimer = 0;                                   // 走っているときのSEを流す時間
-	int m_fontHandle = CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING);  // 画面に表示するフォントのハンドル
+	bool m_isMove;                                          // 動いているかどうか
+	bool m_isCrouching;                                     // しゃがんでいるかどうか
+	bool m_isFreeze;                                        // フリーズさせる
+	bool m_isActiveLight;                                   // ライトを点けるかどうか
+	int m_lightHandle;                                      // ライトモデルハンドル
+	const int MaxStamina;                                   // 最大スタミナ
+	int m_stamina;                                          // スタミナ
+	int m_staminaX;                                         // スタミナゲージのX座標
+	int m_staminaY;                                         // スタミナゲージのY座標
+	int m_width;                                            // 幅(スタミナゲージ)
+	int m_height;                                           // 高さ(スタミナゲージ)
+	int m_gaugeWidth;                                       // 現在値に応じたゲージの幅
+	int m_count;                                            // ステージの当たり判定用カウント
+	int m_recordDis;                                        // プレイヤーの保持した座標の距離
+	int m_addItemID;                                        // ID を背一定する変数
+	int m_walkSETimer;                                      // 歩いているときのSEを流す時間
+	int m_runSETimer;                                       // 走っているときのSEを流す時間
+	int m_fontHandle;                                       // 画面に表示するフォントのハンドル
 
 
-	std::vector<ItemData>m_items;             // アイテム関係変数
+	std::vector<ItemData>m_items;                          // アイテム関係変数
 
-	bool m_getEscapeItem = false;                     // 脱出アイテムを所持しているかどうか
-	bool m_getTimeItem = false;                       // 時間止めアイテムを所持しているかどうか
-	bool m_isUseStopItem = false;                     // 時間止めアイテムを使用するかどうか
+	bool m_getEscapeItem;                                  // 脱出アイテムを所持しているかどうか
+	bool m_getTimeItem;                                    // 時間止めアイテムを所持しているかどうか
+	bool m_isUseStopItem;                                  // 時間止めアイテムを使用するかどうか
 
 	// アイテム欄の変数
-	int m_itemBoxX = 0;                  // アイテムをボックスに表示するためのX座標
-	int m_itemBoxY = 0;                  // アイテムをボックスに表示するためのY座標
-	const int ItemSize = 170;            // アイテムの大きさ
-	const int ItemMargin = 10;           // アイテムの余白
-	const int DrawX = Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin);   // アイテム画像を表示するためのX座標
-	const int DrawY = Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20;            // アイテム画像を表示するためのY座標
-	const int MaxSize = 1;                                                         // インベントリのサイズ
+	int m_itemBoxX;                                       // アイテムをボックスに表示するためのX座標
+	int m_itemBoxY;                                       // アイテムをボックスに表示するためのY座標
+	const int ItemSize;                                   // アイテムの大きさ
+	const int ItemMargin;                                 // アイテムの余白
+	const int DrawX;                                      // アイテム画像を表示するためのX座標
+	const int DrawY;                                      // アイテム画像を表示するためのY座標
+	const int MaxSize;                                    // インベントリのサイズ
 
-	enum MoveState        // 動いている状態の構造体
+	enum class MoveState        // 動いている状態の構造体
 	{
 		Walk,
 		Run
 	};
 
-	MoveState m_state = Walk; // 最初は歩いている状態
+	MoveState m_state; // 最初は歩いている状態
 
 	std::vector<VECTOR>m_playerRecord; // プレイヤーの座標を保持するVECTOR の構造体
 
-	const float RotsteSpeed = 0.2f;   // 回転速度
-	const int ITER = 20;              // 壁に当たる枚数
-	const int SEframeWalk = 25;      // 歩いているときのSEフレーム
-	const int SEframeRUN = 18;       // 走っているときのSEフレーム
-	const int FrameLight = 25;       // ライトの点滅フレーム
 };

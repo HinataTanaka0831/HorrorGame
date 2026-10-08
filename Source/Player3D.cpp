@@ -12,7 +12,52 @@
 
 
 Player3D::Player3D(VECTOR initPosition)
-	:Object3D(initPosition)
+	: Object3D(initPosition)
+	, RotsteSpeed(0.2f)
+	, ITER(20)
+	, SEframeWalk(25)
+	, SEframeRUN(18)
+	, FrameLight(25)
+	, m_doorPos(VGet(0.0f, 0.0f, 0.0f))
+	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
+	, m_oldPlayerPosition(m_position)
+	, m_lightModelPosition(VGet(0.0f, 0.0f, 0.0f))
+	, m_angle(0.0f)
+	, m_targetAngle(0.0f)
+	, m_playerHeight(80.0f)
+	, m_speed(70.0f)
+	, m_distance(0.0f)
+	, m_isMove(false)
+	, m_isCrouching(false)
+	, m_isFreeze(false)
+	, m_isActiveLight(true)
+	, m_lightHandle(-1)
+	, MaxStamina(100)
+	, m_stamina(MaxStamina)
+	, m_staminaX(Utility::SCREEN_WIDTH / 2 - 260)
+	, m_staminaY(Utility::SCREEN_HEIGHT / 2 + 430)
+	, m_width(490)
+	, m_height(30)
+	, m_gaugeWidth(0)
+	, m_count(0)
+	, m_recordDis(0)
+	, m_addItemID(0)
+	, m_walkSETimer(0)
+	, m_runSETimer(0)
+	, m_fontHandle(CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING))
+	, m_getEscapeItem(false)
+	, m_getTimeItem(false)
+	, m_isUseStopItem(false)
+	, m_itemBoxX(0)
+	, m_itemBoxY(0)
+	, ItemSize(170)
+	, ItemMargin(10)
+	, DrawX(Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin))
+	, DrawY(Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20)
+	, MaxSize(1)
+	, m_state(MoveState::Walk)
+
+
 {
 	// タグ設定
 	SetTag(Object3D::TagPlayer3D);
@@ -145,7 +190,7 @@ void Player3D::MoveEx()
 	if (StaminaUpdate(InputManager::GetInstance().CheckPressKey(KEY_INPUT_LSHIFT)))
 	{
 		// 走り状態かつ動いている状態なら
-		if (m_state == Run && m_isMove)
+		if (m_state == MoveState::Run && m_isMove)
 		{
 			m_position = VAdd(m_position, VScale(moveVec, m_speed * 3.0f));
 
@@ -167,7 +212,7 @@ void Player3D::MoveEx()
 	else  // 歩き処理
 	{
 		// 歩き状態かつ動いている状態なら
-		if (m_state == Walk && m_isMove)
+		if (m_state == MoveState::Walk && m_isMove)
 		{
 			m_position = VAdd(m_position, VScale(moveVec, m_speed));
 
@@ -809,14 +854,14 @@ bool Player3D::StaminaUpdate(bool isKeyProsses)
 	if (isKeyProsses && m_stamina > 0 && m_isMove)
 	{
 		// 走り状態にする
-		m_state = Run;
+		m_state = MoveState::Run;
 		// スタミナゲージを減らす
 		m_stamina--;
 
 		// 0以下なら歩き状態にする
 		if (m_stamina <= 0)
 		{
-			m_state = Walk;
+			m_state = MoveState::Walk;
 		}
 
 		return true;
@@ -824,7 +869,7 @@ bool Player3D::StaminaUpdate(bool isKeyProsses)
 	else
 	{
 		// 歩き状態にする
-		m_state = Walk;
+		m_state = MoveState::Walk;
 
 		// 現在のスタミナゲージが最大値より少ない場合スタミナを増やす
 		if (m_stamina < MaxStamina)

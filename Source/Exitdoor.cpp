@@ -5,7 +5,11 @@
 #include "ObjectManager.h"
 
 Exitdoor::Exitdoor(std::string fileName, std::string exitCallModelname, VECTOR initPosition)
-	:Object3D(initPosition)
+	: Object3D(initPosition)
+	, m_model(nullptr)
+	, m_collisionHandle(-1)
+	, m_normal(VGet(0.0f, 0.0f, 0.0f))
+
 {
 	// É^ÉOê›íË
 	SetTag(Object3D::TagExitdoor);

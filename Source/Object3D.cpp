@@ -4,7 +4,7 @@
 #include "Scene.h"
 
 Object3D::Object3D(VECTOR initPosition)
-	:m_position(initPosition)
+	: m_position(initPosition)
 	, m_rotation(VGet(0.0f, 0.0f, 0.0f))
 	, m_deleteFlag(false)
 	, m_tag(Tag3D::None3D)

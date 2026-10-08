@@ -14,6 +14,12 @@
 
 Scene3D::Scene3D()
 	: Scene()
+	, m_enemy(nullptr)
+	, m_enemy2(nullptr)
+	, m_skybox(nullptr)
+	, m_playerCrouchingHandle(-1)
+	, m_playerMoveHandle(-1)
+
 {
 
 }
@@ -52,7 +58,7 @@ void Scene3D::Initialize()
 	// 画像の生成
 	if (m_playerMoveHandle == -1) m_playerMoveHandle = LoadGraph("Resource/UI/ui_playerMove.png");
 
-	EscapeItem::NowNeedItem = 0;  // 脱出のために必要なアイテム数を
+	EscapeItem::m_nowNeedItem = 0;  // 脱出のために必要なアイテム数を
 }
 
 void Scene3D::InitializePlayerData()
@@ -90,17 +96,17 @@ void Scene3D::InitializeEnemyData()
 void Scene3D::InitializeItemData()
 {
 	// 脱出用アイテムの生成
-	int CurrentPos = GetRand(4);
-	int currentpos = GetRand(3);
+	int currentPosition1 = GetRand(4);
+	int currentPosition2 = GetRand(3);
 	Point RandomPoint1[] = { VGet(-1615.0f, 120.0f, 2120.0f), VGet(350.0f, 53.0f, 2986.0f), VGet(-3270.0f, 52.0f, 2220.0f), VGet(-1440.0f, 444.0f, 2666.0f), VGet(3416.0f, 453.0f, 2537.0f) };
 	Point RandomPoint2[] = { VGet(3920.0f, 1228.0f, 2800.0f), VGet(999.0f, 836.0f, 2426.0f), VGet(-2029.0f, 833.0f, 2933.0f), VGet(539.0f, 1228.0f, 2536.0f), VGet(-1853.0f, 839.0f, 2205.0f) };
 	Point RandomPoint3[] = { VGet(-570.0f, 120.0f, -2687.0f), VGet(1851.0f, 446.0f, -2155.0f), VGet(-2120.0f, 905.0f, -2895.0f), VGet(-37.0f, 1228.0f, -2715.0f), VGet(2160.0f, 975.0f, -2460.0f) };
 	Point RandomPoint4[] = { VGet(2050.0f, 510.0f, -2912.0f), VGet(-2132.0f, 831.0f, -2581.0f),  VGet(70.0f, 1224.0f, 2809.0f), VGet(3920.0f, 1228.0f, -2800.0f) };
 
-	VECTOR RandomPosition1 = RandomPoint1[CurrentPos].PointPosition;
-	VECTOR RandomPosition2 = RandomPoint2[CurrentPos].PointPosition;
-	VECTOR RandomPosition3 = RandomPoint3[CurrentPos].PointPosition;
-	VECTOR RandomPosition4 = RandomPoint4[currentpos].PointPosition;
+	VECTOR RandomPosition1 = RandomPoint1[currentPosition1].PointPosition;
+	VECTOR RandomPosition2 = RandomPoint2[currentPosition1].PointPosition;
+	VECTOR RandomPosition3 = RandomPoint3[currentPosition1].PointPosition;
+	VECTOR RandomPosition4 = RandomPoint4[currentPosition2].PointPosition;
 
 	new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition1);
 	new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition2);
@@ -151,7 +157,7 @@ void Scene3D::Draw()
 	SetWriteZBufferFlag(FALSE);
 
 	// 残りアイテム数の表示
-	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), m_itemFontHandle, " 残りアイテム\n  %d / 4", EscapeItem::NowNeedItem);
+	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), m_itemFontHandle, " 残りアイテム\n  %d / 4", EscapeItem::m_nowNeedItem);
 
 	auto pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);

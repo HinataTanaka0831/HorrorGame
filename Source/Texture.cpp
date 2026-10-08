@@ -1,8 +1,13 @@
 #include "Texture.h"
 
 Texture::Texture(std::string fileName, VECTOR centerPosition, int transFlag)
-    : m_position(centerPosition)
+    : m_handle(-1)
+    , m_position(centerPosition)
+    , m_sizeX(0)
+    , m_sizeY(0)
+    , m_radius(0.0f)
     , m_transFlag(transFlag)
+
 {
     // ‰æ‘œ‚Ì“Ç‚İ‚İ
     m_handle = LoadGraph(fileName.c_str());

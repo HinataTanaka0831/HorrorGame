@@ -41,7 +41,7 @@ public:
 	void SetEnemyType(int type) { m_enemyType = type; } 
 
 
-	bool GetScare() { return m_isScare; }              
+	bool GetScare() const { return m_isScare; }              
 
 	bool GetfoundPlayer() { return m_foundPlayer; }
 

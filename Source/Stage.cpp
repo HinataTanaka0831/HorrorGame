@@ -6,6 +6,11 @@
 
 Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
 	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // À•W‚ÍŒ´“_‚Æ‚µ‚Ä‚¨‚­
+	, m_modelHandle(-1)
+	, m_collisionHandle(-1)
+	, m_normal(VGet(0.0f, 0.0f, 0.0f))
+	, m_hitpos(VGet(0.0f, 0.0f, 0.0f))
+
 {
 	SetTag(Object3D::TagStage);
 

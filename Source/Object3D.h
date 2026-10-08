@@ -61,5 +61,4 @@ protected:
 private:
 	bool m_deleteFlag;   // 削除フラグ
 	Tag3D m_tag;         // タグ
-	float m_currentCameraDistance;     // 現在のカメラとの距離
 };

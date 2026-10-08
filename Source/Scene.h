@@ -42,10 +42,13 @@ public:
 	ObjectManager* GetObjectManager() { return m_objectManager; }
 
 protected:
-	int m_fontSize140 = CreateFontToHandle(NULL, 140, -1, -1);
-	int m_fontSize130 = CreateFontToHandle(NULL, 130, -1, DX_FONTTYPE_ANTIALIASING);
-	int m_fontSize20 = CreateFontToHandle(NULL, 20, -1, -1);
-	int m_fontSize50 = CreateFontToHandle(NULL, 50, -1, -1);
+	// 画面に表示するフォントのハンドル
+	int m_fontSize140;
+	int m_fontSize130;
+	int m_fontSize20;
+	int m_fontSize50;
+	int m_itemFontHandle;  
+
 private:
 	ObjectManager* m_objectManager;        // オブジェクト管理クラスのポインタ
 

@@ -35,8 +35,7 @@ private:
 	VECTOR m_position;       // ポジション
 	int m_sizeX = 0;         // 画像の幅
 	int m_sizeY = 0;         // 画像の高さ
-	int m_transFlag;         // 画像の透過を有効にするか
 	float m_radius = 0.0f;   // 半径
-	
+	int m_transFlag;         // 画像の透過を有効にするか
 
 };

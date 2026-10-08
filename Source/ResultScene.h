@@ -32,9 +32,9 @@ public:
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> m_retoryButton = nullptr;  // 再プレイボタン
-	std::unique_ptr<Button> m_titleButton = nullptr;   // タイトル画面へ戻るボタン
-	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150; // ボタン配置基準X座標
-	const int RetoryY = 600;                    // リトライボタンY座標
-	const int TitleY = 750;                     // タイトルボタンY座標
+	std::unique_ptr<Button> m_retoryButton;  // 再プレイボタン
+	std::unique_ptr<Button> m_titleButton;   // タイトル画面へ戻るボタン
+	const int DrawX;                         // ボタン配置基準X座標
+	const int RetoryY;                       // リトライボタンY座標
+	const int TitleY;                        // タイトルボタンY座標
 };

@@ -7,7 +7,18 @@
 #include "Button.h"
 
 GameRuleScene::GameRuleScene()
-	:Scene()
+	: Scene()
+	, m_backButton(nullptr)
+	, m_textureAnimation(nullptr)
+	, DrawX(Utility::SCREEN_WIDTH / 2 - 150)
+	, BackY(900)
+	, m_keyHandle(-1)
+	, m_keyRHandle(-1)
+	, m_keyFHandle(-1)
+	, m_keyEHandle(-1)
+	, m_mouseHandle(-1)
+	,m_mouseMoveHandle(-1)
+
 {
 
 }

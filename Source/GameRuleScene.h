@@ -31,14 +31,14 @@ public:
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> m_backButton = nullptr;                    // タイトルへ戻るボタン
-	std::unique_ptr<TextureAnimation> m_textureAnimation = nullptr;    // 砂嵐アニメーション
-	const int DrawX = Utility::SCREEN_WIDTH / 2 - 150;                 // ボタン配置基準X座標
-	const int BackY = 900;                                             // 戻るボタンY座標
-	int m_keyHandle = -1;                                              // WASD移動キーアイコン
-	int m_keyRHandle = -1;                                             // Rキーアイコン（アイテム取得）
-	int m_keyFHandle = -1;                                             // Fキーアイコン（アイテム使用）
-	int m_keyEHandle = -1;                                             // Eキーアイコン（しゃがみ）
-	int m_mouseHandle = -1;                                            // マウス左クリックアイコン（ライトON/OFF）
-	int m_mouseMoveHandle = -1;                                        // マウス移動アイコン（視点回転）
-};																     
+	std::unique_ptr<Button> m_backButton;                    // タイトルへ戻るボタン
+	std::unique_ptr<TextureAnimation> m_textureAnimation;    // 砂嵐アニメーション
+	const int DrawX;                                         // ボタン配置基準X座標
+	const int BackY;                                         // 戻るボタンY座標
+	int m_keyHandle;                                         // WASD移動キーアイコン
+	int m_keyRHandle;                                        // Rキーアイコン（アイテム取得）
+	int m_keyFHandle;                                        // Fキーアイコン（アイテム使用）
+	int m_keyEHandle;                                        // Eキーアイコン（しゃがみ）
+	int m_mouseHandle;                                       // マウス左クリックアイコン（ライトON/OFF）
+	int m_mouseMoveHandle;                                   // マウス移動アイコン（視点回転）
+};														    

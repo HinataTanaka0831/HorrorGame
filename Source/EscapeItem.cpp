@@ -52,10 +52,10 @@ void EscapeItem::Draw()
 void EscapeItem::Escape()
 {
 	// 残り必要なアイテムを減らす
-	NowNeedItem++;
+	m_nowNeedItem++;
 
 	// もし残り必要なアイテム数が0になったらゲームクリアする
-	if (NowNeedItem == 4)
+	if (m_nowNeedItem == 4)
 	{
 		Master::m_sceneManager->SetNextScene(SceneManager::SceneType::SceneResult);
 	}

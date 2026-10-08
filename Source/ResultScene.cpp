@@ -5,6 +5,12 @@
 
 ResultScene::ResultScene()
 	: Scene()     // 基底クラスのコンストラクタを呼び出す
+	, m_retoryButton(nullptr)
+	, m_titleButton(nullptr)
+	, DrawX(Utility::SCREEN_WIDTH / 2 - 150)
+	, RetoryY(600)
+	, TitleY(750)
+
 {
 
 }

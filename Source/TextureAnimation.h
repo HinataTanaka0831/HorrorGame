@@ -30,9 +30,9 @@ public:
 
 private:
 	VECTOR m_position;      // ポジション
-	int m_counter = 0;      // アニメーションカウンタ
 	int m_interval;         // テクスチャ切り替えのフレーム数
-	int m_currentNum = 0;   // 何番目のテクスチャを表示するか
-	int* m_handleList;      // 分割されたテクスチャのハンドルリスト
 	int m_allNum;           // テクスチャ分割数
+	int m_counter;          // アニメーションカウンタ
+	int m_currentNum;       // 何番目のテクスチャを表示するか
+	int* m_handleList;      // 分割されたテクスチャのハンドルリスト
 };
