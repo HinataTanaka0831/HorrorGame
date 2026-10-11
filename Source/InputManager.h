@@ -67,18 +67,18 @@ private:
 	InputManager&& operator=(InputManager&&) = delete;       // ムーブ代入の禁止
 
 private:
-	bool m_isLocked;
-	int m_downBuffer[256];      // 前フレームのキー押下状態（立ち上がりエッジ検知用）
-	int m_upBuffer[256];        // 前フレームのキー押下状態（立ち下がりエッジ検知用）
-	float m_mouseX;            // マウスのX移動量
-	float m_mouseY;            // マウスのY移動量
-	float m_mouseSensitivity; // マウス移動量から回転角への変換係数
-	float m_deltaX;           // フレーム間のX軸移動差分（感度適用済み）
-	float m_deltaY;          // フレーム間のY軸移動差分（感度適用済み）
+	bool m_isLocked;             // マウスカーソル固定状態のフラグ
+	int m_downBuffer[256];       // 前フレームのキー押下状態（立ち上がりエッジ検知用）
+	int m_upBuffer[256];         // 前フレームのキー押下状態（立ち下がりエッジ検知用）
+	float m_mouseX;              // マウスのX移動量
+	float m_mouseY;              // マウスのY移動量
+	float m_mouseSensitivity;    // マウス移動量から回転角への変換係数
+	float m_deltaX;              // フレーム間のX軸移動差分（感度適用済み）
+	float m_deltaY;              // フレーム間のY軸移動差分（感度適用済み）
 	int m_currentMouseInput;     // 現フレームのマウス入力ビットフラグ
 	int m_previousMouseInput;    // 前フレームのマウス入力ビットフラグ
-	const int CenterX;
-	const int CenterY;
+	const int CenterX;           // 画面中央のX座標
+	const int CenterY;           // 画面中央のY座標
 
 	// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置
 	// 入力: なし / 出力: なし / 副作用: OSマウスカーソル座標の変更

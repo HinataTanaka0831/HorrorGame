@@ -49,8 +49,8 @@ private:
 	VECTOR m_lookAtPosition = VGet(0.0f, 0.0f, 0.0f);   // カメラ注視点ワールド座標
 	VECTOR m_shakePosition = VGet(0.0f, 0.0f, 0.0f);    // 画面揺れによる加算オフセット
 
-	float m_horizontalAngle = DX_PI_F / 1.2f;  // ヨー角（水平回転角度・ラジアン）
-	float m_verticalAngle = 0.0f;    // ピッチ角（垂直見渡し角度・ラジアン）
+	float m_horizontalAngle = DX_PI_F / 1.2f;           // ヨー角（水平回転角度・ラジアン）
+	float m_verticalAngle = 0.0f;                       // ピッチ角（垂直見渡し角度・ラジアン）
 
 	//↓ 画面揺れで使用する変数
 	float m_shakeAngle = 0.0f;        // 画面揺れ正弦波用アングル
@@ -60,7 +60,7 @@ private:
 	float m_shakeAngleSpeed = 0.0f;   // 画面揺れ振動周波数
 	float m_stepTime = 0.0f;          // 画面揺れ更新刻み時間
 
-	bool m_isFreeze = false;             // 視点操作拘束フラグ
+	bool m_isFreeze = false;          // 視点操作拘束フラグ
 
-	Object3D* m_target = nullptr;                       // 追従対象（プレイヤーオブジェクト）
+	Object3D* m_target = nullptr;     // 追従対象（プレイヤーオブジェクト）
 };

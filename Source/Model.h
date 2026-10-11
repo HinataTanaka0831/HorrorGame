@@ -70,10 +70,10 @@ public:
 	void AddAnimation(AnimationState state, std::string fileName);
 
 private:
-	VECTOR m_position;  // 座標
-	VECTOR m_rotation;  // 回転
-	float m_scale;
-	int m_changeTextureHandle;
+	VECTOR m_position;              // 座標
+	VECTOR m_rotation;              // 回転
+	float m_scale;                  // 大きさ
+	int m_changeTextureHandle;     // 変更するテクスチャのハンドル番号
 	int m_handle;                   // 読み込んだモデルのハンドル
 	ModelAnimation* m_animation;    // モデルアニメーションクラスのポインタ
 

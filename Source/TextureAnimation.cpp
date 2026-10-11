@@ -43,7 +43,7 @@ TextureAnimation::TextureAnimation(
 
 TextureAnimation::~TextureAnimation()
 {
-
+	delete[] m_handleList;
 }
 
 void TextureAnimation::Update()

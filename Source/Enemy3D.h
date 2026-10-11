@@ -85,7 +85,7 @@ private:
 	int m_scareTimer = 0;                             // ジャンプスケアを行う時間
 	bool m_isWait = false;                            // 待機状態にするかどうか
 	bool m_isback = false;                            // 目標地点を全部通ったら
-	bool m_isScare = false;
+	bool m_isScare = false;                          // ジャンプスケアを行うかどうか
 	bool m_foundPlayer = false;                      // プレイヤーを見つけたかどうか
 	bool m_isRun = false;                            // 走るかどうか
 	bool m_isStopItem = false;                       // 時間止めアイテムを使用したかどうか

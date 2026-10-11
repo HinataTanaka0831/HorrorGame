@@ -25,13 +25,14 @@ Texture::~Texture()
     DeleteGraph(m_handle);
 }
 
+void Texture::Update()
+{
+
+}
+
 void Texture::Draw()
 {
     // ‰æ‘œ‚Ì•\Ž¦
     DrawGraph((int)m_position.x - (m_sizeX / 2), (int)m_position.y - (m_sizeY / 2), m_handle, m_transFlag);
 }
 
-void Texture::Update()
-{
-    
-}

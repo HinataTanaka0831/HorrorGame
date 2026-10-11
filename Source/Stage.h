@@ -38,7 +38,7 @@ private:
 	int m_modelHandle;      // ステージモデルのハンドル
 	int m_collisionHandle;  // ステージのコリジョンモデルのハンドル
 
-	VECTOR m_normal;
-	VECTOR m_hitpos;
+	VECTOR m_normal;        // 衝突時の法線ベクトル
+	VECTOR m_hitpos;        // 衝突時の交差座標
 
 };

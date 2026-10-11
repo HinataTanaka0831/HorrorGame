@@ -14,6 +14,8 @@ public:
 	Exitdoor(std::string fileName, std::string exitdoorModelname, VECTOR initPosition);
 	~Exitdoor();
 
+	// ドアモデルの回転・座標更新および法線ベクトルの更新
+	// 入力: なし / 出力: なし / 副作用: ドアモデルの回転・座標更新、法線ベクトルの更新
 	void Update() override;
 
 	// ドア3Dモデルの描画
@@ -28,11 +30,12 @@ public:
 	// 入力: position1(始点), position2(終点) / 出力: 交差座標 / 副作用: なし
 	VECTOR CheckHit_Line(VECTOR position1, VECTOR position2);
 
+	// 衝突時の法線ベクトルを取得
 	VECTOR GetNormal() { return m_normal; }
 
 
 private:
-	Model* m_model;  // モデルクラスのポインタ
+	Model* m_model;         // モデルクラスのポインタ
 	int m_collisionHandle;  // 当たり判定モデル
-	VECTOR m_normal;
+	VECTOR m_normal;        // 衝突時の法線ベクトル
 };

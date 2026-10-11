@@ -37,13 +37,13 @@ public:
 	void Finalize() override;
 
 private:
-	Enemy3D* m_enemy;  // 敵キャラクターのポインタ
-	Enemy3D* m_enemy2; // 敵キャラクターのポインタ
-	SkyBox* m_skybox;  // スカイボックスのポインタ
+	Enemy3D* m_enemy;                 // 敵キャラクターのポインタ
+	Enemy3D* m_enemy2;                // 敵キャラクターのポインタ
+	SkyBox* m_skybox;                 // スカイボックスのポインタ
 	int m_playerCrouchingHandle;      // プレイヤーしゃがみハンドル
 	int m_playerMoveHandle;           // プレイヤー移動ハンドル
 
-	struct Point {              // 脱出用アイテムの出現座標
+	struct Point {                    // 脱出用アイテムの出現座標
 
 		VECTOR PointPosition;
 
