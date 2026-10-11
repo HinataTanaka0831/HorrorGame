@@ -2,7 +2,9 @@
 #include "Model.h"
 
 SkyBox::SkyBox(std::string fileName)
-: Object3D(VGet(0.0f, 0.0f, 0.0f))
+    : Object3D(VGet(0.0f, 0.0f, 0.0f))
+	, m_model(nullptr)
+
 {
 	// スカイボックスモデルの生成
 	// note: スカイボックスの座標は、基本的には原点。

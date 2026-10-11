@@ -7,6 +7,20 @@
 #include "Enemy3D.h"
 
 Camera::Camera()
+	: m_position(VGet(0.0f, 0.0f, 0.0f))        
+	, m_lookAtPosition(VGet(0.0f, 0.0f, 0.0f))
+	, m_shakePosition(VGet(0.0f, 0.0f, 0.0f))
+	, m_horizontalAngle(DX_PI_F / 1.2f)
+	, m_verticalAngle(0.0f)
+	, m_shakeAngle(0.0f)
+	, m_shakeTimeCounter(0.0f)
+	, m_shakeTime(0.0f)
+	, m_shakeWidth(0.0f)
+	, m_shakeAngleSpeed(0.0f)
+	, m_stepTime(0.0f)
+	, m_isFreeze(false)
+	, m_target(nullptr)
+
 {
 
 }
