@@ -12,7 +12,7 @@ class GameRuleScene : public Scene
 {
 public:
 	GameRuleScene();
-	~GameRuleScene();
+	~GameRuleScene() override;
 
 	// 操作キーUIグラフィックの読み込みおよび戻るボタンの生成
 	// 入力: なし / 出力: なし / 副作用: キーバインド画像ハンドルのロード、Button生成

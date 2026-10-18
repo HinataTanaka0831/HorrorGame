@@ -39,7 +39,7 @@ void TitleScene::Initialize()
 
 	if (m_textureAnimation == nullptr)
 	{
-		m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/sandStorm.png", 9, 3, 3, 4);
+		m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/bg_sandstorm.png", 9, 3, 3, 4);
 	}
 
 	if (m_playButton == nullptr)
@@ -65,7 +65,7 @@ void TitleScene::Initialize()
 void TitleScene::Update()
 {
 	// BGM‚ÌÄ¶
-	Master::m_soundManager->PlayBGM(SoundManager::BGMTitle);
+	Master::m_soundManager->PlayBGM(SoundManager::BgmTitle);
 
 	if (m_textureAnimation)
 	{
@@ -80,7 +80,7 @@ void TitleScene::Update()
 		if (m_playButton->IsClick())
 		{
 			// SEÄ¶
-			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
 			Master::m_sceneManager->SetNextScene(SceneManager::SceneGame3D);
 		}
 	}
@@ -92,7 +92,7 @@ void TitleScene::Update()
 		if (m_playRuleButton->IsClick())
 		{
 			// SEÄ¶
-			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
 			Master::m_sceneManager->SetNextScene(SceneManager::SceneGameRule);
 		}
 	}
@@ -104,7 +104,7 @@ void TitleScene::Update()
 		if (m_quitButton->IsClick())
 		{
 			// SEÄ¶
-			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
 			Master::m_sceneManager->RequestQuit();
 		}
 	}

@@ -20,7 +20,7 @@ int LoadSoundTask::Execute() {
     m_handle = LoadSoundMem(m_path);
     if (m_handle == -1) {
         // ì«Ç›çûÇ›é∏îséûÇÕÉçÉOÇ»Ç«Ç…èoÇµÇƒÇ‡ó«Ç¢
-        char buf[256];
+        char buf[256] = { 0 };
         //std::sprintf(buf, "Failed to load sound: %s", m_path);
         OutputDebugStringA(buf);
     }
@@ -303,7 +303,7 @@ void LoadingManager::ExecuteScene3D()
     {
         ClearDrawScreen();
 
-       if (m_scene3DGameRuleHandle == -1) m_scene3DGameRuleHandle = LoadGraph("Resource/3D_UI/GameRulePicture.png");
+       if (m_scene3DGameRuleHandle == -1) m_scene3DGameRuleHandle = LoadGraph("Resource/UI/ui_gameRulePicture.png");
 
         DrawGraph(0, 0, m_scene3DGameRuleHandle, false);
 

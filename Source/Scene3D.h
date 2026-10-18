@@ -11,7 +11,7 @@ class Scene3D : public Scene
 {
 public:
 	Scene3D();
-	~Scene3D();
+	~Scene3D() override;
 
 	// ステージ・敵・アイテム生成タスクの実行およびFPSマウス拘束の有効化
 	// 入力: なし / 出力: なし / 副作用: LoadingManagerによる非同期アセット生成、Cameraインスタンス生成

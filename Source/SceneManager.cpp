@@ -3,7 +3,6 @@
 #include "TitleScene.h"
 #include "ResultScene.h"
 #include "GameRuleScene.h"
-#include "GameOverScene.h"
 #include "Scene3D.h"
 
 
@@ -19,7 +18,11 @@ SceneManager::SceneManager()
 
 SceneManager::~SceneManager()
 {
-
+	if (m_currentScene != nullptr)
+	{
+		delete m_currentScene;
+		m_currentScene = nullptr;
+	}
 }
 
 void SceneManager::Initialize()
@@ -45,18 +48,19 @@ void SceneManager::Draw()
 
 void SceneManager::Finalize()
 {
-
+	if (m_currentScene != nullptr)
+	{
+		m_currentScene->Finalize();
+	}
 }
 
 void SceneManager::ChangeSceneIfNeeded()
 {
-
 	// 現在シーンと次シーンが一緒であれば何もしない
 	if (m_sceneType == m_nextSceneType)
 	{
 		return;
-	}
-	
+	}	
 
 	if (m_currentScene != nullptr)
 	{
@@ -87,10 +91,6 @@ void SceneManager::ChangeSceneIfNeeded()
 		m_currentScene = new GameRuleScene();
 		break;
 
-	case SceneType::SceneGameOver:
-		m_currentScene = new GameOverScene();
-		break;
-
 	case SceneType::SceneGame3D:
 		m_currentScene = new Scene3D();
 		break;
@@ -106,6 +106,16 @@ void SceneManager::ChangeSceneIfNeeded()
 		m_currentScene->Initialize();
 	}
 
+}
+
+void SceneManager::SetResultType(ResultType result)
+{
+	if (m_resultType == result)
+	{
+		return;
+	}
+
+	m_resultType = result;
 }
 
 void SceneManager::RequestQuit()

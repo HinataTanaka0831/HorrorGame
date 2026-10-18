@@ -9,18 +9,18 @@ class SoundManager
 {
 public:          // enum, struct などの定義
 	// BGM の種類
-	enum SoundBGM
+	enum SoundBgm
 	{
-		BGMTitle = 0,  // タイトル画面BGM
-		BGMGame,       // 探索・ホラー演出用BGM（ジャンプスケア等）
-		BGMResult,     // リザルト画面BGM
+		BgmTitle = 0,  // タイトル画面BGM
+		BgmGame,       // 探索・ホラー演出用BGM（ジャンプスケア等）
+		BgmResult,     // リザルト画面BGM
 	};
 
 	// SE の種類
-	enum SoundSE
+	enum SoundSe
 	{
-		SEDecide = 0,  // UI決定音
-		SEWalk = 1,    // プレイヤー歩行・足音
+		SeDecide = 0,  // UI決定音
+		SeWalk = 1,    // プレイヤー歩行・足音
 	};
 
 public:
@@ -41,27 +41,27 @@ public:        // サウンド再生系
 
 	// 指定BGMのループ再生開始
 	// 入力: bgm(再生するBGM種別), isTop(先頭から再生し直すか) / 出力: なし / 副作用: 音声再生および再生中BGM状態の更新
-	void PlayBGM(SoundBGM bgm, bool isTop = true);
+	void PlayBGM(SoundBgm bgm, bool isTop = true);
 
 	// 指定SEのバックグラウンド単発再生
 	// 入力: se(再生するSE種別) / 出力: なし / 副作用: 効果音再生
-	void PlaySE(SoundSE se);
+	void PlaySE(SoundSe se);
 
 	// BGMファイルのメモリ読み込み（二重登録ガード付き）
 	// 入力: bgm(BGM種別), fileName(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
-	void LoadBGM(SoundBGM bgm, std::string fileName);
+	void LoadBGM(SoundBgm bgm, std::string fileName);
 
 	// SEファイルのメモリ読み込み（二重登録ガード付き）
 	// 入力: se(SE種別), fileName(音声ファイルパス) / 出力: なし / 副作用: ハンドルリストへの登録
-	void LoadSE(SoundSE se, std::string fileName);
+	void LoadSE(SoundSe se, std::string fileName);
 
 	// 現在再生中のBGMを停止
 	// 入力: なし / 出力: なし / 副作用: BGM再生の停止
 	void StopBGM();
 
 private:    // メンバ変数
-	SoundBGM m_nowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
-	SoundSE m_nowPlayingSe;         // 直近に再生されたSE種別
-	std::vector<std::pair<SoundBGM, int>> m_bgmHandleList;  // BGM種別とDXライブラリハンドルの対応表
-	std::vector<std::pair<SoundSE, int>> m_seHandleList;    // SE種別とDXライブラリハンドルの対応表
+	SoundBgm m_nowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
+	SoundSe m_nowPlayingSe;         // 直近に再生されたSE種別
+	std::vector<std::pair<SoundBgm, int>> m_bgmHandleList;  // BGM種別とDXライブラリハンドルの対応表
+	std::vector<std::pair<SoundSe, int>> m_seHandleList;    // SE種別とDXライブラリハンドルの対応表
 };

@@ -58,7 +58,6 @@ private:
 	const float RotateSpeed;     // 回転速度
 	const float Speed;          // 敵の移動スピード
 	const int WaitFram;           // 待機するフレーム数
-	const int ITER;
 
 	Model* m_model;  // モデルクラスのポインタ
 	VECTOR m_oldPosition = VGet(0.0f, 0.0f, 0.0f);        // 前の座標

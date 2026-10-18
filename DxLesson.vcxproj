@@ -26,7 +26,6 @@
     <ClCompile Include="Source\Enemy3D.cpp" />
     <ClCompile Include="Source\EscapeItem.cpp" />
     <ClCompile Include="Source\Exitdoor.cpp" />
-    <ClCompile Include="Source\GameOverScene.cpp" />
     <ClCompile Include="Source\GameRuleScene.cpp" />
     <ClCompile Include="Source\InputManager.cpp" />
     <ClCompile Include="Source\Item.cpp" />
@@ -58,7 +57,6 @@
     <ClInclude Include="Source\Enemy3D.h" />
     <ClInclude Include="Source\EscapeItem.h" />
     <ClInclude Include="Source\Exitdoor.h" />
-    <ClInclude Include="Source\GameOverScene.h" />
     <ClInclude Include="Source\GameRuleScene.h" />
     <ClInclude Include="Source\InputManager.h" />
     <ClInclude Include="Source\Item.h" />

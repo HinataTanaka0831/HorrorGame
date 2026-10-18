@@ -45,7 +45,7 @@ void GameRuleScene::Initialize()
 
 	if (m_textureAnimation == nullptr)
 	{
-		m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/sandStorm.png", 9, 3, 3, 4);
+		m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/bg_sandstorm.png", 9, 3, 3, 4);
 	}
 
 
@@ -55,7 +55,7 @@ void GameRuleScene::Initialize()
 
 void GameRuleScene::Update()
 {
-	Master::m_soundManager->PlayBGM(SoundManager::BGMTitle);
+	Master::m_soundManager->PlayBGM(SoundManager::BgmTitle);
 
 	if (m_textureAnimation)
 	{
@@ -68,7 +68,7 @@ void GameRuleScene::Update()
 
 		if (m_backButton->IsClick())
 		{
-			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
 			Master::m_sceneManager->SetNextScene(SceneManager::SceneType::SceneTitle);
 		}
 	}
@@ -126,12 +126,41 @@ void GameRuleScene::Draw()
 void GameRuleScene::Finalize()
 {
 	// ‰æ‘œ‚ðíœ
-	if (m_keyHandle != -1) DeleteGraph(m_keyHandle);
-	if (m_keyRHandle != -1) DeleteGraph(m_keyRHandle);
-	if (m_keyFHandle != -1) DeleteGraph(m_keyFHandle);
-	if (m_keyEHandle != -1) DeleteGraph(m_keyEHandle);
-	if (m_mouseHandle != -1) DeleteGraph(m_mouseHandle);
-	if (m_mouseMoveHandle != -1) DeleteGraph(m_mouseMoveHandle);
+	if (m_keyHandle != -1)
+	{
+		DeleteGraph(m_keyHandle);
+		m_keyHandle = -1;
+	}
+
+	if (m_keyRHandle != -1)
+	{
+		DeleteGraph(m_keyRHandle);
+		m_keyRHandle = -1;
+	}
+
+	if (m_keyFHandle != -1)
+	{
+		DeleteGraph(m_keyFHandle);
+		m_keyFHandle = -1;
+	}
+
+	if (m_keyEHandle != -1)
+	{
+		DeleteGraph(m_keyEHandle);
+		m_keyEHandle = -1;
+	}
+
+	if (m_mouseHandle != -1) 
+	{
+		DeleteGraph(m_mouseHandle);
+		m_mouseHandle = -1;
+	}
+
+	if (m_mouseMoveHandle != -1)
+	{
+		DeleteGraph(m_mouseMoveHandle);
+		m_mouseMoveHandle = -1;
+	}
 
 	// BGM’âŽ~
 	Master::m_soundManager->StopBGM();

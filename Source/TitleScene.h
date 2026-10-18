@@ -14,7 +14,7 @@ public:
 	// コンストラクタ
 	TitleScene();
 	// デストラクタ
-	~TitleScene();
+	~TitleScene() override;
 
 
 	// タイトル画面のボタンUI、背景アニメーション生成およびマウスロック解除

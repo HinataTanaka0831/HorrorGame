@@ -57,6 +57,7 @@ void EscapeItem::Escape()
 	// もし残り必要なアイテム数が0になったらゲームクリアする
 	if (m_nowNeedItem == 4)
 	{
+		Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameClear);
 		Master::m_sceneManager->SetNextScene(SceneManager::SceneType::SceneResult);
 	}
 

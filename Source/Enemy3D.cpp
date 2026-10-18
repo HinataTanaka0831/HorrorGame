@@ -13,7 +13,6 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	, RotateSpeed(0.2f)
 	, Speed(6.0f)
 	, WaitFram(60)
-	, ITER(20)
 	, m_model(nullptr)
 	, m_playerPos(VGet(0.0f, 0.0f, 0.0f))
 	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
@@ -678,7 +677,7 @@ void Enemy3D::CollScare()
 			m_scareTimer++;
 
 			// SE再生
-			Master::m_soundManager->PlayBGM(SoundManager::BGMGame);
+			Master::m_soundManager->PlayBGM(SoundManager::BgmGame);
 
 			// カメラの座標を取得
 			VECTOR camPos = Master::m_camera->GetPosition();
@@ -730,8 +729,11 @@ void Enemy3D::CollScare()
 			// ジャンプスケアが一定時間たった場合
 			if (m_scareTimer > 100)
 			{
-				// ゲームオーバーシーンを呼び出す
-				Master::m_sceneManager->SetNextScene(SceneManager::SceneGameOver);
+				// ゲームオーバーシーンに遷移する
+				Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);
+
+				// リザルトシーンを呼び出す
+				Master::m_sceneManager->SetNextScene(SceneManager::SceneResult);
 
 				// BGMを止める
 				Master::m_soundManager->StopBGM();

@@ -2,11 +2,15 @@
 
 AttachmentModel::AttachmentModel(std::string fileName, int parentModelHandle, int parentFrameIndex)
 	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // 座標はアタッチ先によって変わるので初期値は(0,0,0)にしておく
+	, m_handle(-1)
 	, m_parentHandle(parentModelHandle)
 	, m_parentFrameIndex(parentFrameIndex)
 {
-	// 3Dモデルの読み込み
-	m_handle = MV1LoadModel(fileName.c_str());
+	if (m_handle == -1)
+	{
+		// 3Dモデルの読み込み
+		m_handle = MV1LoadModel(fileName.c_str());
+	}
 }
 
 AttachmentModel::~AttachmentModel()

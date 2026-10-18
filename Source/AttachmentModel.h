@@ -14,7 +14,7 @@ public:
     // 親モデルフレームに追従するアタッチメントモデルのロード
 	// 入力: fileName(モデルパス), parentModelHandle(親モデルハンドル), parentFrameIndex(追従先フレーム番号) / 出力: なし / 副作用: MV1LoadModel実行
 	AttachmentModel(std::string fileName, int parentModelHandle, int parentFrameIndex);
-	~AttachmentModel();
+	~AttachmentModel() override;
 
 	// 親モデルボーンフレームのワールド変換行列を取得し自身に反映
 	// 入力: なし / 出力: なし / 副作用: 自身の描画行列の同期

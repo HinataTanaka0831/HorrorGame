@@ -2,11 +2,13 @@
 #include "Master.h"
 #include "InputManager.h"
 #include "Button.h"
+#include "TextureAnimation.h"
 
 ResultScene::ResultScene()
 	: Scene()     // 基底クラスのコンストラクタを呼び出す
 	, m_retoryButton(nullptr)
 	, m_titleButton(nullptr)
+	, m_textureAnimation(nullptr)
 	, DrawX(Utility::SCREEN_WIDTH / 2 - 150)
 	, RetoryY(600)
 	, TitleY(750)
@@ -22,6 +24,18 @@ ResultScene::~ResultScene()
 
 void ResultScene::Initialize()
 {
+	if (Master::m_sceneManager->GetResultType() == SceneManager::ResultType::ResultGameOver)
+	{
+		// BGMの再生
+		Master::m_soundManager->PlayBGM(SoundManager::BgmResult);
+
+		if (m_textureAnimation == nullptr)
+		{
+			m_textureAnimation = std::make_unique<TextureAnimation>(VGet(0, 0, 0), "Resource/UI/bg_sandstorm.png", 9, 3, 3, 4);
+		}
+
+	}
+
 	// ボタンの生成
 	if (m_retoryButton == nullptr)
 	{
@@ -39,6 +53,14 @@ void ResultScene::Initialize()
 
 void ResultScene::Update()
 {
+	if (Master::m_sceneManager->GetResultType() == SceneManager::ResultType::ResultGameOver)
+	{
+		if (m_textureAnimation)
+		{
+			m_textureAnimation->Update();
+		}
+	}
+
 	// ボタンの更新処理を呼ぶ
 	if (m_retoryButton)
 	{
@@ -47,7 +69,7 @@ void ResultScene::Update()
 		if (m_retoryButton->IsClick())
 		{
 			// SE再生
-			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
 			Master::m_sceneManager->SetNextScene(SceneManager::SceneGame3D);
 		}
 
@@ -60,7 +82,7 @@ void ResultScene::Update()
 		if (m_titleButton->IsClick())
 		{
 			// SE再生
-			Master::m_soundManager->PlaySE(SoundManager::SEDecide);
+			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
 			Master::m_sceneManager->SetNextScene(SceneManager::SceneTitle);
 		}
 	}
@@ -77,6 +99,20 @@ void ResultScene::Draw()
 
 	// 文字列の表示 //
 	DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Clear", GetColor(255, 255, 255), m_fontSize140);
+
+
+	if (Master::m_sceneManager->GetResultType() == SceneManager::ResultType::ResultGameOver)
+	{
+		// 砂嵐アニメーションの描画
+		if (m_textureAnimation)
+		{
+			m_textureAnimation->Draw();
+		}
+
+		// 文字列の表示
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Over", GetColor(255, 255, 255), m_fontSize140);
+	}
+
 
 	// ボタンの表示
 	if (m_retoryButton)
@@ -96,5 +132,6 @@ void ResultScene::Draw()
 
 void ResultScene::Finalize()
 {
-
+	// BGM停止
+	Master::m_soundManager->StopBGM();
 }

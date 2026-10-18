@@ -16,11 +16,15 @@ public:  // enum, struct の定義
 		SceneTitle,      // タイトル画面
 		SceneResult,     // クリアリザルト画面
 		SceneGameRule,  // 操作説明画面
-		SceneGameOver,   // ゲームオーバー画面
 		SceneGame3D,         // 3Dホラーゲーム本編
-		// SceneOption,  // オプション
 	};
 
+	enum class ResultType
+	{
+		ResultNone = 0,
+		ResultGameClear,  // ゲームクリア
+		ResultGameOver,   // ゲームオーバー
+	};
 
 public:  // メンバ関数の定義
 	// コンストラクタ
@@ -53,6 +57,8 @@ public:  // メンバ関数の定義
 	// 入力: next(遷移先シーン種別) / 出力: なし / 副作用: m_nextSceneTypeの更新
 	void SetNextScene(SceneType next) { m_nextSceneType = next; }
 
+	void SetResultType(ResultType result);
+
 	// ゲームループ終了要求の発行
 	// 入力: なし / 出力: なし / 副作用: m_quitRequestフラグのtrue化
 	void RequestQuit();
@@ -60,11 +66,14 @@ public:  // メンバ関数の定義
 	bool IsQuitRequest() const { return m_quitRequest; }
 
 	// 現在シーンの取得
-	Scene* GetCurrentScene() { return m_currentScene; }
+	Scene* GetCurrentScene() const { return m_currentScene; }
+
+	ResultType GetResultType() const { return m_resultType; }
 
 private:
 	SceneType m_sceneType;        // 現在実行中のシーン種別
 	SceneType m_nextSceneType;    // 遷移予約されている次シーン種別
+	ResultType m_resultType;      // リザルト画面の種類（クリア/ゲームオーバー）
 	Scene* m_currentScene;       // 現在シーンのポインタ
 	bool m_quitRequest;          // メインループ終了フラグ
 };

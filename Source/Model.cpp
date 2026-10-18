@@ -7,9 +7,11 @@ Model::Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation
 	: m_position(initPosition)
 	, m_rotation(VGet(0.0f, 0.0f, 0.0f))
 	, m_scale(1.0f)
-	, m_attachment(nullptr)
-	, m_handle(-1)
 	, m_changeTextureHandle(-1)
+	, m_handle(-1)
+	, m_animation(nullptr)
+	, m_separateAnimation(nullptr)
+	, m_attachment(nullptr)
 {
 	// ÉÇÉfÉãÇÃì«Ç›çûÇ›
 	m_handle = MV1LoadModel(fileName.c_str());

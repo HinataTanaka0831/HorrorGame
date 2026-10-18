@@ -4,7 +4,9 @@
 #include "Utility.h"
 #include <memory>
 
-class Button; // 前方宣言
+// 前方宣言
+class Button; 
+class TextureAnimation;
 
 // ゲームクリア時に祝福メッセージおよび次アクション（再プレイ/タイトル戻り）を提示するリザルト画面クラス
 class ResultScene : public Scene
@@ -13,7 +15,7 @@ public:
 	// リトライボタン・タイトルボタンの生成およびマウスロック解除
 	// 入力: なし / 出力: なし / 副作用: Buttonインスタンスの生成
 	ResultScene();
-	~ResultScene();
+	~ResultScene() override;
 
 	// リトライボタン・タイトルボタンの生成およびマウスロック解除
 	// 入力: なし / 出力: なし / 副作用: Buttonインスタンスの生成
@@ -32,9 +34,10 @@ public:
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> m_retoryButton;  // 再プレイボタン
-	std::unique_ptr<Button> m_titleButton;   // タイトル画面へ戻るボタン
-	const int DrawX;                         // ボタン配置基準X座標
-	const int RetoryY;                       // リトライボタンY座標
-	const int TitleY;                        // タイトルボタンY座標
+	std::unique_ptr<Button> m_retoryButton;                    // 再プレイボタン
+	std::unique_ptr<Button> m_titleButton;                     // タイトル画面へ戻るボタン
+	std::unique_ptr<TextureAnimation> m_textureAnimation;      // 砂嵐アニメーション
+	const int DrawX;                                           // ボタン配置基準X座標
+	const int RetoryY;                                         // リトライボタンY座標
+	const int TitleY;                                          // タイトルボタンY座標
 };

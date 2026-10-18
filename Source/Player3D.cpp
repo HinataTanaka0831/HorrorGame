@@ -63,7 +63,7 @@ Player3D::Player3D(VECTOR initPosition)
 	SetTag(Object3D::TagPlayer3D);
 
 	// 懐中電灯のモデルを生成
-	m_lightHandle = MV1LoadModel("Resource/3D/Linterna/Linterna.mv1");
+	m_lightHandle = MV1LoadModel("Resource/Object/light/object_light.mv1");
 
 }
 
@@ -200,7 +200,7 @@ void Player3D::MoveEx()
 			// フレーム以上なら
 			if (m_runSETimer >= SEframeRUN)
 			{
-				Master::m_soundManager->PlaySE(SoundManager::SEWalk);
+				Master::m_soundManager->PlaySE(SoundManager::SeWalk);
 				m_runSETimer = 0;
 			}
 		}
@@ -222,7 +222,7 @@ void Player3D::MoveEx()
 			// フレーム以上なら
 			if (m_walkSETimer >= SEframeWalk)
 			{
-				Master::m_soundManager->PlaySE(SoundManager::SEWalk);
+				Master::m_soundManager->PlaySE(SoundManager::SeWalk);
 				m_walkSETimer = 0;
 			}
 		}

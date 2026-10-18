@@ -1,8 +1,8 @@
 #include "SoundManagerh.h"
 
 SoundManager::SoundManager()
-	: m_nowPlayingBgm((SoundBGM)-1)           // 初期状態は何も再生されていない状態
-	, m_nowPlayingSe((SoundSE)-1)             // 初期状態は何も再生されていない状態
+	: m_nowPlayingBgm((SoundBgm)-1)           // 初期状態は何も再生されていない状態
+	, m_nowPlayingSe((SoundSe)-1)             // 初期状態は何も再生されていない状態
 {
 
 }
@@ -15,13 +15,13 @@ SoundManager::~SoundManager()
 void SoundManager::Initialize()
 {
 	// BGM の読み込み
-	LoadBGM(SoundBGM::BGMTitle, "Resource/BGM/electrical_noise1.mp3");
-	LoadBGM(SoundBGM::BGMResult, "Resource/BGM/electrical_noise1.mp3");
-	LoadBGM(SoundBGM::BGMGame, "Resource/BGM/Jumpscare.mp3");
+	LoadBGM(SoundBgm::BgmTitle, "Resource/BGM/electrical_noise1.mp3");
+	LoadBGM(SoundBgm::BgmResult, "Resource/BGM/electrical_noise1.mp3");
+	LoadBGM(SoundBgm::BgmGame, "Resource/BGM/Jumpscare.mp3");
 
 	// SE の読み込み
-	LoadSE(SoundSE::SEDecide, "Resource/SE/maou_se_system49.mp3");
-	LoadSE(SoundSE::SEWalk, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
+	LoadSE(SoundSe::SeDecide, "Resource/SE/maou_se_system49.mp3");
+	LoadSE(SoundSe::SeWalk, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
 }
 
 void SoundManager::Finalize()
@@ -40,7 +40,7 @@ void SoundManager::Finalize()
 
 }
 
-void SoundManager::PlayBGM(SoundBGM bgm, bool isTop)
+void SoundManager::PlayBGM(SoundBgm bgm, bool isTop)
 {
 	if (m_nowPlayingBgm == bgm && !isTop)
 	{
@@ -63,7 +63,7 @@ void SoundManager::PlayBGM(SoundBGM bgm, bool isTop)
 	}
 }
 
-void  SoundManager::PlaySE(SoundSE se)
+void  SoundManager::PlaySE(SoundSe se)
 {
 	for (auto it = m_seHandleList.begin(); it != m_seHandleList.end(); it++)
 	{
@@ -81,7 +81,7 @@ void  SoundManager::PlaySE(SoundSE se)
 
 }
 
-void SoundManager::LoadBGM(SoundBGM bgm, std::string fileName)
+void SoundManager::LoadBGM(SoundBgm bgm, std::string fileName)
 {
 	bool check = false;      // 重複して読み込んでいるかどうか
 	for (auto it = m_bgmHandleList.begin(); it != m_bgmHandleList.end(); it++)
@@ -109,11 +109,11 @@ void SoundManager::LoadBGM(SoundBGM bgm, std::string fileName)
 	}
 
 	// 読み込んだハンドルをリストに追加
-	m_bgmHandleList.push_back(std::pair <SoundBGM, int> (bgm, handle) );
+	m_bgmHandleList.push_back(std::pair <SoundBgm, int> (bgm, handle) );
 }
 
 
-void SoundManager::LoadSE(SoundSE se, std::string fileName)
+void SoundManager::LoadSE(SoundSe se, std::string fileName)
 {
 	bool check = false;      // 重複して読み込んでいるかどうか
 	for (auto it = m_seHandleList.begin(); it != m_seHandleList.end(); it++)
@@ -141,7 +141,7 @@ void SoundManager::LoadSE(SoundSE se, std::string fileName)
 	}
 
 	// 読み込んだハンドルをリストに追加
-	m_seHandleList.push_back(std::pair <SoundSE, int>(se, handle));
+	m_seHandleList.push_back(std::pair <SoundSe, int>(se, handle));
 
 }
 

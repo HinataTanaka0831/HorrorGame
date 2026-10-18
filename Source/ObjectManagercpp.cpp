@@ -9,7 +9,7 @@ ObjectManager::ObjectManager()
 
 ObjectManager::~ObjectManager()
 {
-
+	DeleteAll3D();
 }
 
 void ObjectManager::Update()

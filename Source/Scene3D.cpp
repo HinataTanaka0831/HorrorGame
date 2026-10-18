@@ -26,7 +26,23 @@ Scene3D::Scene3D()
 
 Scene3D::~Scene3D()
 {
+	if (m_enemy != nullptr)
+	{
+		delete m_enemy;
+		m_enemy = nullptr;
+	}
 
+	if (m_enemy2 != nullptr)
+	{
+		delete m_enemy2;
+		m_enemy2 = nullptr;
+	}
+
+	if (m_skybox != nullptr)
+	{
+		delete m_skybox;
+		m_skybox = nullptr;
+	}
 }
 
 void Scene3D::Initialize()
@@ -71,25 +87,25 @@ void Scene3D::InitializeEnemyData()
 {
 	// 敵の生成
 	m_enemy = new Enemy3D(
-		"Resource/Mixamo3DModel/Whiteclown_N_Hallin.mv1",
+		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(-50.0f, 70.0f, 1700.0f),
 		1,
 		true
 	);
-	m_enemy->AddAnimation(AnimationNeutral, "Resource/Mixamo3DModel/Idle.mv1");
-	m_enemy->AddAnimation(AnimationWalking, "Resource/Mixamo3DModel/Walking.mv1");
-	m_enemy->AddAnimation(AnimationRun, "Resource/Mixamo3DModel/Running.mv1");
+	m_enemy->AddAnimation(AnimationNeutral, "Resource/Object/Mixamo3DModel/animation_idle.mv1");
+	m_enemy->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
+	m_enemy->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
 
 	// 敵の生成
 	m_enemy2 = new Enemy3D(
-		"Resource/Mixamo3DModel/Whiteclown_N_Hallin.mv1",
+		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(1000.0f, 70.0f, -1700.0f),
 		2,
 		true
 	);
-	m_enemy2->AddAnimation(AnimationNeutral, "Resource/Mixamo3DModel/Idle.mv1");
-	m_enemy2->AddAnimation(AnimationWalking, "Resource/Mixamo3DModel/Walking.mv1");
-	m_enemy2->AddAnimation(AnimationRun, "Resource/Mixamo3DModel/Running.mv1");
+	m_enemy2->AddAnimation(AnimationNeutral, "Resource/Object/Mixamo3DModel/animation_idle.mv1");
+	m_enemy2->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
+	m_enemy2->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
 
 }
 
@@ -108,36 +124,36 @@ void Scene3D::InitializeItemData()
 	VECTOR RandomPosition3 = RandomPoint3[currentPosition1].PointPosition;
 	VECTOR RandomPosition4 = RandomPoint4[currentPosition2].PointPosition;
 
-	new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition1);
-	new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition2);
-	new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition3);
-	new EscapeItem("Resource/3D/EscapeItem.mv1", RandomPosition4);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition1);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition2);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4);
 
 	// 時間停止アイテムの生成
-	new TimeItem("Resource/3D/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
-	new TimeItem("Resource/3D/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false);
-	new TimeItem("Resource/3D/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false);
+	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
+	new TimeItem("Resource/Object/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false);
+	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false);
 
 }
 
 void Scene3D::InitializeSkyBoxData()
 {
 	// スカイボックスの生成
-	m_skybox = new SkyBox("Resource/SkyBox/SkyBox.x");
+	m_skybox = new SkyBox("Resource/Object/SkyBox/skyBox.x");
 	m_skybox->SetScale(8.0f);
-	m_skybox->SetModelTexture("Resource/SkyBox/sky001.jpg");
+	m_skybox->SetModelTexture("Resource/Object/SkyBox/skybox_nightsky.jpg");
 }
 
 void Scene3D::InitializeStageData()
 {
 	// ステージの生成
-	new Stage("Resource/Stage2/School_02.mv1", "Resource/Stage2/School_02_C.mv1");
+	new Stage("Resource/Object/Stage/object_school.mv1", "Resource/Object/Stage/object_schoolcollision.mv1");
 }
 
 void Scene3D::InitializeExitDoorData()
 {
 	// 脱出ドアの生成
-	new Exitdoor("Resource/Door/Door_Blender.mv1", "Resource/Door/Door_Blender_C.mv1", VGet(500.0f, 0.0f, 1900.0f));
+	new Exitdoor("Resource/Object/Door/object_door.mv1", "Resource/Object/Door/object_doorcollision.mv1", VGet(500.0f, 0.0f, 1900.0f));
 }
 
 
@@ -210,23 +226,5 @@ void Scene3D::Finalize()
 	if (m_playerMoveHandle != -1)
 	{
 		DeleteGraph(m_playerMoveHandle);
-	}
-
-	if (m_enemy != nullptr)
-	{
-		delete m_enemy;
-		m_enemy = nullptr;
-	}
-
-	if (m_enemy2 != nullptr)
-	{
-		delete m_enemy2;
-		m_enemy2 = nullptr;
-	}
-
-	if (m_skybox != nullptr)
-	{
-		delete m_skybox;
-		m_skybox = nullptr;
 	}
 }
