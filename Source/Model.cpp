@@ -2,6 +2,7 @@
 #include "AttachmentModel.h"
 #include "SeparateModelAnimation.h"
 #include "ModelAnimation.h"
+#include "ModelCache.h"
 
 Model::Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
 	: m_position(initPosition)
@@ -9,24 +10,25 @@ Model::Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation
 	, m_scale(1.0f)
 	, m_changeTextureHandle(-1)
 	, m_handle(-1)
+	, m_fileName(fileName)
 	, m_animation(nullptr)
 	, m_separateAnimation(nullptr)
 	, m_attachment(nullptr)
 {
-	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
-	m_handle = MV1LoadModel(fileName.c_str());
+	// ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
+	m_handle = ModelCache::AcquireInstance(fileName);
 
-	// Mixamo—p‚Ì’Ç‰ÁƒvƒƒOƒ‰ƒ€
-	// ğŒ•ªŠò‚ğ’Ç‰Á
+	// Mixamoç”¨ã®è¿½åŠ ãƒ—ãƒ­ã‚°ãƒ©ãƒ 
+	// æ¡ä»¶åˆ†å²ã‚’è¿½åŠ 
 	if (isSeparateAnimation)
 	{
-		// •ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ì¶¬
+		// åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã®ç”Ÿæˆ
 		m_separateAnimation = new SeparateModelAnimation(m_handle);
 		m_animation = nullptr;
 	}
 	else
 	{
-		// ’ÊíƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ì¶¬
+		// é€šå¸¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã®ç”Ÿæˆ
 		m_animation = new ModelAnimation(m_handle);
 		m_separateAnimation = nullptr;
 	}
@@ -44,68 +46,69 @@ void Model::AddAnimation(AnimationState state, std::string fileName)
 
 Model::~Model()
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ì”jŠü
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã®ç ´æ£„
 	if (m_animation != nullptr)
 	{
 		delete m_animation;
 	}
 
-	// Mixamo—pˆ—
-	// •ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ì”jŠü
+	// Mixamoç”¨å‡¦ç†
+	// åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã®ç ´æ£„
 	if (m_separateAnimation != nullptr)
 	{
 		delete m_separateAnimation;
 	}
 
-	// ƒAƒ^ƒbƒ`ƒ‚ƒfƒ‹ƒNƒ‰ƒX‚Ì”jŠü
+	// ã‚¢ã‚¿ãƒƒãƒãƒ¢ãƒ‡ãƒ«ã‚¯ãƒ©ã‚¹ã®ç ´æ£„
 	if (m_attachment != nullptr)
 	{
 		m_attachment->SetDeleteFlag(true);
 	}
 
-	// ƒeƒNƒXƒ`ƒƒ‚ğØ‚è‘Ö‚¦‚Ä‚¢‚éê‡‚Í‚»‚ÌƒeƒNƒXƒ`ƒƒ‚ğ”jŠü
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’åˆ‡ã‚Šæ›¿ãˆã¦ã„ã‚‹å ´åˆã¯ãã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ç ´æ£„
 	if (m_changeTextureHandle != -1)
 	{
 		DeleteGraph(m_changeTextureHandle);
 	}
 
-	// “Ç‚İ‚ñ‚¾ƒ‚ƒfƒ‹‚Ìíœ
-	// note : “Ç‚İ‚ñ‚¾ƒ‚ƒfƒ‹‚ÍŸè‚É”jŠü‚µ‚Ä‚­‚ê‚È‚¢‚Ì‚ÅA•K—v‚È‚­‚È‚Á‚½‚çè“®‚Å”jŠü‚·‚é
-	MV1DeleteModel(m_handle);
+	// èª­ã¿è¾¼ã‚“ã ãƒ¢ãƒ‡ãƒ«ã®å‰Šé™¤
+	// note : èª­ã¿è¾¼ã‚“ã ãƒ¢ãƒ‡ãƒ«ã¯å‹æ‰‹ã«ç ´æ£„ã—ã¦ãã‚Œãªã„ã®ã§ã€å¿…è¦ãªããªã£ãŸã‚‰æ‰‹å‹•ã§ç ´æ£„ã™ã‚‹
+	ModelCache::ReleaseInstance(m_fileName, m_handle);
+	m_handle = -1;
 }
 
 void Model::Update()
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	if (m_animation != nullptr)
 	{
 		m_animation->Update();
 	}
 
-	// Mixamo—pˆ—
-	// •ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// Mixamoç”¨å‡¦ç†
+	// åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	if (m_separateAnimation != nullptr)
 	{
 		m_separateAnimation->Update();
 	}
 
-	// À•Wİ’è
+	// åº§æ¨™è¨­å®š
 	MV1SetPosition(m_handle, m_position);
 
-	// ‰ñ“]İ’è
+	// å›è»¢è¨­å®š
 	MV1SetRotationXYZ(m_handle, m_rotation);
 }
 
 void Model::Draw()
 {
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 	MV1DrawModel(m_handle);
 }
 
 void Model::ChangeAnimation(AnimationState state)
 {
-	// Mixamo—pˆ—
-	// ’Êí or •ªŠ„‚Ì‚Ç‚¿‚ç‚©‚ğg‚Á‚Ä‚¢‚é‚©‚Å•ªŠò
+	// Mixamoç”¨å‡¦ç†
+	// é€šå¸¸ or åˆ†å‰²ã®ã©ã¡ã‚‰ã‹ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã§åˆ†å²
 	if (m_animation != nullptr)
 	{
 		m_animation->ChangeAnimation(state);
@@ -118,8 +121,8 @@ void Model::ChangeAnimation(AnimationState state)
 
 void Model::SetLoop(bool loop)
 {
-	// Mixamo—pˆ—
-	// ’Êí or •ªŠ„‚Ì‚Ç‚¿‚ç‚©‚ğg‚Á‚Ä‚¢‚é‚©‚Å•ªŠò
+	// Mixamoç”¨å‡¦ç†
+	// é€šå¸¸ or åˆ†å‰²ã®ã©ã¡ã‚‰ã‹ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã§åˆ†å²
 	if (m_animation != nullptr)
 	{
 		m_animation->SetLoop(loop);
@@ -132,8 +135,8 @@ void Model::SetLoop(bool loop)
 
 void Model::SetLoopFinishState(AnimationState state)
 {
-	// Mixamo—pˆ—
-	// ’Êí or •ªŠ„‚Ì‚Ç‚¿‚ç‚©‚ğg‚Á‚Ä‚¢‚é‚©‚Å•ªŠò
+	// Mixamoç”¨å‡¦ç†
+	// é€šå¸¸ or åˆ†å‰²ã®ã©ã¡ã‚‰ã‹ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã§åˆ†å²
 	if (m_animation != nullptr)
 	{
 		m_animation->SetLoopFinishState(state);
@@ -146,8 +149,8 @@ void Model::SetLoopFinishState(AnimationState state)
 
 void Model::SetAnimationBlend(bool isBlend)
 {
-	// Mixamo—pˆ—
-	// ’Êí or •ªŠ„‚Ì‚Ç‚¿‚ç‚©‚ğg‚Á‚Ä‚¢‚é‚©‚Å•ªŠò
+	// Mixamoç”¨å‡¦ç†
+	// é€šå¸¸ or åˆ†å‰²ã®ã©ã¡ã‚‰ã‹ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã§åˆ†å²
 	if (m_animation != nullptr)
 	{
 		m_animation->SetAnimationBlend(isBlend);
@@ -160,9 +163,9 @@ void Model::SetAnimationBlend(bool isBlend)
 
 AnimationState Model::GetNowState()
 {
-	// Mixamo—pˆ—
-	// ’Êí or •ªŠ„‚Ì‚Ç‚¿‚ç‚©‚ğg‚Á‚Ä‚¢‚é‚©‚Å•ªŠò
-    // note: i‚Ù‚Ú‚ ‚è‚¦‚È‚¢‚ªj‚à‚µ‚Ç‚¿‚ç‚à‚È‚¯‚ê‚ÎA“Á‚Éİ’è‚Ì‚È‚¢Å‘å’l‚ğ•Ô‚·‚æ‚¤‚É‚·‚é
+	// Mixamoç”¨å‡¦ç†
+	// é€šå¸¸ or åˆ†å‰²ã®ã©ã¡ã‚‰ã‹ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã§åˆ†å²
+    // note: ï¼ˆã»ã¼ã‚ã‚Šãˆãªã„ãŒï¼‰ã‚‚ã—ã©ã¡ã‚‰ã‚‚ãªã‘ã‚Œã°ã€ç‰¹ã«è¨­å®šã®ãªã„æœ€å¤§å€¤ã‚’è¿”ã™ã‚ˆã†ã«ã™ã‚‹
 	AnimationState ret = AnimationState::AnimationMax;
 
 	if (m_animation != nullptr)
@@ -179,9 +182,9 @@ AnimationState Model::GetNowState()
 
 bool Model::IsAnimationLoopFinish()
 {
-	// Mixamo—pˆ—
-    // ’Êí or •ªŠ„‚Ì‚Ç‚¿‚ç‚©‚ğg‚Á‚Ä‚¢‚é‚©‚Å•ªŠò
-    // note: i‚Ù‚Ú‚ ‚è‚¦‚È‚¢‚ªj‚à‚µ‚Ç‚¿‚ç‚à‚È‚¯‚ê‚ÎAfalse ‚ğ•Ô‚·‚æ‚¤‚É‚µ‚Ä‚¨‚­
+	// Mixamoç”¨å‡¦ç†
+    // é€šå¸¸ or åˆ†å‰²ã®ã©ã¡ã‚‰ã‹ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹ã§åˆ†å²
+    // note: ï¼ˆã»ã¼ã‚ã‚Šãˆãªã„ãŒï¼‰ã‚‚ã—ã©ã¡ã‚‰ã‚‚ãªã‘ã‚Œã°ã€false ã‚’è¿”ã™ã‚ˆã†ã«ã—ã¦ãŠã
 
 	bool ret = false;
 
@@ -200,10 +203,10 @@ bool Model::IsAnimationLoopFinish()
 
 void Model::AddAttachment(std::string filename, std::string attachFrameName)
 {
-	// ƒAƒ^ƒbƒ`æ‚ÌƒtƒŒ[ƒ€”Ô†‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒå…ˆã®ãƒ•ãƒ¬ãƒ¼ãƒ ç•ªå·ã‚’å–å¾—
 	int frameIndex = MV1SearchFrame(m_handle, attachFrameName.c_str());
 
-	// ƒAƒ^ƒbƒ`ƒƒ“ƒgƒ‚ƒfƒ‹‚Ì¶¬
+	// ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãƒ¢ãƒ‡ãƒ«ã®ç”Ÿæˆ
 	m_attachment = new AttachmentModel(filename, m_handle, frameIndex);
 }
 
@@ -214,17 +217,17 @@ VECTOR Model::GetAttachmentPosition()
 		
 		VECTOR vec = VGet(0.0f, -50.0f, 0.0f);
 
-		// s—ñ‚Ìæ“¾
-		MATRIX matrix = MV1GetFrameLocalWorldMatrix(m_attachment->GetHandle(), 0);  
+		// è¡Œåˆ—ã®å–å¾—
+		MATRIX matrix = MV1GetFrameLocalWorldMatrix(m_attachment->GetHandle(), 0);
 
-		// s—ñî•ñ‚ğ‚à‚Æ‚ÉÀ•W•ÏŠ·‚·‚é
+		// è¡Œåˆ—æƒ…å ±ã‚’ã‚‚ã¨ã«åº§æ¨™å¤‰æ›ã™ã‚‹
 		vec = VTransform(vec, matrix);
 
 		return vec;
 	}
 
 
-	// ƒAƒ^ƒbƒ`ƒƒ“ƒg‚ª–³‚¢ê‡‚ÍŒ´“_‚ğ•Ô‚µ‚Ä‚¨‚­
+	// ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãŒç„¡ã„å ´åˆã¯åŸç‚¹ã‚’è¿”ã—ã¦ãŠã
 	return VGet(0.0f, 0.0f, 0.0f);
 }
 
@@ -235,15 +238,15 @@ void Model::SetScale(float scale)
 
 void Model::SetTexture(std::string filename, int index)
 {
-	// ƒeƒNƒXƒ`ƒƒ‚ğØ‚è‘Ö‚¦‚Ä‚¢‚é‚È‚ç‚»‚ÌƒeƒNƒXƒ`ƒƒ‚ğ”jŠü
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’åˆ‡ã‚Šæ›¿ãˆã¦ã„ã‚‹ãªã‚‰ãã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ç ´æ£„
 	if (m_changeTextureHandle != -1)
 	{
 		DeleteGraph(m_changeTextureHandle);
 	}
 
-	// ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­ã¿è¾¼ã¿
 	m_changeTextureHandle = LoadGraph(filename.c_str());
 
-	// “Ç‚İ‚ñ‚¾ƒeƒNƒXƒ`ƒƒ‚ğ”½‰f
+	// èª­ã¿è¾¼ã‚“ã ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’åæ˜ 
 	MV1SetTextureGraphHandle(m_handle, index, m_changeTextureHandle, FALSE);
 }

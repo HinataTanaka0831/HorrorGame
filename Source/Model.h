@@ -4,83 +4,84 @@
 #include <string>
 #include "ModelUtility.h"
 
-// ‘O•ûéŒ¾
+// å‰æ–¹å®£è¨€
 class AttachmentModel;
 class ModelAnimation;
 class SeparateModelAnimation;
 
 
-// 3Dƒ‚ƒfƒ‹ƒAƒZƒbƒg‚Ìƒ[ƒhAƒgƒ‰ƒ“ƒXƒtƒH[ƒ€AƒAƒjƒ[ƒVƒ‡ƒ“§ŒäAƒAƒ^ƒbƒ`ƒƒ“ƒg‚ð“Š‡‚·‚éƒNƒ‰ƒX
+// 3Dãƒ¢ãƒ‡ãƒ«ã‚¢ã‚»ãƒƒãƒˆã®ãƒ­ãƒ¼ãƒ‰ã€ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ã€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åˆ¶å¾¡ã€ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆã‚’çµ±æ‹¬ã™ã‚‹ã‚¯ãƒ©ã‚¹
 class Model
 {
 public:
-	// Mixamo—pˆ—
-	// note: •ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“‚ðŽg‚¤‚©‚Ç‚¤‚©‚ÌÝ’è‚ð’Ç‰ÁB
+	// Mixamoç”¨å‡¦ç†
+	// note: åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ä½¿ã†ã‹ã©ã†ã‹ã®è¨­å®šã‚’è¿½åŠ ã€‚
 
-	// 3Dƒ‚ƒfƒ‹‚Ìƒ[ƒh‚¨‚æ‚Ñ’Êí/•ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰‚Ì¶¬
-	// “ü—Í: fileName(ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹ƒpƒX), initPosition(‰Šú”z’uÀ•W), isSeparateAnimation(ŠO•”•ªŠ„ƒAƒjƒ[ƒVƒ‡ƒ“‚ðŽg—p‚·‚é‚©) / o—Í: ‚È‚µ / •›ì—p: MV1LoadModel‚¨‚æ‚ÑƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX¶¬
+	// 3Dãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ãŠã‚ˆã³é€šå¸¸/åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã®ç”Ÿæˆ
+	// å…¥åŠ›: fileName(ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹), initPosition(åˆæœŸé…ç½®åº§æ¨™), isSeparateAnimation(å¤–éƒ¨åˆ†å‰²ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ä½¿ç”¨ã™ã‚‹ã‹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: MV1LoadModelãŠã‚ˆã³ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ç”Ÿæˆ
 	Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
 	~Model();
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶ŽžŠÔ‚Ìis‚¨‚æ‚ÑÀ•WE‰ñ“]‚Ì3Dƒ‚ƒfƒ‹‚Ö‚Ì”½‰f
-	// “ü—Í: ‚È‚µ / o—Í: ‚È‚µ / •›ì—p: DXƒ‰ƒCƒuƒ‰ƒŠƒ‚ƒfƒ‹•ÏŠ·s—ñ‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿæ™‚é–“ã®é€²è¡ŒãŠã‚ˆã³åº§æ¨™ãƒ»å›žè»¢ã®3Dãƒ¢ãƒ‡ãƒ«ã¸ã®åæ˜ 
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒ¢ãƒ‡ãƒ«å¤‰æ›è¡Œåˆ—ã®æ›´æ–°
 	void Update();
 
-	// 3Dƒ‚ƒfƒ‹•`‰æ
-	// “ü—Í: ‚È‚µ / o—Í: ‚È‚µ / •›ì—p: ƒoƒbƒNƒoƒbƒtƒ@‚Ö‚Ì3D•`‰æ
+	// 3Dãƒ¢ãƒ‡ãƒ«æç”»
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã¸ã®3Dæç”»
 	void Draw();
 
-	// Žw’èƒAƒjƒ[ƒVƒ‡ƒ“ƒXƒe[ƒg‚Ö‚ÌØ‚è‘Ö‚¦
-	// “ü—Í: state(•ÏXæƒXƒe[ƒg) / o—Í: ‚È‚µ / •›ì—p: ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰‚ÌƒXƒe[ƒg•ÏX
-	void ChangeAnimation(AnimationState state);	// ƒ‹[ƒvÝ’è
+	// æŒ‡å®šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã¸ã®åˆ‡ã‚Šæ›¿ãˆ
+	// å…¥åŠ›: state(å¤‰æ›´å…ˆã‚¹ãƒ†ãƒ¼ãƒˆ) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã®ã‚¹ãƒ†ãƒ¼ãƒˆå¤‰æ›´
+	void ChangeAnimation(AnimationState state);	// ãƒ«ãƒ¼ãƒ—è¨­å®š
 
 	void SetLoop(bool loop);
 	void SetLoopFinishState(AnimationState state);
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒhÝ’è
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ–ãƒ¬ãƒ³ãƒ‰è¨­å®š
 	void SetAnimationBlend(bool isBlend);
-	// Œ»ÝÄ¶‚³‚ê‚Ä‚¢‚éƒAƒjƒ[ƒVƒ‡ƒ“‚ÌŽæ“¾
+	// ç¾åœ¨å†ç”Ÿã•ã‚Œã¦ã„ã‚‹ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å–å¾—
 	AnimationState GetNowState();
 	
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ‹[ƒv‚ªI—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ«ãƒ¼ãƒ—ãŒçµ‚äº†ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹
 	bool IsAnimationLoopFinish();
 
-	// eƒ‚ƒfƒ‹“Á’èƒ{[ƒ“‚Ö‚ÌƒAƒ^ƒbƒ`ƒƒ“ƒgƒ‚ƒfƒ‹’Ç‰Á
-	// “ü—Í: fileName(’Ç‰Áƒ‚ƒfƒ‹ƒpƒX), attachFrameName(ƒ{[ƒ“ƒtƒŒ[ƒ€–¼) / o—Í: ‚È‚µ / •›ì—p: AttachmentModel¶¬	
+	// è¦ªãƒ¢ãƒ‡ãƒ«ç‰¹å®šãƒœãƒ¼ãƒ³ã¸ã®ã‚¢ã‚¿ãƒƒãƒãƒ¡ãƒ³ãƒˆãƒ¢ãƒ‡ãƒ«è¿½åŠ 
+	// å…¥åŠ›: fileName(è¿½åŠ ãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹), attachFrameName(ãƒœãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ å) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: AttachmentModelç”Ÿæˆ	
 	void AddAttachment(std::string fileName, std::string attachFrameName);
 
-	// ƒAƒ^ƒbƒ`‚³‚ê‚½ƒ‚ƒfƒ‹‚Ìƒ[ƒ‹ƒhÀ•W‚ðŽæ“¾
-	// “ü—Í: ‚È‚µ / o—Í: ƒ[ƒ‹ƒhÀ•W / •›ì—p: ‚È‚µ
+	// ã‚¢ã‚¿ãƒƒãƒã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’å–å¾—
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ / å‰¯ä½œç”¨: ãªã—
 	VECTOR GetAttachmentPosition();
 
 
-	VECTOR GetPosition() { return m_position; }  // À•WŽæ“¾
-	void SetPosition(VECTOR position) { m_position = position; }  // À•WÝ’è
+	VECTOR GetPosition() { return m_position; }  // åº§æ¨™å–å¾—
+	void SetPosition(VECTOR position) { m_position = position; }  // åº§æ¨™è¨­å®š
 
-	VECTOR GetRotation() { return m_rotation; }  // ‰ñ“]Žæ“¾
-	void SetRotation(VECTOR rotation) { m_rotation = rotation; }  // ‰ñ“]Ý’è
+	VECTOR GetRotation() { return m_rotation; }  // å›žè»¢å–å¾—
+	void SetRotation(VECTOR rotation) { m_rotation = rotation; }  // å›žè»¢è¨­å®š
 
-	// ƒXƒP[ƒ‹Žæ“¾EÝ’è
+	// ã‚¹ã‚±ãƒ¼ãƒ«å–å¾—ãƒ»è¨­å®š
 	void SetScale(float scale);
-	// “Ç‚Ýž‚ñ‚¾ƒ‚ƒfƒ‹‚ÌƒeƒNƒXƒ`ƒƒ‚ð•ÏX
-	// “ü—Í: fileName(ƒeƒNƒXƒ`ƒƒƒpƒX), index(•ÏX‚·‚éƒeƒNƒXƒ`ƒƒ”Ô†) / o—Í: ‚È‚µ / •›ì—p: MV1SetTextureGraphHandle‚ÌŽÀs
+	// èª­ã¿è¾¼ã‚“ã ãƒ¢ãƒ‡ãƒ«ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’å¤‰æ›´
+	// å…¥åŠ›: fileName(ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‘ã‚¹), index(å¤‰æ›´ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: MV1SetTextureGraphHandleã®å®Ÿè¡Œ
 	void SetTexture(std::string fileName, int index = 0);
 
-	// ŠO•”ƒ‚[ƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚Ì’Ç‰Á“o˜^iMixamo•ªŠ„ƒtƒ@ƒCƒ‹—pj
-	// “ü—Í: state(•R‚Ã‚¯‚éƒXƒe[ƒg), fileName(ƒAƒjƒ[ƒVƒ‡ƒ“ƒ‚ƒfƒ‹ƒpƒX) / o—Í: ‚È‚µ / •›ì—p: SeparateModelAnimation‚Ö‚Ì“o˜^
+	// å¤–éƒ¨ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã®è¿½åŠ ç™»éŒ²ï¼ˆMixamoåˆ†å‰²ãƒ•ã‚¡ã‚¤ãƒ«ç”¨ï¼‰
+	// å…¥åŠ›: state(ç´ã¥ã‘ã‚‹ã‚¹ãƒ†ãƒ¼ãƒˆ), fileName(ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: SeparateModelAnimationã¸ã®ç™»éŒ²
 	void AddAnimation(AnimationState state, std::string fileName);
 
 private:
-	VECTOR m_position;              // À•W
-	VECTOR m_rotation;              // ‰ñ“]
-	float m_scale;                  // ‘å‚«‚³
-	int m_changeTextureHandle;     // •ÏX‚·‚éƒeƒNƒXƒ`ƒƒ‚Ìƒnƒ“ƒhƒ‹”Ô†
-	int m_handle;                   // “Ç‚Ýž‚ñ‚¾ƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
-	ModelAnimation* m_animation;    // ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
+	VECTOR m_position;              // åº§æ¨™
+	VECTOR m_rotation;              // å›žè»¢
+	float m_scale;                  // å¤§ãã•
+	int m_changeTextureHandle;     // å¤‰æ›´ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒãƒ³ãƒ‰ãƒ«ç•ªå·
+	int m_handle;                   // èª­ã¿è¾¼ã‚“ã ãƒ¢ãƒ‡ãƒ«ã®ãƒãƒ³ãƒ‰ãƒ«
+	std::string m_fileName;         // ãƒ¢ãƒ‡ãƒ«ã®è¤‡è£½ãƒ‘ã‚¹ï¼ˆã‚­ãƒ£ãƒƒã‚·ãƒ¥ç”¨ï¼‰
+	ModelAnimation* m_animation;    // ãƒ¢ãƒ‡ãƒ«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
 
-	// Mixamo—p
-	// •ªŠ„“Ç‚Ýž‚Ýƒo[ƒWƒ‡ƒ“‚Ìƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
+	// Mixamoç”¨
+	// åˆ†å‰²èª­ã¿è¾¼ã¿ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®ãƒ¢ãƒ‡ãƒ«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
 	SeparateModelAnimation* m_separateAnimation;
 
-	AttachmentModel* m_attachment;  // ƒAƒ^ƒbƒ`ƒ‚ƒfƒ‹i•¡”Ž‚½‚¹‚½‚¢ê‡‚Í std::vector ‚â”z—ñ‚ÅŠÇ—‚·‚é‚Æ—Ç‚¢j
+	AttachmentModel* m_attachment;  // ã‚¢ã‚¿ãƒƒãƒãƒ¢ãƒ‡ãƒ«ï¼ˆè¤‡æ•°æŒãŸã›ãŸã„å ´åˆã¯ std::vector ã‚„é…åˆ—ã§ç®¡ç†ã™ã‚‹ã¨è‰¯ã„ï¼‰
 
 };

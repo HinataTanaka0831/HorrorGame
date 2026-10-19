@@ -1,4 +1,5 @@
 #include "SeparateModelAnimation.h"
+#include "ModelCache.h"
 
 SeparateModelAnimation::SeparateModelAnimation(int modelHandle)
     : m_modelHandle(modelHandle)
@@ -13,22 +14,22 @@ SeparateModelAnimation::SeparateModelAnimation(int modelHandle)
     , m_loopFinish(false)
     , m_animationInfoList{}
 {
-    // ƒAƒjƒ[ƒVƒ‡ƒ“‚ÅˆÚ“®‚ğ‚µ‚Ä‚¢‚éƒtƒŒ[ƒ€”Ô†‚ğŒŸõ‚·‚é
+    // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã§ç§»å‹•ã‚’ã—ã¦ã„ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ ç•ªå·ã‚’æ¤œç´¢ã™ã‚‹
     int moveAnimFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Hips");
-    //ˆÚ“®‚ğ–³Œø‚É‚·‚é
+    //ç§»å‹•ã‚’ç„¡åŠ¹ã«ã™ã‚‹
     MV1SetFrameUserLocalMatrix(
         m_modelHandle,
         moveAnimFrameIndex,
         MV1GetFrameLocalMatrix(m_modelHandle, moveAnimFrameIndex)
     );
 
-    // ‰Šúó‘Ô‚Í‘Ò‹@ƒ‚[ƒVƒ‡ƒ“‚É‚µ‚Ä‚¨‚­
+    // åˆæœŸçŠ¶æ…‹ã¯å¾…æ©Ÿãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã«ã—ã¦ãŠã
     ChangeAnimation(AnimationState::AnimationNeutral);
 }
 
 SeparateModelAnimation::~SeparateModelAnimation()
 {
-    // ’Ç‰Á“Ç‚İ‚İ‚µ‚½ƒ‚[ƒVƒ‡ƒ“‚Ìíœ
+    // è¿½åŠ èª­ã¿è¾¼ã¿ã—ãŸãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®å‰Šé™¤
     if (!m_animationInfoList.empty())
     {
         for (auto itr = m_animationInfoList.begin(); itr != m_animationInfoList.end(); )
@@ -36,7 +37,8 @@ SeparateModelAnimation::~SeparateModelAnimation()
             auto temp = *itr;
 
             itr = m_animationInfoList.erase(itr);
-            MV1DeleteModel(temp->m_animationHandle);
+			// å‚ç…§ã—ã¦ã„ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’è§£æ”¾ã™ã‚‹
+            ModelCache::ReleaseShared(temp->m_fileName);
 
             delete temp;
             temp = nullptr;
@@ -46,10 +48,10 @@ SeparateModelAnimation::~SeparateModelAnimation()
 
 void SeparateModelAnimation::Update()
 {
-    // ƒ‚[ƒVƒ‡ƒ“‚ÌƒuƒŒƒ“ƒh—¦‚ği‚ß‚é
+    // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã‚’é€²ã‚ã‚‹
     if (m_animBlendRate < 1.0f)
     {
-        m_animBlendRate += 0.1f;    // += 0.1f ‚ÍƒuƒŒƒ“ƒh‘¬“xB©—R‚É•Ï‚¦‚Ä‚àok
+        m_animBlendRate += 0.1f;    // += 0.1f ã¯ãƒ–ãƒ¬ãƒ³ãƒ‰é€Ÿåº¦ã€‚è‡ªç”±ã«å¤‰ãˆã¦ã‚‚ok
         if (m_animBlendRate > 1.0f)
         {
             m_animBlendRate = 1.0f;
@@ -57,123 +59,123 @@ void SeparateModelAnimation::Update()
     }
 
 
-    // ƒ‚[ƒVƒ‡ƒ“‚ÌXV
+    // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
     float fAnimTotalTime = 0.0f;
     if (m_animationIndex != -1)
     {
-        // ‘Ä¶ŠÔ‚Ìæ“¾
+        // ç·å†ç”Ÿæ™‚é–“ã®å–å¾—
         fAnimTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_animationIndex);
 
-        // ƒ‚[ƒVƒ‡ƒ“‚ği‚ß‚é
+        // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’é€²ã‚ã‚‹
         m_animationTime += 0.5f;
 
-        // ƒ‹[ƒv‚³‚¹‚é
+        // ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹
         if (m_animationTime > fAnimTotalTime)
         {
-            // ƒ‹[ƒv‚µ‚È‚¢İ’è‚Å‚ ‚ê‚Î
+            // ãƒ«ãƒ¼ãƒ—ã—ãªã„è¨­å®šã§ã‚ã‚Œã°
             if (!m_loop)
             {
-                // Ÿ‚Ìƒ‚[ƒVƒ‡ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡
+                // æ¬¡ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆ
                 if (m_loopFinishState == AnimationMax)
                 {
-                    // ƒ‚[ƒVƒ‡ƒ“‚Í‚±‚êˆÈãi‚ß‚¸Aˆ—‚ğ’†’f‚³‚¹‚é
+                    // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã¯ã“ã‚Œä»¥ä¸Šé€²ã‚ãšã€å‡¦ç†ã‚’ä¸­æ–­ã•ã›ã‚‹
                     m_loopFinish = true;
                     return;
                 }
 
-                // ƒ‹[ƒvI—¹‚Ìƒ‚[ƒVƒ‡ƒ“‚Ö•ÏX
+                // ãƒ«ãƒ¼ãƒ—çµ‚äº†æ™‚ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã¸å¤‰æ›´
                 ChangeAnimation(m_loopFinishState);
-                // ƒuƒŒƒ“ƒh‚Í‚µ‚È‚¢
+                // ãƒ–ãƒ¬ãƒ³ãƒ‰ã¯ã—ãªã„
                 SetAnimationBlend(false);
-                // •ÏX‚³‚ê‚½‚Ì‚Å‰ü‚ß‚Ä‘Ä¶ŠÔ‚ğ‚Æ‚Á‚Ä‚¨‚­
+                // å¤‰æ›´ã•ã‚ŒãŸã®ã§æ”¹ã‚ã¦ç·å†ç”Ÿæ™‚é–“ã‚’ã¨ã£ã¦ãŠã
                 fAnimTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_animationIndex);
             }
 
             m_animationTime = 0.0f;
         }
 
-        // ƒ‚[ƒVƒ‡ƒ“‚ğ”½‰f
+        // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’åæ˜ 
         MV1SetAttachAnimTime(m_modelHandle, m_animationIndex, m_animationTime);
 
-        // ƒuƒŒƒ“ƒh—¦‚ğİ’è
+        // ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã‚’è¨­å®š
         MV1SetAttachAnimBlendRate(m_modelHandle, m_animationIndex, m_animBlendRate);
     }
 
-    // ‚P‚Â‘O‚Ìƒ‚[ƒVƒ‡ƒ“‚ğXV
+    // ï¼‘ã¤å‰ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’æ›´æ–°
     if (m_oldAnimationIndex != -1)
     {
-        // ‘Ä¶ŠÔ‚Ìæ“¾
+        // ç·å†ç”Ÿæ™‚é–“ã®å–å¾—
         fAnimTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_oldAnimationIndex);
 
-        // ƒ‚[ƒVƒ‡ƒ“‚ği‚ß‚é
+        // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’é€²ã‚ã‚‹
         m_oldAnimationTime += 0.5f;
 
-        // ƒ‹[ƒv‚³‚¹‚é
+        // ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹
         if (m_oldAnimationTime > fAnimTotalTime)
         {
             m_oldAnimationTime = 0.0f;
         }
 
-        // ƒ‚[ƒVƒ‡ƒ“‚ğ”½‰f
+        // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’åæ˜ 
         MV1SetAttachAnimTime(m_modelHandle, m_oldAnimationIndex, m_oldAnimationTime);
 
-        // ƒuƒŒƒ“ƒh—¦‚ğİ’è
+        // ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã‚’è¨­å®š
         MV1SetAttachAnimBlendRate(m_modelHandle, m_oldAnimationIndex, 1.0f - m_animBlendRate);
     }
 }
 
 void SeparateModelAnimation::ChangeAnimation(AnimationState state, int index)
 {
-    // Ø‚è‘Ö‚¦‚æ‚¤‚Æ‚µ‚Ä‚¢‚éƒ‚[ƒVƒ‡ƒ“‚ª‚·‚Å‚Éİ’è‚³‚ê‚Ä‚¢‚éê‡
+    // åˆ‡ã‚Šæ›¿ãˆã‚ˆã†ã¨ã—ã¦ã„ã‚‹ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒã™ã§ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹å ´åˆ
     if (m_state == state)
     {
-        return;     // ‰½‚à‚µ‚È‚¢
+        return;     // ä½•ã‚‚ã—ãªã„
     }
 
-    // Ø‚è‘Ö‚¦æ‚Ì”Ô†‚ğ•Û
-    m_state = state;
+    // åˆ‡ã‚Šæ›¿ãˆå…ˆã®ç•ªå·ã‚’ä¿æŒ
+        m_state = state;
 
-    // ƒ‹[ƒvî•ñ‚Ì‰Šú‰»
-    m_loop = true;  // İ’è‚ª“Á‚É‚È‚¢ê‡‚Íƒ‹[ƒv‚³‚¹‚é
-    m_loopFinishState = AnimationState::AnimationMax;  // ƒ‹[ƒvI—¹‚Ìƒ‚[ƒVƒ‡ƒ“‚Í“Á‚É‚È‚µ
+    // ãƒ«ãƒ¼ãƒ—æƒ…å ±ã®åˆæœŸåŒ–
+    m_loop = true;  // è¨­å®šãŒç‰¹ã«ãªã„å ´åˆã¯ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹
+    m_loopFinishState = AnimationState::AnimationMax;  // ãƒ«ãƒ¼ãƒ—çµ‚äº†æ™‚ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã¯ç‰¹ã«ãªã—
     m_loopFinish = false;
 
-    // ‚P‚Â‘O‚Ìƒ‚[ƒVƒ‡ƒ“‚ª—LŒøó‘Ô‚Å‚ ‚ê‚Î
+    // ï¼‘ã¤å‰ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒæœ‰åŠ¹çŠ¶æ…‹ã§ã‚ã‚Œã°
     if (m_oldAnimationIndex != -1)
     {
-        // ƒ‚[ƒVƒ‡ƒ“‚Ìƒfƒ^ƒbƒ`iæ‚èŠO‚·j
+        // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ‡ã‚¿ãƒƒãƒï¼ˆå–ã‚Šå¤–ã™ï¼‰
         MV1DetachAnim(m_modelHandle, m_oldAnimationIndex);
         m_oldAnimationIndex = -1;
     }
 
-    // Œ»İ‚Ìƒ‚[ƒVƒ‡ƒ“ó‘Ô‚ğ•Û‚·‚é
+    // ç¾åœ¨ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³çŠ¶æ…‹ã‚’ä¿æŒã™ã‚‹
     m_oldAnimationIndex = m_animationIndex;
     m_oldAnimationTime = m_animationTime;
 
-    // ƒ‚[ƒVƒ‡ƒ“‚ÌƒAƒ^ƒbƒ`
+    // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ã‚¿ãƒƒãƒ
     m_animationIndex = MV1AttachAnim(m_modelHandle, index, GetAnimationHandle(state), FALSE);
 
-    // Ä¶ŠÔ‚Ì‰Šú‰»
+    // å†ç”Ÿæ™‚é–“ã®åˆæœŸåŒ–
     m_animationTime = 0.0f;
 
-    // ƒuƒŒƒ“ƒhó‘Ô‚ğ‰Šú‰»
-    // ƒuƒŒƒ“ƒh—¦‚ÍAŒÃ‚¢ƒ‚[ƒVƒ‡ƒ“‚ª—LŒø‚Å‚È‚¢ê‡‚Í1.0fiƒuƒŒƒ“ƒh‚µ‚È‚¢ó‘Ôj‚É‚µ‚Ä‚¨‚­
+    // ãƒ–ãƒ¬ãƒ³ãƒ‰çŠ¶æ…‹ã‚’åˆæœŸåŒ–
+    // ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã¯ã€å¤ã„ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒæœ‰åŠ¹ã§ãªã„å ´åˆã¯1.0fï¼ˆãƒ–ãƒ¬ãƒ³ãƒ‰ã—ãªã„çŠ¶æ…‹ï¼‰ã«ã—ã¦ãŠã
     m_animBlendRate = (m_oldAnimationIndex == -1 ? 1.0f : 0.0f);
 }
 
 void SeparateModelAnimation::SetAnimationBlend(bool isBlend)
 {
-    if (isBlend)    // ƒuƒŒƒ“ƒh‚·‚éê‡
+    if (isBlend)    // ãƒ–ãƒ¬ãƒ³ãƒ‰ã™ã‚‹å ´åˆ
     {
-        // ƒuƒŒƒ“ƒh—¦‚ÍAŒÃ‚¢ƒ‚[ƒVƒ‡ƒ“‚ª—LŒø‚Å‚È‚¢ê‡‚Í1.0fiƒuƒŒƒ“ƒh‚µ‚È‚¢ó‘Ôj‚É‚µ‚Ä‚¨‚­
+        // ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã¯ã€å¤ã„ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒæœ‰åŠ¹ã§ãªã„å ´åˆã¯1.0fï¼ˆãƒ–ãƒ¬ãƒ³ãƒ‰ã—ãªã„çŠ¶æ…‹ï¼‰ã«ã—ã¦ãŠã
         m_animBlendRate = (m_oldAnimationIndex == -1 ? 1.0f : 0.0f);
     }
-    else    // ƒuƒŒƒ“ƒh‚µ‚È‚¢ê‡
+    else    // ãƒ–ãƒ¬ãƒ³ãƒ‰ã—ãªã„å ´åˆ
     {
-        // ƒuƒŒƒ“ƒh‚µ‚È‚¢ó‘Ô‚É‚·‚é
+        // ãƒ–ãƒ¬ãƒ³ãƒ‰ã—ãªã„çŠ¶æ…‹ã«ã™ã‚‹
         m_animBlendRate = 1.0f;
 
-        // ƒuƒŒƒ“ƒh‚·‚é•K—v‚ª‚È‚¢‚Ì‚ÅAŒÃ‚¢ƒ‚[ƒVƒ‡ƒ“‚Íƒfƒ^ƒbƒ`‚µ‚Ä‚¨‚­
+        // ãƒ–ãƒ¬ãƒ³ãƒ‰ã™ã‚‹å¿…è¦ãŒãªã„ã®ã§ã€å¤ã„ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã¯ãƒ‡ã‚¿ãƒƒãƒã—ã¦ãŠã
         if (m_oldAnimationIndex != -1)
         {
             MV1DetachAnim(m_modelHandle, m_oldAnimationIndex);
@@ -184,31 +186,32 @@ void SeparateModelAnimation::SetAnimationBlend(bool isBlend)
 
 void SeparateModelAnimation::AddAnimation(AnimationState state, std::string filename)
 {
-    // ƒ‚[ƒVƒ‡ƒ“ƒ‚ƒfƒ‹“Ç‚İ‚İ
-    int handle = MV1LoadModel(filename.c_str());
+    // ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ãƒ‡ãƒ«èª­ã¿è¾¼ã¿
+    int handle = ModelCache::AcquireShared(filename);
 
     if (handle == -1)
     {
         return;
     }
 
-    // AnimationState ‚Æ“Ç‚İ‚ñ‚¾ƒnƒ“ƒhƒ‹‚Ì•R‚Ã‚¯
+    // AnimationState ã¨èª­ã¿è¾¼ã‚“ã ãƒãƒ³ãƒ‰ãƒ«ã®ç´ã¥ã‘
     AnimationInfo* pInfo = new AnimationInfo();
     pInfo->m_state = state;
     pInfo->m_animationHandle = handle;
+    pInfo->m_fileName = filename;
     m_animationInfoList.push_back(pInfo);
 
-    // NEUTRALƒ‚[ƒVƒ‡ƒ“i‘Ò‹@ƒ‚[ƒVƒ‡ƒ“j‚ª’Ç‰Á‚³‚ê‚½‚çƒ‚[ƒVƒ‡ƒ“•ÏXˆ—‚ğ‚µ‚Ä‚¨‚­
+    // NEUTRALãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ï¼ˆå¾…æ©Ÿãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ï¼‰ãŒè¿½åŠ ã•ã‚ŒãŸã‚‰ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³å¤‰æ›´å‡¦ç†ã‚’ã—ã¦ãŠã
     if (state == AnimationState::AnimationNeutral)
     {
-        // ‰Šúó‘Ô‚Í‘Ò‹@ƒ‚[ƒVƒ‡ƒ“‚É‚µ‚Ä‚¨‚­
+        // åˆæœŸçŠ¶æ…‹ã¯å¾…æ©Ÿãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã«ã—ã¦ãŠã
         ChangeAnimation(AnimationState::AnimationNeutral);
     }
 }
 
 int SeparateModelAnimation::GetAnimationHandle(AnimationState state)
 {
-    // ‚»‚à‚»‚à‹ó‚Á‚Û‚Ìê‡‚Í’T‚³‚È‚¢
+    // ãã‚‚ãã‚‚ç©ºã£ã½ã®å ´åˆã¯æ¢ã•ãªã„
     if (m_animationInfoList.empty())
     {
         return -1;
@@ -218,13 +221,13 @@ int SeparateModelAnimation::GetAnimationHandle(AnimationState state)
     {
         auto temp = *itr;
 
-        // ‘Î‰‚·‚éƒ‚[ƒVƒ‡ƒ“ƒnƒ“ƒhƒ‹‚ª‚ ‚ê‚Î‚»‚ê‚ğ•Ô‚·
+        // å¯¾å¿œã™ã‚‹ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãƒãƒ³ãƒ‰ãƒ«ãŒã‚ã‚Œã°ãã‚Œã‚’è¿”ã™
         if (temp->m_state == state)
         {
             return temp->m_animationHandle;
         }
     }
 
-    // Œ©‚Â‚©‚ç‚È‚©‚Á‚½‚ç-1‚ğ•Ô‚·
+    // è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã‚‰-1ã‚’è¿”ã™
     return -1;
 }

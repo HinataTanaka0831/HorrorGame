@@ -32,6 +32,7 @@
     <ClCompile Include="Source\Loading.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Model.cpp" />
+    <ClCompile Include="Source\ModelCache.cpp" />
     <ClCompile Include="Source\ModelAnimation.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
     <ClCompile Include="Source\ObjectManagercpp.cpp" />
@@ -64,6 +65,7 @@
     <ClInclude Include="Source\Loading.h" />
     <ClInclude Include="Source\Master.h" />
     <ClInclude Include="Source\Model.h" />
+    <ClInclude Include="Source\ModelCache.h" />
     <ClInclude Include="Source\ModelAnimation.h" />
     <ClInclude Include="Source\ModelUtility.h" />
     <ClInclude Include="Source\Object3D.h" />

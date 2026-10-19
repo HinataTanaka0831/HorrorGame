@@ -66,6 +66,9 @@
     <ClCompile Include="Source\Model.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ModelCache.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
     <ClCompile Include="Source\ModelAnimation.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
@@ -195,6 +198,9 @@
       <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model.h">
+      <Filter>ヘッダー ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelCache.h">
       <Filter>ヘッダー ファイル\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModelAnimation.h">
