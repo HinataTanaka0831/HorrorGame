@@ -9,6 +9,7 @@
 SceneManager::SceneManager()
    : m_sceneType(SceneType::SceneNone)
    , m_nextSceneType(SceneType::SceneNone)
+   , m_resultType(ResultType::ResultNone)
    , m_currentScene(nullptr)
    , m_quitRequest(false)
 

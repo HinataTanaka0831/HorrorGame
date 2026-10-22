@@ -19,6 +19,7 @@ public:  // enum, struct の定義
 		SceneGame3D,         // 3Dホラーゲーム本編
 	};
 
+	// リザルトの種類
 	enum class ResultType
 	{
 		ResultNone = 0,
@@ -57,17 +58,21 @@ public:  // メンバ関数の定義
 	// 入力: next(遷移先シーン種別) / 出力: なし / 副作用: m_nextSceneTypeの更新
 	void SetNextScene(SceneType next) { m_nextSceneType = next; }
 
+	// リザルトシーンに遷移した際にリザルトの種別を設定する
+	// 入力: result(リザルト種別) / 出力: なし / 副作用: m_resultTypeの更新
 	void SetResultType(ResultType result);
 
 	// ゲームループ終了要求の発行
 	// 入力: なし / 出力: なし / 副作用: m_quitRequestフラグのtrue化
 	void RequestQuit();
 
+	// ゲームループ終了要求の取得
 	bool IsQuitRequest() const { return m_quitRequest; }
 
 	// 現在シーンの取得
 	Scene* GetCurrentScene() const { return m_currentScene; }
 
+	// リザルトの種別を取得
 	ResultType GetResultType() const { return m_resultType; }
 
 private:

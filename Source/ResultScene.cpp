@@ -94,12 +94,15 @@ void ResultScene::Update()
 
 void ResultScene::Draw()
 {
-	// ”wŒi‚Ì•\Ž¦
-	SetBackgroundColor(255, 255, 255);
+	if (Master::m_sceneManager->GetResultType() == SceneManager::ResultType::ResultGameClear)
+	{
+		// ”wŒi‚Ì•\Ž¦
+		SetBackgroundColor(255, 255, 255);
 
-	// •¶Žš—ñ‚Ì•\Ž¦ //
-	DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Clear", GetColor(255, 255, 255), m_fontSize140);
+		// •¶Žš—ñ‚Ì•\Ž¦ //
+		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 350, Utility::SCREEN_HEIGHT / 2 - 140, "Game Clear", GetColor(255, 255, 255), m_fontSize140);
 
+	}
 
 	if (Master::m_sceneManager->GetResultType() == SceneManager::ResultType::ResultGameOver)
 	{

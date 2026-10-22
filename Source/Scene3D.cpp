@@ -69,12 +69,19 @@ void Scene3D::Initialize()
 	loader.ExecuteScene3D();
 
 	// 画像の生成
-	if (m_playerCrouchingHandle == -1) m_playerCrouchingHandle = LoadGraph("Resource/UI/ui_playerCrouching.png");
+	if (m_playerCrouchingHandle == -1)
+	{
+		m_playerCrouchingHandle = LoadGraph("Resource/UI/ui_playerCrouching.png");
+	}
 
 	// 画像の生成
-	if (m_playerMoveHandle == -1) m_playerMoveHandle = LoadGraph("Resource/UI/ui_playerMove.png");
+	if (m_playerMoveHandle == -1)
+	{
+		m_playerMoveHandle = LoadGraph("Resource/UI/ui_playerMove.png");
+	}
 
-	EscapeItem::m_nowNeedItem = 0;  // 脱出のために必要なアイテム数を
+	// 脱出のために必要なアイテム数を初期化
+	EscapeItem::m_nowNeedItem = 0;  
 }
 
 void Scene3D::InitializePlayerData()

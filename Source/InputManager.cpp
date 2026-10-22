@@ -85,6 +85,7 @@ int InputManager::CheckPressKey(int keyCode)
 }
 
 
+
 // ----FPS視点操作用のマウスカーソル固定および表示状態の切り替え----
 
 void InputManager::EnableMouseLock(bool enable)

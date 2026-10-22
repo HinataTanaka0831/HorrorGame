@@ -22,7 +22,9 @@ public:
 	// 入力: keyCode(DXライブラリのキーコード) / 出力: 押下中なら1、それ以外は0 / 副作用: なし
 	int CheckPressKey(int keyCode);
 
+
 	// ----FPS視点操作用のマウスカーソル固定および表示状態の切り替え----
+	
 	// 入力: enable(trueで固定/非表示、falseで解除/表示) / 出力: なし / 副作用: OSカーソル表示設定および画面中央への強制移動
 	void EnableMouseLock(bool enable);
 
@@ -66,6 +68,10 @@ private:
 	InputManager(InputManager&&) = delete;                   // ムーブ生成の禁止
 	InputManager&& operator=(InputManager&&) = delete;       // ムーブ代入の禁止
 
+	// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置
+   // 入力: なし / 出力: なし / 副作用: OSマウスカーソル座標の変更
+	void RecenterCursor();
+
 private:
 	bool m_isLocked;             // マウスカーソル固定状態のフラグ
 	int m_downBuffer[256];       // 前フレームのキー押下状態（立ち上がりエッジ検知用）
@@ -80,8 +86,5 @@ private:
 	const int CenterX;           // 画面中央のX座標
 	const int CenterY;           // 画面中央のY座標
 
-	// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置
-	// 入力: なし / 出力: なし / 副作用: OSマウスカーソル座標の変更
-	void RecenterCursor();
 
 };
