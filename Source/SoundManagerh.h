@@ -12,8 +12,9 @@ public:          // enum, struct などの定義
 	enum SoundBgm
 	{
 		BgmTitle = 0,  // タイトル画面BGM
-		BgmGame,       // 探索・ホラー演出用BGM（ジャンプスケア等）
+		BgmGame,       // 探索・ホラー演出用BGM
 		BgmResult,     // リザルト画面BGM
+		BgmNoise,      // 雑音BGM
 	};
 
 	// SE の種類
@@ -21,6 +22,8 @@ public:          // enum, struct などの定義
 	{
 		SeDecide = 0,  // UI決定音
 		SeWalk = 1,    // プレイヤー歩行・足音
+		SeJumpScare = 2, // ジャンプスケアSE
+		SeNoise = 3,     // 雑音SE
 	};
 
 public:

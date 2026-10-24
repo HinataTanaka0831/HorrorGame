@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -32,7 +32,6 @@ public:
 	static int LoadMasterIfNeeded(CacheEntry& entry, const std::string& path);
 
 private:
-	ModelCache() = delete;
 
 	static std::unordered_map<std::string, CacheEntry> m_instanceMasters;
 	static std::unordered_map<std::string, CacheEntry> m_sharedMasters;

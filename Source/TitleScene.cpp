@@ -65,7 +65,7 @@ void TitleScene::Initialize()
 void TitleScene::Update()
 {
 	// BGM‚ÌÄ¶
-	Master::m_soundManager->PlayBGM(SoundManager::BgmTitle);
+	Master::m_soundManager->PlayBGM(SoundManager::BgmNoise, true);
 
 	if (m_textureAnimation)
 	{

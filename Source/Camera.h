@@ -1,66 +1,69 @@
-#pragma once
+ï»¿#pragma once
 
 #include "DxLib.h"
 #include "Utility.h"
 
 class Object3D;
 
-// FPSŽ‹“_‚Ì’Ç]ƒJƒƒ‰Aƒ}ƒEƒX“ü—Í‚É‚æ‚é…•½/‚’¼‰ñ“]AƒWƒƒƒ“ƒvƒXƒPƒAŽž‰æ–Ê—h‚ê‚ð§Œä‚·‚éƒNƒ‰ƒX
+// FPSè¦–ç‚¹ã®è¿½å¾“ã‚«ãƒ¡ãƒ©ã€ãƒžã‚¦ã‚¹å…¥åŠ›ã«ã‚ˆã‚‹æ°´å¹³/åž‚ç›´å›žè»¢ã€ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢æ™‚ç”»é¢æºã‚Œã‚’åˆ¶å¾¡ã™ã‚‹ã‚¯ãƒ©ã‚¹
 class Camera
 {
 public:
-	Camera();   // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	~Camera();  // ƒfƒXƒgƒ‰ƒNƒ^
+	Camera();   // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	~Camera();  // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 
-	// ƒJƒƒ‰ƒNƒŠƒbƒv‹——£E”wŒiFE‰Šú’Ž‹“_‚Ì‰ŠúÝ’è
-	// “ü—Í: ‚È‚µ / o—Í: ‚È‚µ / •›ì—p: SetCameraNearFar, SetBackgroundColorŽÀs
+	// ã‚«ãƒ¡ãƒ©ã‚¯ãƒªãƒƒãƒ—è·é›¢ãƒ»èƒŒæ™¯è‰²ãƒ»åˆæœŸæ³¨è¦–ç‚¹ã®åˆæœŸè¨­å®š
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: SetCameraNearFar, SetBackgroundColorå®Ÿè¡Œ
 	void Initialize();      
 
-	// ’Ç]ƒ^[ƒQƒbƒgiƒvƒŒƒCƒ„[jÀ•W‚ÌŽæ“¾A‚µ‚á‚ª‚ÝŽž‚ÌŽ‹ü‚’²®A’Ž‹“_ŽZo‚¨‚æ‚ÑDXƒ‰ƒCƒuƒ‰ƒŠƒJƒƒ‰‚Ö‚Ì”½‰f
-	// “ü—Í: ‚È‚µ / o—Í: ‚È‚µ / •›ì—p: SetCameraPositionAndTarget_UpVecYŽÀs
+	// è¿½å¾“ã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼‰åº§æ¨™ã®å–å¾—ã€ã—ã‚ƒãŒã¿æ™‚ã®è¦–ç·šé«˜èª¿æ•´ã€æ³¨è¦–ç‚¹ç®—å‡ºãŠã‚ˆã³DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚«ãƒ¡ãƒ©ã¸ã®åæ˜ 
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: SetCameraPositionAndTarget_UpVecYå®Ÿè¡Œ
 	void Update();          
 
-	// ƒ}ƒEƒX•ÏˆÊ—Ê‚É‰ž‚¶‚½Ž‹“_‰ñ“]Šp‚Ì‰ÁŽZ‚¨‚æ‚Ñƒsƒbƒ`Špiã‰ºŒ©“n‚µj‚Ìã‰º90“x§ŒÀ
-	// “ü—Í: ‚È‚µ / o—Í: ‚È‚µ / •›ì—p: m_horizontalAngle/m_verticalAngle‚ÌXV
+	// ãƒžã‚¦ã‚¹å¤‰ä½é‡ã«å¿œã˜ãŸè¦–ç‚¹å›žè»¢è§’ã®åŠ ç®—ãŠã‚ˆã³ãƒ”ãƒƒãƒè§’ï¼ˆä¸Šä¸‹è¦‹æ¸¡ã—ï¼‰ã®ä¸Šä¸‹90åº¦åˆ¶é™
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: m_horizontalAngle/m_verticalAngleã®æ›´æ–°
 	void UpdateRotation(); 
 
-	// ƒWƒƒƒ“ƒvƒXƒPƒAŽž“™‚ÌŽ‹“_‘€ìŒÅ’èƒtƒ‰ƒOÝ’è
-	// “ü—Í: isFreeze(ŒÅ’èƒtƒ‰ƒO) / o—Í: ‚È‚µ / •›ì—p: m_isFreeze‚ÌXV
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢æ™‚ç­‰ã®è¦–ç‚¹æ“ä½œå›ºå®šãƒ•ãƒ©ã‚°è¨­å®š
+	// å…¥åŠ›: isFreeze(å›ºå®šãƒ•ãƒ©ã‚°) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: m_isFreezeã®æ›´æ–°
 	void SetFreeze(bool isFreeze) { m_isFreeze = isFreeze; }       
 
-	// ³Œ·”gŠŒ¸ŠÖ”‚É‚æ‚é‰æ–ÊU“®ƒIƒtƒZƒbƒg‚ÌŒvŽZ
-	// “ü—Í: ‚È‚µ / o—Í: ‚È‚µ / •›ì—p: m_shakePosition‚ÌXV
+	// æ­£å¼¦æ³¢è¡°æ¸›é–¢æ•°ã«ã‚ˆã‚‹ç”»é¢æŒ¯å‹•ã‚ªãƒ•ã‚»ãƒƒãƒˆã®è¨ˆç®—
+	// å…¥åŠ›: ãªã— / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: m_shakePositionã®æ›´æ–°
 	void Shake();                                
 
-	// ‰æ–Ê—h‚ê‰‰oƒpƒ‰ƒ[ƒ^iŒp‘±ŽžŠÔEU•EŽüŠú‘¬“xj‚ÌÝ’è
-	// “ü—Í: time(Œp‘±•b), width(U•), angleSpeed(Šp‘¬“x), stepTime(XV‚Ý) / o—Í: ‚È‚µ / •›ì—p: —h‚êƒJƒEƒ“ƒ^‚ÌƒŠƒZƒbƒg
+	// ç”»é¢æºã‚Œæ¼”å‡ºãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼ˆç¶™ç¶šæ™‚é–“ãƒ»æŒ¯å¹…ãƒ»å‘¨æœŸé€Ÿåº¦ï¼‰ã®è¨­å®š
+	// å…¥åŠ›: time(ç¶™ç¶šç§’), width(æŒ¯å¹…), angleSpeed(è§’é€Ÿåº¦), stepTime(æ›´æ–°åˆ»ã¿) / å‡ºåŠ›: ãªã— / å‰¯ä½œç”¨: æºã‚Œã‚«ã‚¦ãƒ³ã‚¿ã®ãƒªã‚»ãƒƒãƒˆ
 	void SetUpShake(float time, float width, float angleSpeed, float stepTime = 1.0f); 
 
-	// À•WŽæ“¾
+	void ResetTarget() { m_target = nullptr; }  // è¿½å¾“å¯¾è±¡ã®ãƒªã‚»ãƒƒãƒˆ
+
+	// åº§æ¨™å–å¾—
 	VECTOR GetPosition() { return m_position; } 
 
-	// ’Ž‹“_Žæ“¾
+	// æ³¨è¦–ç‚¹å–å¾—
 	VECTOR GetLookAtPosition() { return m_lookAtPosition; } 
 
 
 
 private:
-	VECTOR m_position = VGet(0.0f, 0.0f, 0.0f);         // ƒJƒƒ‰ƒ[ƒ‹ƒhÀ•W
-	VECTOR m_lookAtPosition = VGet(0.0f, 0.0f, 0.0f);   // ƒJƒƒ‰’Ž‹“_ƒ[ƒ‹ƒhÀ•W
-	VECTOR m_shakePosition = VGet(0.0f, 0.0f, 0.0f);    // ‰æ–Ê—h‚ê‚É‚æ‚é‰ÁŽZƒIƒtƒZƒbƒg
+	VECTOR m_position;        // ã‚«ãƒ¡ãƒ©ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™
+	VECTOR m_lookAtPosition;   // ã‚«ãƒ¡ãƒ©æ³¨è¦–ç‚¹ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™
+	VECTOR m_shakePosition;    // ç”»é¢æºã‚Œã«ã‚ˆã‚‹åŠ ç®—ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 
-	float m_horizontalAngle = DX_PI_F / 1.2f;           // ƒˆ[Špi…•½‰ñ“]Šp“xEƒ‰ƒWƒAƒ“j
-	float m_verticalAngle = 0.0f;                       // ƒsƒbƒ`Špi‚’¼Œ©“n‚µŠp“xEƒ‰ƒWƒAƒ“j
+	float m_horizontalAngle;   // ãƒ¨ãƒ¼è§’ï¼ˆæ°´å¹³å›žè»¢è§’åº¦ãƒ»ãƒ©ã‚¸ã‚¢ãƒ³ï¼‰
+	float m_verticalAngle;     // ãƒ”ãƒƒãƒè§’ï¼ˆåž‚ç›´è¦‹æ¸¡ã—è§’åº¦ãƒ»ãƒ©ã‚¸ã‚¢ãƒ³ï¼‰
 
-	//« ‰æ–Ê—h‚ê‚ÅŽg—p‚·‚é•Ï”
-	float m_shakeAngle = 0.0f;        // ‰æ–Ê—h‚ê³Œ·”g—pƒAƒ“ƒOƒ‹
-	float m_shakeTimeCounter = 0.0f;  // ‰æ–Ê—h‚êŒo‰ßŽžŠÔ
-	float m_shakeTime = 0.0f;         // ‰æ–Ê—h‚ê‘Œp‘±ŽžŠÔ
-	float m_shakeWidth = 0.0f;        // ‰æ–Ê—h‚êU•
-	float m_shakeAngleSpeed = 0.0f;   // ‰æ–Ê—h‚êU“®Žü”g”
-	float m_stepTime = 0.0f;          // ‰æ–Ê—h‚êXV‚ÝŽžŠÔ
+	//â†“ ç”»é¢æºã‚Œã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°
+	float m_shakeAngle;       // ç”»é¢æºã‚Œæ­£å¼¦æ³¢ç”¨ã‚¢ãƒ³ã‚°ãƒ«
+	float m_shakeTimeCounter;  // ç”»é¢æºã‚ŒçµŒéŽæ™‚é–“
+	float m_shakeTime;         // ç”»é¢æºã‚Œç·ç¶™ç¶šæ™‚é–“
+	float m_shakeWidth;        // ç”»é¢æºã‚ŒæŒ¯å¹…
+	float m_shakeAngleSpeed;    // ç”»é¢æºã‚ŒæŒ¯å‹•å‘¨æ³¢æ•°
+	float m_stepTime;          // ç”»é¢æºã‚Œæ›´æ–°åˆ»ã¿æ™‚é–“
 
-	bool m_isFreeze = false;          // Ž‹“_‘€ìS‘©ƒtƒ‰ƒO
 
-	Object3D* m_target = nullptr;     // ’Ç]‘ÎÛiƒvƒŒƒCƒ„[ƒIƒuƒWƒFƒNƒgj
+	bool m_isFreeze;           // è¦–ç‚¹æ“ä½œæ‹˜æŸãƒ•ãƒ©ã‚°
+
+	Object3D* m_target;    // è¿½å¾“å¯¾è±¡ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼‰
 };

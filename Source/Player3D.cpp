@@ -14,7 +14,6 @@
 Player3D::Player3D(VECTOR initPosition)
 	: Object3D(initPosition)
 	, RotsteSpeed(0.2f)
-	, ITER(20)
 	, SEframeWalk(25)
 	, SEframeRUN(18)
 	, FrameLight(25)
@@ -238,8 +237,10 @@ void Player3D::MoveEx()
 	{
 		Enemy3D* Enemy = dynamic_cast<Enemy3D*>(eobj);
 
-		if (Enemy != nullptr)
+		if (Enemy == nullptr)
 		{
+			return;
+		}
 			// プレイヤーを見つけたかどうかのフラグを取得
 			bool found = Enemy->GetfoundPlayer();
 
@@ -260,7 +261,7 @@ void Player3D::MoveEx()
 			}
 
 
-		}
+		
 	}
 
 

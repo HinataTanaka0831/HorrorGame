@@ -1,4 +1,4 @@
-#include "SeparateModelAnimation.h"
+﻿#include "SeparateModelAnimation.h"
 #include "ModelCache.h"
 
 SeparateModelAnimation::SeparateModelAnimation(int modelHandle)

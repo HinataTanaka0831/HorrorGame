@@ -1,6 +1,9 @@
-#include "ModelCache.h"
+﻿#include "ModelCache.h"
 #include "DxLib.h"
-#include <unordered_map>
+
+// ここで静的メンバを定義
+std::unordered_map<std::string, ModelCache::CacheEntry> ModelCache::m_instanceMasters;
+std::unordered_map<std::string, ModelCache::CacheEntry> ModelCache::m_sharedMasters;
 
 int ModelCache::LoadMasterIfNeeded(CacheEntry& entry, const std::string& path)
 {

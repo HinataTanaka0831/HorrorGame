@@ -78,7 +78,7 @@ private:
 	int m_scareLight = 0;
 	int m_count = 0;                                   // カウント変数
 	int m_currentPoint = 0;                            // 現在の目標座標を示す変数
-	int m_pointcount = 28;                             // 目標座標の最大数を表す変数
+	int m_maxPointCount = 28;                             // 目標座標の最大数を表す変数
 	int m_waitTimer = 0;                              // 待機時間
 	int m_enemyType = -1;                             // 敵のモデルによって目標地点を変更するための変数
 	int m_scareTimer = 0;                             // ジャンプスケアを行う時間

@@ -85,7 +85,6 @@ public:
 
 private:
 	const float RotsteSpeed;                                  // 回転速度
-	const int ITER;                                          // 壁に当たる枚数
 	const int SEframeWalk;                                  // 歩いているときのSEフレーム
 	const int SEframeRUN;                                   // 走っているときのSEフレーム
 	const int FrameLight;                                   // ライトの点滅フレーム

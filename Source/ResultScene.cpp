@@ -27,7 +27,7 @@ void ResultScene::Initialize()
 	if (Master::m_sceneManager->GetResultType() == SceneManager::ResultType::ResultGameOver)
 	{
 		// BGM‚ÌÄ¶
-		Master::m_soundManager->PlayBGM(SoundManager::BgmResult);
+		Master::m_soundManager->PlayBGM(SoundManager::BgmNoise, true);
 
 		if (m_textureAnimation == nullptr)
 		{

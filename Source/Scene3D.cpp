@@ -1,9 +1,10 @@
-#include "Scene3D.h"
+ï»¿#include "Scene3D.h"
 #include "Model.h"
 #include "Loading.h"
 #include <memory>
 #include "Master.h"
 #include "ObjectManager.h"
+#include "Camera.h"
 #include "Player3D.h"
 #include "Enemy3D.h"
 #include "Stage.h"
@@ -26,32 +27,19 @@ Scene3D::Scene3D()
 
 Scene3D::~Scene3D()
 {
-	if (m_enemy != nullptr)
+	if (Master::m_camera != nullptr)
 	{
-		delete m_enemy;
-		m_enemy = nullptr;
-	}
-
-	if (m_enemy2 != nullptr)
-	{
-		delete m_enemy2;
-		m_enemy2 = nullptr;
-	}
-
-	if (m_skybox != nullptr)
-	{
-		delete m_skybox;
-		m_skybox = nullptr;
+		Master::m_camera->ResetTarget();
 	}
 }
 
 void Scene3D::Initialize()
 {
 
-	// ƒ[ƒfƒBƒ“ƒOƒ}ƒl[ƒWƒƒ[‚Ìì¬
+	// ãƒ­ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®ä½œæˆ
 	LoadingManager loader;
 
-	// ƒ^ƒXƒN‚ğ’Ç‰Á
+	// ã‚¿ã‚¹ã‚¯ã‚’è¿½åŠ 
 	loader.AddTask(std::make_unique<InitializePlayerTask>());
 	loader.AddTask(std::make_unique<InitializeEnemyTask>());
 	loader.AddTask(std::make_unique<InitializeItemTask>());
@@ -59,40 +47,41 @@ void Scene3D::Initialize()
 	loader.AddTask(std::make_unique<InitializeStageTask>());
 	loader.AddTask(std::make_unique<InitializeExitDoorTask>());
 
-	// ƒJƒƒ‰‚Ì‰Šú‰»
+	// ã‚«ãƒ¡ãƒ©ã®åˆæœŸåŒ–
+	delete Master::m_camera;
 	Master::m_camera = new Camera();
 
-	// FPS ƒV[ƒ“‚ÅƒƒbƒN—LŒø‰»
+	// FPS ã‚·ãƒ¼ãƒ³ã§ãƒ­ãƒƒã‚¯æœ‰åŠ¹åŒ–
 	InputManager::GetInstance().EnableMouseLock(true);
 
-	// ƒ[ƒfƒBƒ“ƒOÀs
+	// ãƒ­ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å®Ÿè¡Œ
 	loader.ExecuteScene3D();
 
-	// ‰æ‘œ‚Ì¶¬
+	// ç”»åƒã®ç”Ÿæˆ
 	if (m_playerCrouchingHandle == -1)
 	{
 		m_playerCrouchingHandle = LoadGraph("Resource/UI/ui_playerCrouching.png");
 	}
 
-	// ‰æ‘œ‚Ì¶¬
+	// ç”»åƒã®ç”Ÿæˆ
 	if (m_playerMoveHandle == -1)
 	{
 		m_playerMoveHandle = LoadGraph("Resource/UI/ui_playerMove.png");
 	}
 
-	// ’Eo‚Ì‚½‚ß‚É•K—v‚ÈƒAƒCƒeƒ€”‚ğ‰Šú‰»
-	EscapeItem::m_nowNeedItem = 0;  
+	// è„±å‡ºã®ãŸã‚ã«å¿…è¦ãªã‚¢ã‚¤ãƒ†ãƒ æ•°ã‚’åˆæœŸåŒ–
+	EscapeItem::m_nowNeedItem = 0;
 }
 
 void Scene3D::InitializePlayerData()
 {
-	// ƒvƒŒƒCƒ„[‚Ì¶¬
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç”Ÿæˆ
 	new Player3D(VGet(-4000.0f, 82.0f, 1700.0f));
 }
 
 void Scene3D::InitializeEnemyData()
 {
-	// “G‚Ì¶¬
+	// æ•µã®ç”Ÿæˆ
 	m_enemy = new Enemy3D(
 		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(-50.0f, 70.0f, 1700.0f),
@@ -103,7 +92,7 @@ void Scene3D::InitializeEnemyData()
 	m_enemy->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
 	m_enemy->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
 
-	// “G‚Ì¶¬
+	// æ•µã®ç”Ÿæˆ
 	m_enemy2 = new Enemy3D(
 		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(1000.0f, 70.0f, -1700.0f),
@@ -118,7 +107,7 @@ void Scene3D::InitializeEnemyData()
 
 void Scene3D::InitializeItemData()
 {
-	// ’Eo—pƒAƒCƒeƒ€‚Ì¶¬
+	// è„±å‡ºç”¨ã‚¢ã‚¤ãƒ†ãƒ ã®ç”Ÿæˆ
 	int currentPosition1 = GetRand(4);
 	int currentPosition2 = GetRand(3);
 	Point RandomPoint1[] = { VGet(-1615.0f, 120.0f, 2120.0f), VGet(350.0f, 53.0f, 2986.0f), VGet(-3270.0f, 52.0f, 2220.0f), VGet(-1440.0f, 444.0f, 2666.0f), VGet(3416.0f, 453.0f, 2537.0f) };
@@ -136,7 +125,7 @@ void Scene3D::InitializeItemData()
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3);
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4);
 
-	// ŠÔ’â~ƒAƒCƒeƒ€‚Ì¶¬
+	// æ™‚é–“åœæ­¢ã‚¢ã‚¤ãƒ†ãƒ ã®ç”Ÿæˆ
 	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
 	new TimeItem("Resource/Object/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false);
 	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false);
@@ -145,7 +134,7 @@ void Scene3D::InitializeItemData()
 
 void Scene3D::InitializeSkyBoxData()
 {
-	// ƒXƒJƒCƒ{ƒbƒNƒX‚Ì¶¬
+	// ã‚¹ã‚«ã‚¤ãƒœãƒƒã‚¯ã‚¹ã®ç”Ÿæˆ
 	m_skybox = new SkyBox("Resource/Object/SkyBox/skyBox.x");
 	m_skybox->SetScale(8.0f);
 	m_skybox->SetModelTexture("Resource/Object/SkyBox/skybox_nightsky.jpg");
@@ -153,13 +142,13 @@ void Scene3D::InitializeSkyBoxData()
 
 void Scene3D::InitializeStageData()
 {
-	// ƒXƒe[ƒW‚Ì¶¬
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ã®ç”Ÿæˆ
 	new Stage("Resource/Object/Stage/object_school.mv1", "Resource/Object/Stage/object_schoolcollision.mv1");
 }
 
 void Scene3D::InitializeExitDoorData()
 {
-	// ’EoƒhƒA‚Ì¶¬
+	// è„±å‡ºãƒ‰ã‚¢ã®ç”Ÿæˆ
 	new Exitdoor("Resource/Object/Door/object_door.mv1", "Resource/Object/Door/object_doorcollision.mv1", VGet(500.0f, 0.0f, 1900.0f));
 }
 
@@ -173,14 +162,14 @@ void Scene3D::Draw()
 {
 	Scene::Draw();
 
-	// Zƒoƒbƒtƒ@‚ğg—p‚·‚éİ’è‚É‚·‚é
+	// Zãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ç”¨ã™ã‚‹è¨­å®šã«ã™ã‚‹
 	SetUseZBufferFlag(FALSE);
 
-	// Zƒoƒbƒtƒ@‚Ö‚Ì‘‚«‚İ‚Í‚µ‚È‚¢
+	// Zãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãè¾¼ã¿ã¯ã—ãªã„
 	SetWriteZBufferFlag(FALSE);
 
-	// c‚èƒAƒCƒeƒ€”‚Ì•\¦
-	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), m_itemFontHandle, " c‚èƒAƒCƒeƒ€\n  %d / 4", EscapeItem::m_nowNeedItem);
+	// æ®‹ã‚Šã‚¢ã‚¤ãƒ†ãƒ æ•°ã®è¡¨ç¤º
+	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), m_itemFontHandle, " æ®‹ã‚Šã‚¢ã‚¤ãƒ†ãƒ \n  %d / 4", EscapeItem::m_nowNeedItem);
 
 	auto pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
@@ -194,12 +183,12 @@ void Scene3D::Draw()
 
 	if (pPlayer->GetCrouching())
 	{
-		// ƒvƒŒƒCƒ„[‚Ì‚µ‚á‚ª‚İó‘Ô‰æ‘œ‚Ì•\¦
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã—ã‚ƒãŒã¿çŠ¶æ…‹ç”»åƒã®è¡¨ç¤º
 		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, m_playerCrouchingHandle, true);
 	}
 	else
 	{
-		// ƒvƒŒƒCƒ„[‚Ì•à‚«ó‘Ô‰æ‘œ‚Ì•\¦
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ­©ãçŠ¶æ…‹ç”»åƒã®è¡¨ç¤º
 		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, m_playerMoveHandle, true);
 	}
 
@@ -213,23 +202,23 @@ void Scene3D::Draw()
 		pTimeItem->DrawTimer();
 	}
 
-	// Zƒoƒbƒtƒ@‚ğg—p‚·‚éİ’è‚É‚·‚é
+	// Zãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ç”¨ã™ã‚‹è¨­å®šã«ã™ã‚‹
 	SetUseZBufferFlag(TRUE);
 
-	// Zƒoƒbƒtƒ@‚Ö‚Ì‘‚«‚İ‚ğ‚·‚é
+	// Zãƒãƒƒãƒ•ã‚¡ã¸ã®æ›¸ãè¾¼ã¿ã‚’ã™ã‚‹
 	SetWriteZBufferFlag(TRUE);
 
 }
 
 void Scene3D::Finalize()
 {
-	// ‰æ‘œ‚Ìíœ
+	// ç”»åƒã®å‰Šé™¤
 	if (m_playerCrouchingHandle != -1)
 	{
 		DeleteGraph(m_playerCrouchingHandle);
 	}
 
-	// ‰æ‘œ‚Ìíœ
+	// ç”»åƒã®å‰Šé™¤
 	if (m_playerMoveHandle != -1)
 	{
 		DeleteGraph(m_playerMoveHandle);

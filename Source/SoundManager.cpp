@@ -15,13 +15,12 @@ SoundManager::~SoundManager()
 void SoundManager::Initialize()
 {
 	// BGM ÇÃì«Ç›çûÇ›
-	LoadBGM(SoundBgm::BgmTitle, "Resource/BGM/electrical_noise1.mp3");
-	LoadBGM(SoundBgm::BgmResult, "Resource/BGM/electrical_noise1.mp3");
-	LoadBGM(SoundBgm::BgmGame, "Resource/BGM/Jumpscare.mp3");
-
+	LoadBGM(SoundBgm::BgmNoise, "Resource/BGM/electrical_noise1.mp3");
+	
 	// SE ÇÃì«Ç›çûÇ›
 	LoadSE(SoundSe::SeDecide, "Resource/SE/maou_se_system49.mp3");
 	LoadSE(SoundSe::SeWalk, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
+	LoadSE(SoundSe::SeJumpScare, "Resource/BGM/Jumpscare.mp3");
 }
 
 void SoundManager::Finalize()

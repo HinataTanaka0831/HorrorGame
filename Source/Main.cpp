@@ -32,7 +32,7 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
 	// ウインドウモードで起動
-	ChangeWindowMode(false);
+	ChangeWindowMode(true);
 
 	// 画面サイズ調整
 	SetGraphMode(Utility::SCREEN_WIDTH, Utility::SCREEN_HEIGHT, 32);
@@ -145,6 +145,8 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//Finalize();
 	Master::m_sceneManager->Finalize();
 	delete Master::m_sceneManager;
+	delete Master::m_camera;
+	Master::m_camera = nullptr;
 	Master::m_soundManager->Finalize();
 	delete Master::m_soundManager;
 

@@ -55,7 +55,7 @@ void GameRuleScene::Initialize()
 
 void GameRuleScene::Update()
 {
-	Master::m_soundManager->PlayBGM(SoundManager::BgmTitle);
+	Master::m_soundManager->PlayBGM(SoundManager::BgmNoise, true);
 
 	if (m_textureAnimation)
 	{

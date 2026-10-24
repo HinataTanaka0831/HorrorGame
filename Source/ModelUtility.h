@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
@@ -36,7 +36,7 @@ enum AnimationState
 // 分割されているアニメーションのデータ
 struct AnimationInfo
 {
-    AnimationState m_state;
-    int m_animationHandle;
-	std::string m_fileName; // 共有用モーションのファイル名を保持するメンバ変数
+    AnimationState m_state = AnimationMax;
+    int m_animationHandle = -1;
+	std::string m_fileName = ""; // 共有用モーションのファイル名を保持するメンバ変数
 };

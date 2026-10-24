@@ -1,4 +1,4 @@
-#include "Enemy3D.h"
+ï»¿#include "Enemy3D.h"
 #include "Model.h"
 #include "Master.h"
 #include "ObjectManager.h"
@@ -31,7 +31,7 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	, m_scareLight(0)
 	, m_count(0)
 	, m_currentPoint(0)
-	, m_pointcount(28)
+	, m_maxPointCount(28)
 	, m_waitTimer(0)
 	, m_enemyType(-1)
 	, m_scareTimer(0)
@@ -42,10 +42,10 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	, m_isRun(false)
 	, m_isStopItem(false)
 {
-	// ƒ^ƒOİ’è
+	// ã‚¿ã‚°è¨­å®š
 	SetTag(Object3D::TagEnemy3D);
 
-	// “G‚Ìƒ‚ƒfƒ‹‚É‚æ‚Á‚Ä–Ú•W’n“_‚ğ•ÏX‚·‚é
+	// æ•µã®ãƒ¢ãƒ‡ãƒ«ã«ã‚ˆã£ã¦ç›®æ¨™åœ°ç‚¹ã‚’å¤‰æ›´ã™ã‚‹
 	SetEnemyType(enemyType);
 
 	m_scareLight = CreateDirLightHandle(VGet(0.0f, m_position.y, 0.0f));
@@ -53,8 +53,9 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	SetLightAmbColorHandle(m_scareLight, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
 	SetLightEnableHandle(m_scareLight, false);
 
-	// Mixamo—pˆ—
-	// ƒ‚ƒfƒ‹‚Ì¶¬
+
+	// Mixamoç”¨å‡¦ç†
+	// ãƒ¢ãƒ‡ãƒ«ã®ç”Ÿæˆ
 	m_model = new Model(fileName, initPosition, isSeparateAnimation);
 }
 
@@ -77,19 +78,19 @@ Enemy3D::~Enemy3D()
 void Enemy3D::Update()
 {
 
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	Move();
 
-	// ƒvƒŒƒCƒ„[‚ª“G‚Æ“–‚½‚Á‚½‚Ìˆ—
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ•µã¨å½“ãŸã£ãŸæ™‚ã®å‡¦ç†
 	CollScare();
 
 	if (!m_isScare)
 	{
-		// ˆÚ“®‚É‚æ‚é‰ñ“]ˆ—
+		// ç§»å‹•ã«ã‚ˆã‚‹å›è»¢å‡¦ç†
 		RotationByMove();
 	}
 
-	// ƒ‚ƒfƒ‹‚ÌXV
+	// ãƒ¢ãƒ‡ãƒ«ã®æ›´æ–°
 	if (m_model != nullptr)
 	{
 		m_model->SetPosition(m_position);
@@ -105,7 +106,7 @@ void Enemy3D::Draw()
 		m_model->Draw();
 	}
 
-	// ƒfƒoƒbƒN•\¦—p
+	// ãƒ‡ãƒãƒƒã‚¯è¡¨ç¤ºç”¨
 	//DrawCapsule3D(mvPosition, VAdd(mvPosition, VGet(0.0f, 150.0f, 0.0f)), 40.0f, 8, GetColor(255, 255, 255), GetColor(255, 255, 255), false);
 
 }
@@ -114,7 +115,7 @@ void Enemy3D::Draw()
 
 void Enemy3D::Move()
 {
-	// ƒWƒƒƒ“ƒvƒXƒPƒA’†‚ÍˆÚ“®ˆ—‚ğ‘S‚ÄƒXƒLƒbƒv‚·‚é
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ä¸­ã¯ç§»å‹•å‡¦ç†ã‚’å…¨ã¦ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹
 	if (m_isScare)
 	{
 		return;
@@ -126,153 +127,158 @@ void Enemy3D::Move()
 		return;
 	}
 
-	// Œ»İÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğæ“¾
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å–å¾—
 	AnimationState state = m_model->GetNowState();
 	if (state == AnimationAttack || state == AnimationJumpOut)
 	{
-		return; // “Á’è‚Ìƒ‚[ƒVƒ‡ƒ“’†‚Å‚ ‚ê‚Î‰½‚à‚µ‚È‚¢
+		return; // ç‰¹å®šã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ä¸­ã§ã‚ã‚Œã°ä½•ã‚‚ã—ãªã„
 	}
 
-	// –Ú•WÀ•W‚Ìİ’è ƒXƒe[ƒW‚Ì‰¡3680.0f‚‚³400.0f ŠK’i-180.0f z2590.0f h:1027, h(’†ŠÔ):1224
-	Point Weipoint[] = { {0.0f, 44.0f, 1700.0f},                                                                                          // ‰ŠúÀ•W‚És‚­
-					   {3680.0f, 44.0f, 1700.0f }, {3680.0f, 241.0f, 2590.0f},  {3980.0f, 241.0f, 2590.0f},  {3980.0f, 438.0f, 1700.0f},  // ‰EŠK’i1¨2
-					   {-3680.0f, 438.0f, 1700.0f},{-3680.0f, 634.0f, 2590.0f}, {-3980.0f, 634.0f, 2590.0f}, {-3980.0f, 831.0f, 1700.0f}, // ¶ŠK’i2¨3
-					   {0.0f, 831.0f, 1700.0f},    {-100.0f, 831.0, -1600.0f},  {-100.0f, 831.0f, 1700.0f},  {-100.0f, 1027.0f, 2590.0f}, // ’†‰›ŠK’i3¨4
-					   {150.0f, 1027.0f, 2590.0f}, {150.0f, 1224.0f, 1800.0f},  {3960.0f, 1224.0f, 1800.0f},                              // 4ŠK‚ÌˆÚ“®
-					   {3960.0f, 1027.0f, 2580.0f},{3680.0f, 1027.0f, 2580.0f}, {3680.0f, 831.0f, 1700.0f}, {180.0f, 831.0f, 1700.0f},    // 3ŠK‚Ì’†‰›ŠK’i‚ÖˆÚ“®
-					   {180.0f, 634.0f, 2590.0f},  {-180.0f, 634.0f, 2590.0f }, {-180.0f, 438.0f, 1700.0f},                               // ’†‰›ŠK’i3¨2
-					   {-3960.0f, 438.0f, 1700.0f},{-3960.0f, 241.0f, 2590.0f}, {-3680.0f, 241.0f, 2590.0f},{-3680.0f, 44.0f, 1700.0f},   // ¶ŠK’i2¨1
-					   {100.0f, 44.0f, 1700.0f} };                                                                                        // ‰ŠúÀ•W‚É–ß‚é
+	// ç›®æ¨™åº§æ¨™ã®è¨­å®š ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ¨ª3680.0fé«˜ã•400.0f éšæ®µ-180.0f z2590.0f h:1027, h(ä¸­é–“):1224
+	Point weipoint[] = { {0.0f, 44.0f, 1700.0f},                                                                                          // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½Ésï¿½ï¿½
+					   {3680.0f, 44.0f, 1700.0f }, {3680.0f, 241.0f, 2590.0f},  {3980.0f, 241.0f, 2590.0f},  {3980.0f, 438.0f, 1700.0f},  // ï¿½Eï¿½Kï¿½i1ï¿½ï¿½2
+					   {-3680.0f, 438.0f, 1700.0f},{-3680.0f, 634.0f, 2590.0f}, {-3980.0f, 634.0f, 2590.0f}, {-3980.0f, 831.0f, 1700.0f}, // ï¿½ï¿½ï¿½Kï¿½i2ï¿½ï¿½3
+					   {0.0f, 831.0f, 1700.0f},    {-100.0f, 831.0, -1600.0f},  {-100.0f, 831.0f, 1700.0f},  {-100.0f, 1027.0f, 2590.0f}, // ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½i3ï¿½ï¿½4
+					   {150.0f, 1027.0f, 2590.0f}, {150.0f, 1224.0f, 1800.0f},  {3960.0f, 1224.0f, 1800.0f},                              // 4ï¿½Kï¿½ÌˆÚ“ï¿½
+					   {3960.0f, 1027.0f, 2580.0f},{3680.0f, 1027.0f, 2580.0f}, {3680.0f, 831.0f, 1700.0f}, {180.0f, 831.0f, 1700.0f},    // 3ï¿½Kï¿½Ì’ï¿½ï¿½ï¿½ï¿½Kï¿½iï¿½ÖˆÚ“ï¿½
+					   {180.0f, 634.0f, 2590.0f},  {-180.0f, 634.0f, 2590.0f }, {-180.0f, 438.0f, 1700.0f},                               // ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½i3ï¿½ï¿½2
+					   {-3960.0f, 438.0f, 1700.0f},{-3960.0f, 241.0f, 2590.0f}, {-3680.0f, 241.0f, 2590.0f},{-3680.0f, 44.0f, 1700.0f},   // ï¿½ï¿½ï¿½Kï¿½i2ï¿½ï¿½1
+					   {100.0f, 44.0f, 1700.0f} };                                                                                        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½É–ß‚ï¿½
 
 
-	Point WeipointNex[] = { {0.0f, 44.0f, -1700.0f},                                                                                               // ‰ŠúÀ•W‚És‚­
-						  {-3680.0f, 44.0f, -1700.0f},  {-3680.0f, 241.0f, -2500.0f}, {-3980.0f, 241.0f, -2500.0f}, {-3980.0f, 438.0f, -1700.0f}, // ¶ŠK’i1¨2
-						  {3680.0f, 438.0f, -1700.0f},  {3680.0f, 634.0f, -2500.0f},  {3980.0f, 634.0f, -2500.0f},  {3980.0f, 831.0f, -1700.0f},  // ‰EŠK’i2¨3
-						  {0.0f, 831.0f, -1700.0f},     {100.0f, 831.0f, 1600.0f},    {100.0f, 831.0f, -1700.0f},   {100.0f, 1027.0f, -2500.0f},  // ’†‰›ŠK’i3¨4
-						  {-150.0f, 1027.0f, -2500.0f}, {-150.0f, 1224.0f, -1500.0f}, {-3960.0f, 1224.0f, -1500.0f},                              // 4ŠK‚ÌˆÚ“®
-						  {-3960.0f, 1027.0f, -2500.0f},{-3680.0f, 1027.0f, -2500.0f},{-3680.0f, 831.0f, -1700.0f}, {3960.0f, 831.0f, -1700.0f},  // 3ŠK‚Ì‰EŠK’i‚ÖˆÚ“®
-						  {3960.0f, 634.0f, -2500.0f},  {3680.0f, 634.0f, -2500.0f},  {3680.0f, 438.0f, -1700.0f},                                // ‰EŠK’i3¨2
-						  {-3960.0f, 438.0f, -1700.0f}, {-3960.0f, 241.0f, -2500.0f,},{-3680.0f, 241.0f, -2500.0f}, {-3680.0f, 44.0f, -1700.0f},  // ¶ŠK’i2¨1
-						  {100.0f, 44.0f, -1700.0f} };                                                                                            // ‰ŠúÀ•W‚É–ß‚é
+	Point weipointNex[] = { {0.0f, 44.0f, -1700.0f},                                                                                               // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½Ésï¿½ï¿½
+						  {-3680.0f, 44.0f, -1700.0f},  {-3680.0f, 241.0f, -2500.0f}, {-3980.0f, 241.0f, -2500.0f}, {-3980.0f, 438.0f, -1700.0f}, // ï¿½ï¿½ï¿½Kï¿½i1ï¿½ï¿½2
+						  {3680.0f, 438.0f, -1700.0f},  {3680.0f, 634.0f, -2500.0f},  {3980.0f, 634.0f, -2500.0f},  {3980.0f, 831.0f, -1700.0f},  // ï¿½Eï¿½Kï¿½i2ï¿½ï¿½3
+						  {0.0f, 831.0f, -1700.0f},     {100.0f, 831.0f, 1600.0f},    {100.0f, 831.0f, -1700.0f},   {100.0f, 1027.0f, -2500.0f},  // ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½i3ï¿½ï¿½4
+						  {-150.0f, 1027.0f, -2500.0f}, {-150.0f, 1224.0f, -1500.0f}, {-3960.0f, 1224.0f, -1500.0f},                              // 4ï¿½Kï¿½ÌˆÚ“ï¿½
+						  {-3960.0f, 1027.0f, -2500.0f},{-3680.0f, 1027.0f, -2500.0f},{-3680.0f, 831.0f, -1700.0f}, {3960.0f, 831.0f, -1700.0f},  // 3ï¿½Kï¿½Ì‰Eï¿½Kï¿½iï¿½ÖˆÚ“ï¿½
+						  {3960.0f, 634.0f, -2500.0f},  {3680.0f, 634.0f, -2500.0f},  {3680.0f, 438.0f, -1700.0f},                                // ï¿½Eï¿½Kï¿½i3ï¿½ï¿½2
+						  {-3960.0f, 438.0f, -1700.0f}, {-3960.0f, 241.0f, -2500.0f,},{-3680.0f, 241.0f, -2500.0f}, {-3680.0f, 44.0f, -1700.0f},  // ï¿½ï¿½ï¿½Kï¿½i2ï¿½ï¿½1
+						  {100.0f, 44.0f, -1700.0f} };                                                                                            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½É–ß‚ï¿½
 
 
-	m_oldPosition = m_position;   // ‘O‰ñ‚ÌÀ•W‚ğ‚¢‚Á‚½‚ñ•Û
+	m_oldPosition = m_position;  // å‰å›ã®åº§æ¨™ã‚’ã„ã£ãŸã‚“ä¿æŒ
 
 
-		// ƒvƒŒƒCƒ„[‚Ìî•ñ‚ğæ“¾
-		Object3D* Player = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
-
-		if (Player != nullptr)
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æƒ…å ±ã‚’å–å¾—
+	Object3D* pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+		if (pPlayerObj == nullptr)
 		{
-			// ƒvƒŒƒCƒ„[‚ÌÀ•W‚ğæ“¾
-			m_playerPos = Player->GetPosition();
+			return; // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìï¿½ñ‚ªæ“¾ï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Íï¿½ï¿½ï¿½ï¿½ğ’†’f
+		}
 
-			// ƒvƒŒƒCƒ„[‚Æ“G‚ÌÀ•W‚Ì‹——£‚ğŒvZ
-			VECTOR distance = VSub(m_playerPos, m_position);
+		Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
+		if (pPlayer == nullptr)
+		{
+			return; // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìï¿½ï¿½Player3Dï¿½^ï¿½ÉƒLï¿½ï¿½ï¿½Xï¿½gï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Íï¿½ï¿½ï¿½ï¿½ğ’†’f
+		}
 
-			// ƒxƒNƒgƒ‹‚ÌƒTƒCƒY‚ğæ“¾
-			float dis = VSize(distance);
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åº§æ¨™ã‚’å–å¾—
+		m_playerPos = pPlayer->GetPosition();
+
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨æ•µã®åº§æ¨™ã®è·é›¢ã‚’è¨ˆç®—
+		VECTOR vDistanceToPlayer = VSub(m_playerPos, m_position);
+
+		// ãƒ™ã‚¯ãƒˆãƒ«ã®ã‚µã‚¤ã‚ºã‚’å–å¾—
+		float fDistanceToPlayer = VSize(vDistanceToPlayer);
 
 
-			// ƒvƒŒƒCƒ„[‚ª“G‚É‹ß‚Ã‚¢‚½‚çƒQ[ƒ€ƒI[ƒo[ˆ—‚ğs‚¤
-			if (dis <= 60.0f)
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ•µã«è¿‘ã¥ã„ãŸã‚‰ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼å‡¦ç†ã‚’è¡Œã†
+		if (fDistanceToPlayer <= 60.0f)
 			{
-				Player3D* player = dynamic_cast<Player3D*>(Player);
-				if (player != nullptr)
-				{
-					// ƒvƒŒƒCƒ„[‚ÌˆÚ“®ˆ—‚ğ~‚ß‚é
-					player->SetFreeze(true);
-					// ƒJƒƒ‰‚ÌˆÚ“®‚ğ~‚ß‚é
-					Master::m_camera->SetFreeze(true);
-					m_isRun = false;
-					// ƒWƒƒƒ“ƒvƒXƒPƒA‚ğ”­¶‚³‚¹‚é
-					m_isScare = true;
-				}
+			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•å‡¦ç†ã‚’æ­¢ã‚ã‚‹
+			pPlayer->SetFreeze(true);
 
+			// ã‚«ãƒ¡ãƒ©ã®ç§»å‹•ã‚’æ­¢ã‚ã‚‹
+			Master::m_camera->SetFreeze(true);
+
+			// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ã‚’ç™ºç”Ÿã•ã›ã‚‹
+			m_isRun = false;
+
+				// ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Xï¿½Pï¿½Aï¿½ğ”­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				m_isScare = true;
+				
 			}
 
+		// ç¢ºèªã™ã‚‹è§’åº¦
+		float visionAngle = 45.0f;
 
-			// Šm”F‚·‚éŠp“x
-			float visionAngle = 45.0f;
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç¢ºèªã™ã‚‹ç¯„å›²
+		float sight = visionAngle * DX_PI_F / 180.0f;
 
-			// ƒvƒŒƒCƒ„[‚ğŠm”F‚·‚é”ÍˆÍ
-			float sight = visionAngle * DX_PI_F / 180.0f;
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨æ•µã®é«˜ã•ã®å·®ã‚’è¨ˆç®—ã™ã‚‹
+		float heightDistance = (m_playerPos.y + 80.0f) - (m_position.y + 80.0f);
 
-			// Œ©‚Â‚¯‚é‹——£
-			float founddis = 1500.0f;
+		// ã‚¹ãƒ‘ã‚¤ã‚¯é˜²æ­¢ã®ãŸã‚ã®ã‚¹ãƒ ãƒ¼ã‚¸ãƒ³ã‚°å‡¦ç†
+		static float smoothHeight = 0.0f;
+			smoothHeight = (smoothHeight * 0.8f) + (heightDistance * 0.2f);
 
-			// ƒvƒŒƒCƒ„[‚Æ“G‚Ì‚‚³‚Ì·‚ğŒvZ‚·‚é
-			float heightDis = (m_playerPos.y + 80.0f) - (m_position.y + 80.0f);
-
-			// ƒXƒpƒCƒN–h~‚Ì‚½‚ß‚ÌƒXƒ€[ƒWƒ“ƒOˆ—
-			static float smoothHeight = 0.0f;
-			smoothHeight = (smoothHeight * 0.8f) + (heightDis * 0.2f);
-
-			// ‚‚³‚Ì·‚ªˆê’è‹——£‚æ‚è‘å‚«‚¢‚È‚çƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚Ä‚¢‚È‚¢
+			// é«˜ã•ã®å·®ãŒä¸€å®šè·é›¢ã‚ˆã‚Šå¤§ãã„ãªã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ã¦ã„ãªã„
 			if (fabs(smoothHeight) > 150.0f)
 			{
 				m_foundPlayer = false;
 			}
 
-
-			// “G‚Ì‹“_‚ğİ’è
+			// æ•µã®è¦–ç‚¹ã‚’è¨­å®š
 			VECTOR forward = VGet(sinf(m_angle), 0.0f, cosf(m_angle));
 
-			// ‹——£‚ğ³‹K‰»
-			distance = VNorm(distance);
+			// è·é›¢ã‚’æ­£è¦åŒ–
+			vDistanceToPlayer = VNorm(vDistanceToPlayer);
 
-			// ‹“_‚Æ‹——£‚©‚ç“àÏ‚ğ‹‚ß‚é
-			float dot = VDot(forward, distance);
+			// è¦–ç‚¹ã¨è·é›¢ã‹ã‚‰å†…ç©ã‚’æ±‚ã‚ã‚‹
+			float dot = VDot(forward, vDistanceToPlayer);
 
+			// ï¿½ï¿½ï¿½Â‚ï¿½ï¿½é‹—ï¿½ï¿½
+			float foundDistance = 1500.0f;
 
-			// “G‚Ì‹“_‚©‚çƒvƒŒƒCƒ„[‚ªŒ©‚¦‚½ê‡‚©‚Âˆê’è‚Ì‹——£ˆÈ‰º‚È‚ç
-			if (dot >= sight && dis <= founddis)
+			// æ•µã®è¦–ç‚¹ã‹ã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¦‹ãˆãŸå ´åˆã‹ã¤ä¸€å®šã®è·é›¢ä»¥ä¸‹ãªã‚‰
+			if (dot >= sight && fDistanceToPlayer <= foundDistance)
 			{
-				// ƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚½
+				// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ãŸ
 				m_foundPlayer = true;
 			}
-			else  // ˆê’è‚Ì‹——£‚ğ—£‚ê‚½‚ç–Ú•WÀ•W‚És‚­‚æ‚¤‚É‚·‚é
+			else  // ä¸€å®šã®è·é›¢ã‚’é›¢ã‚ŒãŸã‚‰ç›®æ¨™åº§æ¨™ã«è¡Œãã‚ˆã†ã«ã™ã‚‹
 			{
 				m_foundPlayer = false;
 			}
 
 
 
-			// ƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚Ä‚¢‚È‚¢ê‡(–Ú•WÀ•W‚ÉŒü‚©‚¤ˆ—)
+			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ã¦ã„ãªã„å ´åˆ(ç›®æ¨™åº§æ¨™ã«å‘ã‹ã†å‡¦ç†)
 			if (!m_foundPlayer)
 			{
-				// ‘–‚Á‚Ä‚¢‚È‚¢
+				// èµ°ã£ã¦ã„ãªã„
 				m_isRun = false;
 
-				// ‘Ò‹@ó‘Ô‚Ìê‡
+				// å¾…æ©ŸçŠ¶æ…‹ã®å ´åˆ
 				if (m_isWait)
 				{
-					// ‘Ò‹@ŠÔ‘‰Á
+					// å¾…æ©Ÿæ™‚é–“å¢—åŠ 
 					m_waitTimer++;
 
-					// ‘Ò‹@ŠÔ‚ª‘Ò‹@‚·‚éƒtƒŒ[ƒ€”ˆÈã‚Ìê‡
+					// å¾…æ©Ÿæ™‚é–“ãŒå¾…æ©Ÿã™ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ æ•°ä»¥ä¸Šã®å ´åˆ
 					if (m_waitTimer >= WaitFram)
 					{
-						// ‘Ò‹@ŠÔI—¹
+						// å¾…æ©Ÿæ™‚é–“çµ‚äº†
 						m_isWait = false;
 
-						// ‘Ò‹@ŠÔ‚Ì‰Šú‰»
+						// å¾…æ©Ÿæ™‚é–“ã®åˆæœŸåŒ–
 						m_waitTimer = 0;
 					}
 
 				}
 				else
 				{
-					// “G‚Ìƒ‚ƒfƒ‹‚É‚æ‚Á‚Ä–Ú•W’n“_‚ğ•ÏX‚·‚é
+					// æ•µã®ãƒ¢ãƒ‡ãƒ«ã«ã‚ˆã£ã¦ç›®æ¨™åœ°ç‚¹ã‚’å¤‰æ›´ã™ã‚‹
 					switch (m_enemyType)
 					{
 					case 1:
-						// –Ú•WÀ•W‚Ì•Ï”‚Éİ’è
-						m_targetX = Weipoint[m_currentPoint].pointX;
-						m_targetY = Weipoint[m_currentPoint].pointY;
-						m_targetZ = Weipoint[m_currentPoint].pointZ;
+						// ç›®æ¨™åº§æ¨™ã®å¤‰æ•°ã«è¨­å®š
+						m_targetX = weipoint[m_currentPoint].pointX;
+						m_targetY = weipoint[m_currentPoint].pointY;
+						m_targetZ = weipoint[m_currentPoint].pointZ;
 
-						// –Ú•WÀ•W‚Æ“G‚ÌÀ•W‚Ì‹——£‚ğ‹‚ß‚é
+						// ç›®æ¨™åº§æ¨™ã¨æ•µã®åº§æ¨™ã®è·é›¢ã‚’æ±‚ã‚ã‚‹
 						m_distanceX = m_targetX - m_position.x;
 						m_distanceY = m_targetY - m_position.y;
 						m_distanceZ = m_targetZ - m_position.z;
@@ -280,12 +286,12 @@ void Enemy3D::Move()
 						break;
 
 					case 2:
-						// –Ú•WÀ•W‚Ì•Ï”‚Éİ’è
-						m_targetX = WeipointNex[m_currentPoint].pointX;
-						m_targetY = WeipointNex[m_currentPoint].pointY;
-						m_targetZ = WeipointNex[m_currentPoint].pointZ;
+						// ç›®æ¨™åº§æ¨™ã®å¤‰æ•°ã«è¨­å®š
+						m_targetX = weipointNex[m_currentPoint].pointX;
+						m_targetY = weipointNex[m_currentPoint].pointY;
+						m_targetZ = weipointNex[m_currentPoint].pointZ;
 
-						// –Ú•WÀ•W‚Æ“G‚ÌÀ•W‚Ì‹——£‚ğ‹‚ß‚é
+						// ç›®æ¨™åº§æ¨™ã¨æ•µã®åº§æ¨™ã®è·é›¢ã‚’æ±‚ã‚ã‚‹
 						m_distanceX = m_targetX - m_position.x;
 						m_distanceY = m_targetY - m_position.y;
 						m_distanceZ = m_targetZ - m_position.z;
@@ -293,38 +299,38 @@ void Enemy3D::Move()
 						break;
 					}
 
-					// ‹——£‚ğŒvZ
-					float distance = sqrtf(m_distanceX * m_distanceX + m_distanceY * m_distanceY + m_distanceZ * m_distanceZ);
+					// è·é›¢ã‚’è¨ˆç®—
+					float fDistanceToTarget = sqrtf(m_distanceX * m_distanceX + m_distanceY * m_distanceY + m_distanceZ * m_distanceZ);
 
 
-					// ‹——£‚ª‘¬‚³‚æ‚è‘å‚«‚¢‚È‚ç
-					if (distance > Speed)
+					// è·é›¢ãŒé€Ÿã•ã‚ˆã‚Šå¤§ãã„ãªã‚‰
+					if (fDistanceToTarget > Speed)
 					{
-						//‹‚ß‚½‹——£‚ğİ’è
+						//æ±‚ã‚ãŸè·é›¢ã‚’è¨­å®š
 						VECTOR d = VGet(m_distanceX, m_distanceY, m_distanceZ);
-						// –Ú•WÀ•W‚ğ³‹K‰»
+						// ç›®æ¨™åº§æ¨™ã‚’æ­£è¦åŒ–
 						d = VNorm(d);
 
-						// ˆÚ“®ƒxƒNƒgƒ‹‚É‰Á‚¦‚é
+						// ï¿½Ú“ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½
 						m_moveVec = VAdd(m_moveVec, d);
 
-						// ˆÚ“®‚³‚¹‚é
+						m_moveVec = VAdd(m_moveVec, d);
 						m_position = VAdd(m_position, VScale(m_moveVec, Speed));
 
 					}
 					else
 					{
-						// –Ú•WÀ•W‚ğƒ‚ƒfƒ‹‚Éİ’è
+						// ç›®æ¨™åº§æ¨™ã‚’ãƒ¢ãƒ‡ãƒ«ã«è¨­å®š
 						m_position.x = m_targetX;
 
 						m_position.y = m_targetY;
 
 						m_position.z = m_targetZ;
 
-						// ˆÚ“®•ûŒü‚ğ‰Šú‰»
+						// ç§»å‹•æ–¹å‘ã‚’åˆæœŸåŒ–
 						m_moveVec = VGet(0.0f, 0.0f, 0.0f);
 
-						// ŠK’i‚Ìã‚è‰º‚è‚ÌÛ‚É‚Í‘Ò‹@ó‘Ô‚ğ–³‚­‚·
+						// éšæ®µã®ä¸Šã‚Šä¸‹ã‚Šã®éš›ã«ã¯å¾…æ©ŸçŠ¶æ…‹ã‚’ç„¡ãã™
 						if (m_currentPoint == 2 || m_currentPoint == 3 || m_currentPoint == 6 || m_currentPoint == 7
 							|| m_currentPoint == 12 || m_currentPoint == 13 || m_currentPoint == 16 || m_currentPoint == 17
 							|| m_currentPoint == 20 || m_currentPoint == 21 || m_currentPoint == 24 || m_currentPoint == 25
@@ -337,28 +343,29 @@ void Enemy3D::Move()
 							m_isWait = true;
 						}
 
-						// –Ú•W’n“_‚ÌÅŒã‚Ü‚Ås‚Á‚½‚ç’Ê‚Á‚Ä‚«‚½À•W‚ğ‡”Ô‚É–ß‚é‚æ‚¤‚É‚·‚é
-						if (m_position.x == Weipoint[27].pointX && m_position.y == Weipoint[27].pointY && m_position.z == Weipoint[27].pointZ)
+						// ç›®æ¨™åœ°ç‚¹ã®æœ€å¾Œã¾ã§è¡Œã£ãŸã‚‰é€šã£ã¦ããŸåº§æ¨™ã‚’é †ç•ªã«æˆ»ã‚‹ã‚ˆã†ã«ã™ã‚‹
+						if (m_position.x == weipoint[27].pointX && m_position.y == weipoint[27].pointY && m_position.z == weipoint[27].pointZ)
 						{
 							m_isback = true;
 						}
-						if (m_position.x == WeipointNex[27].pointX && m_position.y == WeipointNex[27].pointY && m_position.z == WeipointNex[27].pointZ)
+						if (m_position.x == weipointNex[27].pointX && m_position.y == weipointNex[27].pointY && m_position.z == weipointNex[27].pointZ)
 						{
 							m_isback = true;
 						}
 
-						// –Ú•W’n“_‚ğ‘S•”’Ê‚é‚Ü‚Åİ’è‚µ‚½–Ú•W’n“_‚ğ’Ê‚Á‚Ä‚¢‚­
+						// ç›®æ¨™åœ°ç‚¹ã‚’å…¨éƒ¨é€šã‚‹ã¾ã§è¨­å®šã—ãŸç›®æ¨™åœ°ç‚¹ã‚’é€šã£ã¦ã„ã
 						if (!m_isback)
 						{
-							m_currentPoint = (m_currentPoint + 1) % m_pointcount;
+							m_currentPoint = (m_currentPoint + 1) % m_maxPointCount;
 						}
-						else  // –Ú•W’n“_‚ğ‘S•”’Ê‚Á‚½‚ç’Ê‚Á‚Ä‚«‚½’n“_‚ğ–ß‚é
+						else  // ç›®æ¨™åœ°ç‚¹ã‚’å…¨éƒ¨é€šã£ãŸã‚‰é€šã£ã¦ããŸåœ°ç‚¹ã‚’æˆ»ã‚‹
 						{
-							// Œ»İ‚Ì–Ú•WÀ•W‚ğ¦‚·•Ï”‚ğŒ¸‚ç‚µ‚Ä‚¢‚­
+							// ç¾åœ¨ã®ç›®æ¨™åº§æ¨™ã‚’ç¤ºã™å¤‰æ•°ã‚’æ¸›ã‚‰ã—ã¦ã„ã
 							m_currentPoint--;
 
-							// Å‘å”z—ñ”‚ª0‚É‚È‚Á‚½‚ç
+							// æœ€å¤§é…åˆ—æ•°ãŒ0ã«ãªã£ãŸã‚‰
 							if (m_currentPoint <= 0)
+								if (m_currentPoint <= 0)
 							{
 								m_isback = false;
 								m_currentPoint = 0;
@@ -373,104 +380,97 @@ void Enemy3D::Move()
 
 
 			}
-			else   // ƒvƒŒƒCƒ„[‚ğŒ©‚Â‚¯‚½ê‡(’Ç”öˆ—`ƒvƒŒƒCƒ„[‚ÌÀ•W‚ğ’Ê‚é`)
+			else   // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦‹ã¤ã‘ãŸå ´åˆ(è¿½å°¾å‡¦ç†ï½ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åº§æ¨™ã‚’é€šã‚‹ï½)
 			{
-					// ‘–‚é
-					m_isRun = true;
+				// èµ°ã‚‹
+				m_isRun = true;
 
-					Player3D* getPlayer = dynamic_cast<Player3D*>(Player);
+				// ========== è¿½åŠ å®Ÿè£…ï¼šæ•µãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«è¿‘ã¥ã„ãŸã‚‰ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’é¿ã‘ãªãŒã‚‰è¿½å°¾ã™ã‚‹å‡¦ç† ==========
+				// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®è·é›¢ãŒä¸€å®šè·é›¢ä»¥ä¸‹ï¼ˆä¾‹ï¼š800.0f ä»¥ä¸‹ï¼‰ãªã‚‰ç›´æ¥è¿½å°¾ã‚’è©¦ã¿ã‚‹
+				// è·é›¢ãŒé ã„å ´åˆã¯ã€ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¶³è·¡ï¼ˆè¿‚å›ãƒ«ãƒ¼ãƒˆï¼‰ã‚’ãŸã©ã‚‹
+				bool isDistanceChase = (fDistanceToPlayer <= 800.0f);
 
-					if (getPlayer != nullptr)
+				// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¶³è·¡ãƒªã‚¹ãƒˆã‚’å–å¾—
+				std::vector<VECTOR>& playerRecord = pPlayer->GetPlayerRecord();
+
+				// ç›´æ¥è¿½å°¾ã‚’è¡Œã†å ´åˆ
+				if (isDistanceChase)
 					{
-						// ========== ’Ç‰ÁÀ‘•F“G‚ªƒvƒŒƒCƒ„[‚É‹ß‚Ã‚¢‚½‚çƒXƒe[ƒW‚ğ”ğ‚¯‚È‚ª‚ç’Ç”ö‚·‚éˆ— ==========
-						// ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ªˆê’è‹——£ˆÈ‰ºi—áF800.0f ˆÈ‰ºj‚È‚ç’¼Ú’Ç”ö‚ğ‚İ‚é
-						// ‹——£‚ª‰“‚¢ê‡‚ÍAƒvƒŒƒCƒ„[‚Ì‘«Õi‰I‰ñƒ‹[ƒgj‚ğ‚½‚Ç‚é
-						bool isDirectChase = (dis <= 800.0f);
-
-						// ƒvƒŒƒCƒ„[‚Ì‘«ÕƒŠƒXƒg‚ğæ“¾
-						std::vector<VECTOR>& playerRecord = getPlayer->GetPlayerRecord();
-
-						// ’¼Ú’Ç”ö‚ğs‚¤ê‡
-						if (isDirectChase)
+					// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ–¹å‘ã¸å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
+					VECTOR toPlayer = VSub(m_playerPos, m_position);
+						
+					// é«˜ã•ã‚’ç„¡è¦–ã—ã¦å¹³é¢ã§è¿½å°¾ã™ã‚‹ã‚ˆã†ã« Y ã‚’ 0 ã«ã™ã‚‹
+					toPlayer.y = 0.0f;
+						
+					// ã‚¼ãƒ­é™¤ç®—ã‚’é¿ã‘ã‚‹ãŸã‚ã®ãƒã‚§ãƒƒã‚¯
+					if (VSize(toPlayer) > 0.001f)
 						{
-							// ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ÖŒü‚©‚¤ƒxƒNƒgƒ‹‚ğŒvZ
-							VECTOR toPlayer = VSub(m_playerPos, m_position);
-							
-							// ‚‚³‚ğ–³‹‚µ‚Ä•½–Ê‚Å’Ç”ö‚·‚é‚æ‚¤‚É Y ‚ğ 0 ‚É‚·‚é
-							toPlayer.y = 0.0f; 
-							
-							// ƒ[ƒœZ‚ğ”ğ‚¯‚é‚½‚ß‚Ìƒ`ƒFƒbƒN
-							if (VSize(toPlayer) > 0.001f)
-							{
-								// ƒxƒNƒgƒ‹‚ğ³‹K‰»i’·‚³‚ğ1‚É‚·‚éj‚µ‚Ä•ûŒü‚¾‚¯‚É‚·‚é
-								toPlayer = VNorm(toPlayer);
+						// ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ï¼ˆé•·ã•ã‚’1ã«ã™ã‚‹ï¼‰ã—ã¦æ–¹å‘ã ã‘ã«ã™ã‚‹
+						toPlayer = VNorm(toPlayer);
 
-								// Šµ«‚ğã‚ß‚ÄAƒvƒŒƒCƒ„[‚Ì•ûŒü‚É‘f‘‚­Œü‚«’¼‚ê‚é‚æ‚¤‚É‚·‚é
-								m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
-								m_moveVec = VNorm(m_moveVec); // í‚Ì’·‚³‚ğ1‚É•Û‚Â‚±‚Æ‚ÅAˆÚ“®‘¬“x‚ª”š”­‚·‚é‚Ì‚ğ–h‚®
+							// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ÄAï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½É‘fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½ï¿½
+							m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
+							m_moveVec = VNorm(m_moveVec); // å¸¸ã®é•·ã•ã‚’1ã«ä¿ã¤ã“ã¨ã§ã€ç§»å‹•é€Ÿåº¦ãŒçˆ†ç™ºã™ã‚‹ã®ã‚’é˜²ã
 
-								// “G‚ğƒvƒŒƒCƒ„[‚Ì•ûŒü‚ÉˆÚ“®‚³‚¹‚éi‘¬“x‚Í‘–‚éƒXƒs[ƒhj
-								m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
-							}
+							// æ•µã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ–¹å‘ã«ç§»å‹•ã•ã›ã‚‹ï¼ˆé€Ÿåº¦ã¯èµ°ã‚‹ã‚¹ãƒ”ãƒ¼ãƒ‰ï¼‰
+							m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
+						}
 
-							// ¦ƒXƒe[ƒW‚Ì•Ç‚ğ”ğ‚¯‚éiŠŠ‚è”²‚¯‚éjˆ—©‘Ì‚ÍA
-							// Move()ŠÖ”‚ÌŒã”¼‚É‚ ‚éu‘Sƒqƒbƒgî•ñ‚Å‰Ÿ‚µo‚·ƒƒWƒbƒNv‚Å©“®“I‚És‚í‚ê‚Ü‚·B
-							
-							// ƒvƒŒƒCƒ„[‚É’¼Ú’Ç”ö‚Å‚«‚Ä‚¢‚éŠÔ‚ÍA’Ê‰ß‚µ‚½‚Æ‚İ‚È‚µ‚Ä‘«Õ‚ğŒÃ‚¢‚à‚Ì‚©‚ç­‚µÁ‚µ‚Ä‚¨‚­
+					// â€»ã‚¹ãƒ†ãƒ¼ã‚¸ã®å£ã‚’é¿ã‘ã‚‹ï¼ˆæ»‘ã‚ŠæŠœã‘ã‚‹ï¼‰å‡¦ç†è‡ªä½“ã¯ã€
+					// Move()é–¢æ•°ã®å¾ŒåŠã«ã‚ã‚‹ã€Œå…¨ãƒ’ãƒƒãƒˆæƒ…å ±ã§æŠ¼ã—å‡ºã™ãƒ­ã‚¸ãƒƒã‚¯ã€ã§è‡ªå‹•çš„ã«è¡Œã‚ã‚Œã¾ã™ã€‚
+
+							// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ç›´æ¥è¿½å°¾ã§ãã¦ã„ã‚‹é–“ã¯ã€é€šéã—ãŸã¨ã¿ãªã—ã¦è¶³è·¡ã‚’å¤ã„ã‚‚ã®ã‹ã‚‰å°‘ã—æ¶ˆã—ã¦ãŠã
+					if (!playerRecord.empty())
+						{
+							playerRecord.erase(playerRecord.begin());
+						}
+					}
+					else
+					{
+					// é ã„å ´åˆãªã©ã¯ã€ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’é¿ã‘ã‚‹ãŸã‚ã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¶³è·¡ã‚’ãŸã©ã‚‹
+					// è¶³è·¡ãƒªã‚¹ãƒˆãŒç©ºã®å ´åˆ
+					if (playerRecord.empty())
+						{
+						// è¿½å°¾ã™ã¹ãè¶³è·¡ãŒãªã„ã®ã§çµ‚äº†
+						return;
+						}
+
+					// ä¸€ç•ªå¤ã„è¶³è·¡ï¼ˆå‘ã‹ã†ã¹ãã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼‰ã‚’å–å¾—
+					VECTOR playerRecordPosition = playerRecord.front();
+
+					// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨æ•µã®è·é›¢ã‚’è¨ˆç®—
+					VECTOR vec = VSub(playerRecordPosition, m_position);
+						vec.y = 0.0f; // é«˜ã•ã¯ç„¡è¦–
+
+						// ãƒ™ã‚¯ãƒˆãƒ«ã®ã‚µã‚¤ã‚ºï¼ˆè·é›¢ï¼‰ã‚’å–å¾—
+						float fDistanceToPlayerRecord = VSize(vec);
+						// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ã®è·é›¢ãŒä¸€å®šä»¥ä¸‹ï¼ˆåˆ°ç€ã—ãŸï¼‰ãªã‚‰
+						if (fDistanceToPlayerRecord <= 30.0f)
+						{
+							// è¶³è·¡ãƒªã‚¹ãƒˆãŒç©ºã§ãªã„å ´åˆ
 							if (!playerRecord.empty())
 							{
+								// é€šéã—ãŸè¶³è·¡ã‚’ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤ã—ã€æ¬¡ã®è¶³è·¡ã«å‘ã‹ã†ã‚ˆã†ã«ã™ã‚‹
 								playerRecord.erase(playerRecord.begin());
 							}
 						}
 						else
 						{
-							// ‰“‚¢ê‡‚È‚Ç‚ÍAƒXƒe[ƒW‚ğ”ğ‚¯‚é‚½‚ß‚ÉƒvƒŒƒCƒ„[‚Ì‘«Õ‚ğ‚½‚Ç‚é
-							// ‘«ÕƒŠƒXƒg‚ª‹ó‚Ìê‡
-							if (playerRecord.empty())
+							// ã‚¼ãƒ­é™¤ç®—ã‚’é¿ã‘ã‚‹ãŸã‚ã®ãƒã‚§ãƒƒã‚¯
+							if (fDistanceToPlayerRecord > 0.001f)
 							{
-								// ’Ç”ö‚·‚×‚«‘«Õ‚ª‚È‚¢‚Ì‚ÅI—¹
-								return;
+								// æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–
+								vec = VNorm(vec);
+
+								// æ…£æ€§ã‚’å¼±ã‚ã‚‹
+								m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
+								m_moveVec = VNorm(m_moveVec);
+
+								// æ•µã‚’è¶³è·¡ã®æ–¹å‘ã«ç§»å‹•ã•ã›ã‚‹
+								m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
 							}
-
-							// ˆê”ÔŒÃ‚¢‘«ÕiŒü‚©‚¤‚×‚«ƒ^[ƒQƒbƒgj‚ğæ“¾
-							VECTOR TargetPos = playerRecord.front();
-
-							// ƒ^[ƒQƒbƒg‚Æ“G‚Ì‹——£‚ğŒvZ
-							VECTOR vec = VSub(TargetPos, m_position);
-							vec.y = 0.0f; // ‚‚³‚Í–³‹
-
-							// ƒxƒNƒgƒ‹‚ÌƒTƒCƒYi‹——£j‚ğæ“¾
-							float Dis = VSize(vec);
-
-							// ƒ^[ƒQƒbƒg‚Æ‚Ì‹——£‚ªˆê’èˆÈ‰ºi“’…‚µ‚½j‚È‚ç
-							if (Dis <= 30.0f)
-							{
-								// ‘«ÕƒŠƒXƒg‚ª‹ó‚Å‚È‚¢ê‡
-								if (!playerRecord.empty())
-								{
-									// ’Ê‰ß‚µ‚½‘«Õ‚ğƒŠƒXƒg‚©‚çíœ‚µAŸ‚Ì‘«Õ‚ÉŒü‚©‚¤‚æ‚¤‚É‚·‚é
-									playerRecord.erase(playerRecord.begin());
-								}
-							}
-							else
-							{
-								// ƒ[ƒœZ‚ğ”ğ‚¯‚é‚½‚ß‚Ìƒ`ƒFƒbƒN
-								if (Dis > 0.001f)
-								{
-									// •ûŒüƒxƒNƒgƒ‹‚ğ³‹K‰»
-									vec = VNorm(vec);
-
-									// Šµ«‚ğã‚ß‚é
-									m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
-									m_moveVec = VNorm(m_moveVec);
-
-									// “G‚ğ‘«Õ‚Ì•ûŒü‚ÉˆÚ“®‚³‚¹‚é
-									m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
-								}
-							}
-
-
 						}
+
 
 					}
 
@@ -485,24 +485,24 @@ void Enemy3D::Move()
 
 
 
-		}
+		
 
 
-		// ˆÚ“®‚µ‚Ä‚¢‚éó‘Ô‚Å‚ ‚ê‚Î
-		bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
+			// ç§»å‹•ã—ã¦ã„ã‚‹çŠ¶æ…‹ã§ã‚ã‚Œã°
+			bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
 		if (isMove)
 		{
 
-			// ˆÚ“®•ûŒü‚ğ³‹K‰»‚µ‚Ä‚¨‚­
+			// ç§»å‹•æ–¹å‘ã‚’æ­£è¦åŒ–ã—ã¦ãŠã
 			m_moveVec = VNorm(m_moveVec);
 
-			// V‚µ‚¢‰ñ“]‚ğƒZƒbƒg
+			// æ–°ã—ã„å›è»¢ã‚’ã‚»ãƒƒãƒˆ
 			m_targetAngle = atan2f(m_moveVec.x, m_moveVec.z);
 
 		}
 
 
-		// ˆÚ“®‚µ‚Ä‚¢‚éó‘Ô‚Å‚ ‚ê‚Î
+		// ç§»å‹•ã—ã¦ã„ã‚‹çŠ¶æ…‹ã§ã‚ã‚Œã°
 		if (isMove)
 		{
 			if (m_isRun)
@@ -521,42 +521,48 @@ void Enemy3D::Move()
 
 
 
-		// ƒXƒe[ƒW‚Æ‚Ì“–‚½‚è”»’è‚ğ‚·‚é
+		// ã‚¹ãƒ†ãƒ¼ã‚¸ã¨ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã™ã‚‹
 		VECTOR hitPos = VGet(0.0f, 0.0f, 0.0f);
 		bool isHit = false;
 		int count = 0;
-		auto obj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-		if (obj != nullptr)
+		auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+		if (pStageObj == nullptr)
 		{
-			Stage* pStage = dynamic_cast<Stage*>(obj);
-			if (pStage != nullptr)
+			return; // ï¿½Xï¿½eï¿½[ï¿½Wï¿½Ìï¿½ñ‚ªæ“¾ï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Íï¿½ï¿½ï¿½ï¿½ğ’†’f
+		}
+
+			Stage* pStage = dynamic_cast<Stage*>(pStageObj);
+			if (pStage == nullptr)
 			{
-				// ƒXƒe[ƒW‚ÆƒvƒŒƒCƒ„[‚ÌƒJƒvƒZƒ‹‚ª“–‚½‚Á‚Ä‚¢‚éê‡ (ƒXƒe[ƒW‚Ì’n–Ê‚ÆƒvƒŒƒCƒ„[‚Æ‚Ì“–‚½‚è”»’èˆ—)
-				if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, 70.0f, 0.0f)), 40.0f))
+				return; // ï¿½Xï¿½eï¿½[ï¿½Wï¿½Ìï¿½ñ‚ªæ“¾ï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Íï¿½ï¿½ï¿½ï¿½ğ’†’f
+			}
+
+			// ã‚¹ãƒ†ãƒ¼ã‚¸ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚«ãƒ—ã‚»ãƒ«ãŒå½“ãŸã£ã¦ã„ã‚‹å ´åˆ (ã‚¹ãƒ†ãƒ¼ã‚¸ã®åœ°é¢ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®å½“ãŸã‚Šåˆ¤å®šå‡¦ç†)
+			if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, 70.0f, 0.0f)), 40.0f))
 				{
-					// “–‚½‚Á‚Ä‚¢‚é‚Å‚ ‚ë‚¤ƒ|ƒŠƒSƒ“‚Æ‚ÌÚG“_‚ğ‹‚ß‚é
-					hitPos = pStage->CheckHit_Line(
-						VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // ƒvƒŒƒCƒ„[‚Ì•G•Ó‚èi‘½•ªj‚Æ
-						VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))  // ƒvƒŒƒCƒ„[‚Ì­‚µ‰º‚ ‚½‚è‚ğü•ª‚Æ‚µ‚Äw’è
+				// å½“ãŸã£ã¦ã„ã‚‹ã§ã‚ã‚ã†ãƒãƒªã‚´ãƒ³ã¨ã®æ¥è§¦ç‚¹ã‚’æ±‚ã‚ã‚‹
+				hitPos = pStage->CheckHit_Line(
+						VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è†è¾ºã‚Šï¼ˆå¤šåˆ†ï¼‰ã¨
+						VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))   // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å°‘ã—ä¸‹ã‚ãŸã‚Šã‚’ç·šåˆ†ã¨ã—ã¦æŒ‡å®š
 					);
 
 
-					// “–‚½‚Á‚½”»’è‚ğæ‚Á‚Ä‚¨‚­
-					isHit = true;
+				// å½“ãŸã£ãŸåˆ¤å®šã‚’å–ã£ã¦ãŠã
+				isHit = true;
 
 				}
 
 
-				// -------------------------------------------------
-				// š “G—pF‘Sƒqƒbƒgî•ñ‚Å‰Ÿ‚µo‚·ƒƒWƒbƒN š
-				// -------------------------------------------------
-					VECTOR capBottom = VAdd(m_position, VGet(0.0f, 70.0f, 0.0f));
+			// -------------------------------------------------
+			// â˜… æ•µç”¨ï¼šå…¨ãƒ’ãƒƒãƒˆæƒ…å ±ã§æŠ¼ã—å‡ºã™ãƒ­ã‚¸ãƒƒã‚¯ â˜…
+			// -------------------------------------------------
+			VECTOR capBottom = VAdd(m_position, VGet(0.0f, 70.0f, 0.0f));
 				    VECTOR capTop = VAdd(m_position, VGet(0.0f, 90.0f, 0.0f));
 				
 				if (pStage->CheckHit_Capsule(capBottom, capTop, 50.0f))
 				{
-				       // ‡@ Œ»İ‚Ì•Ç‚Ì–@ü‚Å¨‚¢‚ğ‘Å‚¿Á‚·
-					   VECTOR stageNormal = VNorm(pStage->GetNormal());
+					// â‘  ç¾åœ¨ã®å£ã®æ³•ç·šã§å‹¢ã„ã‚’æ‰“ã¡æ¶ˆã™
+					VECTOR stageNormal = VNorm(pStage->GetNormal());
 				       float   b = VDot(m_moveVec, stageNormal);
 				      if (b < 0.0f)
 				      {
@@ -567,8 +573,8 @@ void Enemy3D::Move()
 				          capTop = VAdd(m_position, VGet(0.0f, 90.0f, 0.0f));
 				      }
 				     
-				     // ‡A MV1 ‚ÌÕ“ËŠÖ”‚Å‘Sƒqƒbƒgî•ñæ“¾‚µA‡¬–@ü‚Å‰Ÿ‚µo‚·
-				     const int SLIDE_MAX_ITERATION = 100;
+					  // â‘¡ MV1 ã®è¡çªé–¢æ•°ã§å…¨ãƒ’ãƒƒãƒˆæƒ…å ±å–å¾—ã—ã€åˆæˆæ³•ç·šã§æŠ¼ã—å‡ºã™
+					  const int SLIDE_MAX_ITERATION = 100;
 				      for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
 				      {
 				             MV1_COLL_RESULT_POLY_DIM result =
@@ -593,29 +599,29 @@ void Enemy3D::Move()
 				            capTop = VAdd(capTop, VScale(pushDir, 1.0f));
 				      }
 				}    
-			}
+			
 
 
 			if (isHit)
 			{
-				// ’n–Ê‚É‰ˆ‚Á‚Ä•à‚¢‚Ä‚¢‚éó‘Ô‚Æ‚µ‚ÄAYÀ•W‚ğƒXƒe[ƒW‚É‡‚í‚¹‚é
+				// ï¿½nï¿½Ê‚É‰ï¿½ï¿½ï¿½ï¿½Ä•ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Ô‚Æ‚ï¿½ï¿½ÄAYï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½Xï¿½eï¿½[ï¿½Wï¿½Éï¿½ï¿½í‚¹ï¿½ï¿½
 				m_position.y = hitPos.y;
 
 			}
 
 
-		}
+		
 
 }
 
 
 void Enemy3D::RotationByMove()
 {
-	// Œ»İ‚Ì‰ñ“]’l‚©‚ç–Ú•W‚Ì‰ñ“]’l‚Ì·•ª‚ğ‹‚ß‚é
+	// ç¾åœ¨ã®å›è»¢å€¤ã‹ã‚‰ç›®æ¨™ã®å›è»¢å€¤ã®å·®åˆ†ã‚’æ±‚ã‚ã‚‹
 	float subAngle = m_targetAngle - m_angle;
 
-	// ‚ ‚é•ûŒü‚©‚ç‚ ‚é•ûŒü‚Ì·‚ª180“xˆÈãiˆÈ‰ºj‚É‚È‚é‚±‚Æ‚ª‚È‚¢‚Í‚¸‚È‚Ì‚ÅA
-	// ·‚Ì’l‚ª180“xˆÈãiˆÈ‰ºj‚É‚È‚Á‚Ä‚¢‚½‚ç‹¸³‚·‚é
+	// ã‚ã‚‹æ–¹å‘ã‹ã‚‰ã‚ã‚‹æ–¹å‘ã®å·®ãŒ180åº¦ä»¥ä¸Šï¼ˆä»¥ä¸‹ï¼‰ã«ãªã‚‹ã“ã¨ãŒãªã„ã¯ãšãªã®ã§ã€
+	// å·®ã®å€¤ãŒ180åº¦ä»¥ä¸Šï¼ˆä»¥ä¸‹ï¼‰ã«ãªã£ã¦ã„ãŸã‚‰çŸ¯æ­£ã™ã‚‹
 	if (subAngle < -DX_PI_F)
 	{
 		subAngle += DX_TWO_PI_F;
@@ -625,7 +631,7 @@ void Enemy3D::RotationByMove()
 		subAngle -= DX_TWO_PI_F;
 	}
 
-	// Šp“x‚Ì·•ª‚ğ™X‚É 0 ‚É‹ß‚Ã‚¯‚é
+	// è§’åº¦ã®å·®åˆ†ã‚’å¾ã€…ã« 0 ã«è¿‘ã¥ã‘ã‚‹
 	if (subAngle > 0.0f)
 	{
 		subAngle -= RotateSpeed;
@@ -645,13 +651,13 @@ void Enemy3D::RotationByMove()
 		}
 	}
 
-	// ¡Œü‚¢‚Ä‚Ù‚µ‚¢Šp“x‚ğZo
+	// ä»Šå‘ã„ã¦ã»ã—ã„è§’åº¦ã‚’ç®—å‡º
 	m_angle = m_targetAngle - subAngle;
 
-	// ‰ñ“]’l‚ğİ’è
+	// å›è»¢å€¤ã‚’è¨­å®š
 	m_rotation.y = m_angle + DX_PI_F;
 
-	// ƒ‚ƒfƒ‹‚É“`‚¦‚é
+	// ãƒ¢ãƒ‡ãƒ«ã«ä¼ãˆã‚‹
 	m_model->SetRotation(m_rotation);
 
 }
@@ -659,91 +665,106 @@ void Enemy3D::RotationByMove()
 
 void Enemy3D::CollScare()
 {
-	Object3D* pobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
-	if (pobj != nullptr)
+	Object3D* pObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+	if (pObj == nullptr)
 	{
-		// ƒWƒƒƒ“ƒvƒXƒPƒA‚È‚ç
-		if (m_isScare)
-		{
-			// ƒWƒƒƒ“ƒvƒXƒPƒA’†‚ÍˆÚ“®ƒxƒNƒgƒ‹‚ğƒ[ƒ‚É‚µ‚Ä“G‚ğ’â~‚³‚¹‚é
-			m_moveVec = VGet(0.0f, 0.0f, 0.0f);
+		return;
+	}
 
-			// ƒWƒƒƒ“ƒvƒXƒPƒA’†‚Í“G‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğIdlei‘Ò‹@jó‘Ô‚É‚·‚é
-			m_model->ChangeAnimation(AnimationNeutral);
+	Player3D* pPlayer = dynamic_cast<Player3D*>(pObj);
+	if (pPlayer == nullptr)
+	{
+		return;
+	}
+
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ãªã‚‰
+	if (m_isScare)
+		{
+		// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ä¸­ã¯ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã‚’ã‚¼ãƒ­ã«ã—ã¦æ•µã‚’åœæ­¢ã•ã›ã‚‹
+		m_moveVec = VGet(0.0f, 0.0f, 0.0f);
+
+		// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ä¸­ã¯æ•µã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’Idleï¼ˆå¾…æ©Ÿï¼‰çŠ¶æ…‹ã«ã™ã‚‹
+		m_model->ChangeAnimation(AnimationNeutral);
 
 			SetLightEnableHandle(m_scareLight, true);
 
-			// ƒWƒƒƒ“ƒvƒXƒPƒA‚ÌŠÔ‚ği‚ß‚é
+			// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ã®æ™‚é–“ã‚’é€²ã‚ã‚‹
 			m_scareTimer++;
 
-			// SEÄ¶
-			Master::m_soundManager->PlayBGM(SoundManager::BgmGame);
+			// SEå†ç”Ÿ
+			Master::m_soundManager->PlaySE(SoundManager::SeJumpScare);
 
-			// ƒJƒƒ‰‚ÌÀ•W‚ğæ“¾
+			// ã‚«ãƒ¡ãƒ©ã®åº§æ¨™ã‚’å–å¾—
 			VECTOR camPos = Master::m_camera->GetPosition();
 
-			// ƒJƒƒ‰‚Ì’‹“_‚ğæ“¾
+			// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ã‚’å–å¾—
 			VECTOR camLook = Master::m_camera->GetLookAtPosition();
 
-			// ƒ[ƒ‹ƒhÀ•W‚Ìã•ûŒü
+			// ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã®ä¸Šæ–¹å‘
 			VECTOR worldUp = VGet(0.0f, 1.0f, 0.0f);
 
-			// ƒJƒƒ‰‚ªŒü‚¢‚Ä‚¢‚é•ûŒü‚ğŒvZ
+			// ã‚«ãƒ¡ãƒ©ãŒå‘ã„ã¦ã„ã‚‹æ–¹å‘ã‚’è¨ˆç®—
 			VECTOR camDir = VNorm(VSub(camLook, camPos));
 
-			// ƒJƒƒ‰‚Ì‰E•ûŒü
+			// ã‚«ãƒ¡ãƒ©ã®å³æ–¹å‘
 			VECTOR camRight = VNorm(VCross(worldUp, camDir));
 
-			// ƒJƒƒ‰‚Ìã•ûŒü
+			// ã‚«ãƒ¡ãƒ©ã®ä¸Šæ–¹å‘
 			VECTOR camUp = VNorm(VCross(camDir, camRight));
 
-			// “G‚Ìƒ‚ƒfƒ‹‚ğİ’è‚·‚éˆÊ’u‚ğŒvZ
+			// æ•µã®ãƒ¢ãƒ‡ãƒ«ã‚’è¨­å®šã™ã‚‹ä½ç½®ã‚’è¨ˆç®—
 			m_currentPos = camPos;
 			m_currentPos = VAdd(m_currentPos, VScale(camDir, 55.0f));
 			m_currentPos = VAdd(m_currentPos, VScale(camRight, 5.0f));
 			m_currentPos = VAdd(m_currentPos, VScale(camUp, -185.0f));
 
-			// “G‚Ìƒ‚ƒfƒ‹‚ÌˆÊ’u‚ğİ’è‚·‚é
+			// æ•µã®ãƒ¢ãƒ‡ãƒ«ã®ä½ç½®ã‚’è¨­å®šã™ã‚‹
 			m_position = m_currentPos;
 			
 
 
-			// ƒJƒƒ‰‚Æ“G‚ÌˆÊ’u‚©‚ç‹——£‚ğŒvZ
+			// ã‚«ãƒ¡ãƒ©ã¨æ•µã®ä½ç½®ã‹ã‚‰è·é›¢ã‚’è¨ˆç®—
 			VECTOR Enemydir = VSub(camPos, m_position);
 
-			// ³‹K‰»‚·‚é
+			// æ­£è¦åŒ–ã™ã‚‹
 			Enemydir = VNorm(Enemydir);
 
-			// “G‚Ìƒ‚ƒfƒ‹‚ªŒü‚­•ûŒü‚ğŒvZ
+			// æ•µã®ãƒ¢ãƒ‡ãƒ«ãŒå‘ãæ–¹å‘ã‚’è¨ˆç®—
 			float angle = atan2f(Enemydir.x, Enemydir.z);
 
-			// ‰ñ“]’l‚ğİ’è
+			// å›è»¢å€¤ã‚’è¨­å®š
 			m_rotation.y = angle + DX_PI_F;
 
-			// ƒ‚ƒfƒ‹‚É“`‚¦‚é
+			// ãƒ¢ãƒ‡ãƒ«ã«ä¼ãˆã‚‹
 			m_model->SetRotation(m_rotation);
 
 
 			Master::m_camera->SetUpShake((float)m_scareTimer, (float)Utility::SCREEN_WIDTH / 500, 15.0f);
 
-			// ƒWƒƒƒ“ƒvƒXƒPƒA‚ªˆê’èŠÔ‚½‚Á‚½ê‡
+			// ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ã‚±ã‚¢ãŒä¸€å®šæ™‚é–“ãŸã£ãŸå ´åˆ
 			if (m_scareTimer > 100)
 			{
-				// ƒQ[ƒ€ƒI[ƒo[ƒV[ƒ“‚É‘JˆÚ‚·‚é
+				// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹
+				pPlayer->SetFreeze(false);
+
+				// ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½ï¿½ÄŠJï¿½ï¿½ï¿½ï¿½
+				Master::m_camera->SetFreeze(false);
+
+				// ï¿½Qï¿½[ï¿½ï¿½ï¿½Iï¿½[ï¿½oï¿½[ï¿½Vï¿½[ï¿½ï¿½ï¿½É‘Jï¿½Ú‚ï¿½ï¿½ï¿½
 				Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);
 
-				// ƒŠƒUƒ‹ƒgƒV[ƒ“‚ğŒÄ‚Ño‚·
+				// ãƒªã‚¶ãƒ«ãƒˆã‚·ãƒ¼ãƒ³ã‚’å‘¼ã³å‡ºã™
 				Master::m_sceneManager->SetNextScene(SceneManager::SceneResult);
 
-				// BGM‚ğ~‚ß‚é
+				// BGMã‚’æ­¢ã‚ã‚‹
 				Master::m_soundManager->StopBGM();
 
 				SetLightEnableHandle(m_scareLight, false);
 
-				// I—¹
+				// çµ‚äº†
 				m_isScare = false;
 
-				// ƒ^ƒCƒ}[‚ğ‰Šú‰»
+				// ã‚¿ã‚¤ãƒãƒ¼ã‚’åˆæœŸåŒ–
 				m_scareTimer = 0;
 
 			}
@@ -753,7 +774,7 @@ void Enemy3D::CollScare()
 
 
 
-	}
+	
 
 }
 
