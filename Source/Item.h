@@ -3,7 +3,6 @@
 #include "Object3D.h"
 #include <string>
 #include <vector>
-#include "ItemData.h"
 
 // ステージ上に配置される3Dアイテムオブジェクトの共通基底クラス
 class Item : public Object3D

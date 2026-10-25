@@ -31,12 +31,36 @@ GameRuleScene::~GameRuleScene()
 void GameRuleScene::Initialize()
 {
 	// âÊëúÇê∂ê¨
-	if (m_keyHandle == -1) m_keyHandle = LoadGraph("Resource/UI/ui_ruleMove.png");
-	if (m_keyRHandle == -1) m_keyRHandle = LoadGraph("Resource/UI/ui_ruleGet.png");
-	if (m_keyFHandle == -1) m_keyFHandle = LoadGraph("Resource/UI/ui_ruleAttack.png");
-	if (m_keyEHandle == -1) m_keyEHandle = LoadGraph("Resource/UI/ui_ruleCrouching.png");
-	if (m_mouseHandle == -1) m_mouseHandle = LoadGraph("Resource/UI/ui_ruleMouseInputLeft.png");
-	if (m_mouseMoveHandle == -1) m_mouseMoveHandle = LoadGraph("Resource/UI/playRule_MouseMove_UI.png");
+	if (m_keyHandle == -1)
+	{
+		m_keyHandle = LoadGraph("Resource/UI/ui_ruleMove.png");
+	}
+
+	if (m_keyRHandle == -1)
+	{
+		m_keyRHandle = LoadGraph("Resource/UI/ui_ruleGet.png");
+	}
+
+	if (m_keyFHandle == -1)
+	{
+		m_keyFHandle = LoadGraph("Resource/UI/ui_ruleAttack.png");
+	}
+
+	if (m_keyEHandle == -1)
+	{
+		m_keyEHandle = LoadGraph("Resource/UI/ui_ruleCrouching.png");
+	}
+
+	if (m_mouseHandle == -1)
+	{
+		m_mouseHandle = LoadGraph("Resource/UI/ui_ruleMouseInputLeft.png");
+	}
+
+	if (m_mouseMoveHandle == -1)
+	{
+		m_mouseMoveHandle = LoadGraph("Resource/UI/playRule_MouseMove_UI.png");
+	}
+
 
 	if (m_backButton == nullptr)
 	{

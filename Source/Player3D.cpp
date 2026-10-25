@@ -5,7 +5,6 @@
 #include "ObjectManager.h"
 #include "Enemy3D.h"
 #include "Stage.h"
-#include "Collision.h"
 #include "Exitdoor.h"
 #include "EscapeItem.h"
 #include "TimeItem.h"
@@ -55,7 +54,7 @@ Player3D::Player3D(VECTOR initPosition)
 	, DrawY(Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20)
 	, MaxSize(1)
 	, m_state(MoveState::Walk)
-
+	,m_aabb{ VGet(0.0f, 0.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f)}
 
 {
 	// タグ設定
@@ -76,6 +75,7 @@ Player3D::~Player3D()
 
 void Player3D::Update()
 {
+	UpdateAABB();
 
 	// 移動処理
 	MoveEx();
@@ -95,7 +95,6 @@ void Player3D::Update()
 	// ライトのON/OFFを変更
 	SetLightEnable(m_isActiveLight);
 
-
 }
 
 
@@ -103,8 +102,20 @@ void Player3D::Draw()
 {
 	// 懐中電灯のモデルを描画
 	MV1DrawModel(m_lightHandle);
+
+	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %d, m_position.y : %d, m_position.z : %d", m_position.x, m_position.y, m_position.z);
 }
 
+
+void Player3D::UpdateAABB()
+{
+	float width = 0.5f;
+	float height = 1.8f;
+
+	m_aabb.min = { m_position.x - width, m_position.y, m_position.z - width };
+	m_aabb.max = { m_position.x + width, m_position.y + height, m_position.z + width };
+
+}
 
 
 void Player3D::MoveEx()
@@ -229,192 +240,126 @@ void Player3D::MoveEx()
 
 
 
+
 	// 足跡の記録処理 //
    // 敵の情報を取得
-	Object3D* eobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
+	Object3D* pEnemyObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
 
-	if (eobj != nullptr)
+	if (pEnemyObj == nullptr)
 	{
-		Enemy3D* Enemy = dynamic_cast<Enemy3D*>(eobj);
+		return;
+	}
+		Enemy3D* pEnemy = dynamic_cast<Enemy3D*>(pEnemyObj);
 
-		if (Enemy == nullptr)
+		if (pEnemy == nullptr)
 		{
 			return;
 		}
 			// プレイヤーを見つけたかどうかのフラグを取得
-			bool found = Enemy->GetfoundPlayer();
+			bool found = pEnemy->GetfoundPlayer();
 
 			// 見つけたら
 			if (found)
 			{
 				// ベクトルのサイズを取得・距離を計測
-				m_distance = VSize(VSub(m_position, m_oldPlayerPosition));
+				m_distance = VSize(VSub(m_position, m_oldPosition));
 
 				// 距離が一定距離以上なら
 				if (m_distance >= 25.0f)
 				{
 					// プレイヤーの座標を保存
 					m_playerRecord.push_back(m_position);
-					m_oldPlayerPosition = m_position;
+					m_oldPosition = m_position;
 				}
 
 			}
 
 
 		
-	}
+	
 
 
-	// ステージとの当たり判定をする
-	VECTOR hitPos = VGet(0.0f, 0.0f, 0.0f);
-	bool isHit = false;
-	int count = 0;
-	auto obj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-	if (obj != nullptr)
-	{
-		Stage* pStage = dynamic_cast<Stage*>(obj);
-		if (pStage != nullptr)
-		{
-			// ステージとプレイヤーのカプセルが当たっている場合 (ステージの地面とプレイヤーとの当たり判定処理)
-			if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
-			{
-				// 当たっているであろうポリゴンとの接触点を求める
-				hitPos = pStage->CheckHit_Line(
-					VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
-					VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))  // プレイヤーの少し下あたりを線分として指定
-				);
+	     // ステージとの当たり判定をする
+		 auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+		 if (pStageObj == nullptr)
+		 {
+		 	return;
+		 }
+		 
+		 Stage* pStage = dynamic_cast<Stage*>(pStageObj);
+		 if (pStage == nullptr)
+		 {
+		 	return;
+		 }
+		 
+		 const auto& walls = pStage->GetWalls();
+		 for (const auto& wall : walls)
+		 {
+		 	if (Collision::CheckAABB(m_aabb, wall))
+		 	{
+		 		m_position = m_oldPosition;
+		 
+		 		UpdateAABB();
+		 
+		 		break;
+		 	}
+		 }
 
 
-				// 当たった判定を取っておく
-				isHit = true;
-
-			}
-
-			// ---------------------------------------------------------
-			// 壁との当たり判定とスライド処理（ダッシュ対応版）
-			// ---------------------------------------------------------
-
-			// ① すでに「歩き・ダッシュ処理」で計算された最新の m_position をそのまま「目標位置」とします
-			// （ここで m_playerSpeed を掛け直さないことで、ダッシュの速度移動量が正しく反映されます）
-			VECTOR nextPosition = m_position;
-
-			// ② スライド・すり抜け防止のための最大5回ループ
-			const int SLIDE_MAX_ITERATION = 15;
-
-			for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
-			{
-				// 目標位置（nextPosition）でカプセルを作り、ステージの壁と当たっているかチェック
-				// ※ Y座標の m_playerHeight や 90.0f の数値は、敵に使う場合は敵のサイズ（70.0f等）に合わせてください
-				VECTOR capBottom = VAdd(nextPosition, VGet(0.0f, m_playerHeight, 0.0f));
-				VECTOR capTop = VAdd(nextPosition, VGet(0.0f, 90.0f, 0.0f));
-
-
-				// -------------------------------------------------
-				// ★ すべてのヒット情報を利用した新しい壁抜け防止ロジック ★
-				// -------------------------------------------------
-				if (pStage->CheckHit_Capsule(capBottom, capTop, 40.0f))
-				{
-					// ① まずは現在の壁の法線で勢いを打ち消す（1 回だけ）
-					VECTOR movePath = VSub(nextPosition, m_oldPosition);
-					VECTOR firstNorm = VNorm(pStage->GetNormal());
-					float  dot = VDot(movePath, firstNorm);
-					if (dot < 0.0f)
-					{
-						VECTOR pushBack = VScale(firstNorm, -dot);
-						nextPosition = VAdd(nextPosition, pushBack);
-						capBottom = VAdd(capBottom, pushBack);
-						capTop = VAdd(capTop, pushBack);
-					}
-
-					// ② MV1 の衝突関数から **全ヒット情報** を取得し、合成法線で押し出す
-					const int SLIDE_MAX_ITERATION = 150;
-					for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
-					{
-						// まだめり込んでいるか確認
-						MV1_COLL_RESULT_POLY_DIM result =
-							MV1CollCheck_Capsule(pStage->GetCollisionHandle(), -1, capBottom, capTop, 40.0f);
-						if (result.HitNum == 0) break;   // めり込みが解消された
-
-						// すべてのヒット法線を合成
-						VECTOR summed = VGet(0.0f, 0.0f, 0.0f);
-						for (int h = 0; h < result.HitNum; ++h)
-						{
-							summed = VAdd(summed, result.Dim[h].Normal);
-						}
-						VECTOR pushDir = VNorm(summed);
-
-						// 合成法線方向へ 1.0f だけ押し出す
-						nextPosition = VAdd(nextPosition, VScale(pushDir, 1.0f));
-						capBottom = VAdd(capBottom, VScale(pushDir, 1.0f));
-						capTop = VAdd(capTop, VScale(pushDir, 1.0f));
-					}
-				}
-			}
-
-			// 最終的な安全な位置を反映
-			m_position = nextPosition;
-
-			if (isHit)
-			{
-				// 地面に沿って歩いている状態として、Y座標をステージに合わせる
-				m_position.y = hitPos.y;
-
-			}
-
-
-		}
+		
 
 
 		// 脱出口との当たり判定をする
 		VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
 		bool ishit = false;
 		auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
-		if (object != nullptr)
+		if (object == nullptr)
 		{
-			m_doorPos = object->GetPosition();
-
+			return;
+		}
 			Exitdoor* pDoor = dynamic_cast<Exitdoor*>(object);
-			if (pDoor != nullptr)
+			if (pDoor == nullptr)
 			{
-				// ステージとプレイヤーのカプセルが当たっている場合
-				if (pDoor->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
-				{
-
-					// 当たっているであろうポリゴンとの接触点を求める
-					hitPosition = pDoor->CheckHit_Line(
-						VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
-						VAdd(m_position, VGet(0.0f, -m_playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
-					);
-
-					// 当たった判定を取っておく
-					ishit = true;
-				}
-
+				return;
 			}
+
+			m_doorPos = pDoor->GetPosition();
+
+			// ステージとプレイヤーのカプセルが当たっている場合
+			if (pDoor->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
+			{
+
+				// 当たっているであろうポリゴンとの接触点を求める
+				hitPosition = pDoor->CheckHit_Line(
+					VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
+					VAdd(m_position, VGet(0.0f, -m_playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
+				);
+
+				// 当たった判定を取っておく
+				ishit = true;
+			}
+
+			
 
 			// 当たった場合
 			if (ishit)
 			{
-				if (pDoor != nullptr)
-				{
-					// 脱出口の法線を取得
-					VECTOR nurm = pDoor->GetNormal();
-					// 壁に沿っていくようなベクトルを取得
-					VECTOR slider = VGet(0.0f, 0.0f, 0.0f);  // 壁沿いベクトル
-					float a = VDot(VScale(moveVec, -1.0f), nurm); // 移動方向ベクトルの反対方向と、脱出口の法線との内積を求める
-					slider = VAdd(moveVec, VScale(nurm, a));   // 壁沿いベクトルを計算
+				// 脱出口の法線を取得
+				VECTOR nurm = pDoor->GetNormal();
+				// 壁に沿っていくようなベクトルを取得
+				VECTOR slider = VGet(0.0f, 0.0f, 0.0f);  // 壁沿いベクトル
+				float a = VDot(VScale(moveVec, -1.0f), nurm); // 移動方向ベクトルの反対方向と、脱出口の法線との内積を求める
+				slider = VAdd(moveVec, VScale(nurm, a));   // 壁沿いベクトルを計算
 
-					m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
-
-				}
+				m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
 
 			}
 
-		}
+		
 
 
 
-	}
+	
 }
 
 

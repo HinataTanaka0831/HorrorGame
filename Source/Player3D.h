@@ -6,6 +6,8 @@
 #include "ItemData.h"
 #include "Object3D.h"
 #include "Utility.h"
+#include "Collision.h"
+
 
 class Item;
 class EscapeItem;
@@ -26,7 +28,9 @@ public:
 
 	// 懐中電灯3DモデルおよびアイテムHUD枠の描画
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
-	void Draw() override;                         
+	void Draw() override; 
+
+	void UpdateAABB();
 					
 	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
 	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
@@ -145,4 +149,5 @@ private:
 
 	std::vector<VECTOR>m_playerRecord; // プレイヤーの座標を保持するVECTOR の構造体
 
+	AABB m_aabb;
 };

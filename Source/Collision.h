@@ -1,10 +1,18 @@
 #pragma once
 #include "DxLib.h"
 
+// AABB構造体
+struct AABB
+{
+	VECTOR min; // AABBの最小座標
+	VECTOR max; // AABBの最大座標
+};
+
 // 球体・点同士の幾何学的当たり判定を計算する静的ユーティリティクラス
 class Collision
 {
 public:
+
 
 	// 円と円の当たり判定をしてくれる関数
 	// const VECTOR& centerPositionA ... Aの円の中心座標
@@ -28,4 +36,11 @@ public:
 		const VECTOR& centerPosition,
 		const float& radius
 	);
+
+
+	static bool CheckAABB(
+		const AABB& a,
+		const AABB& b
+	);
+
 };

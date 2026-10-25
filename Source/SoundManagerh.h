@@ -62,6 +62,8 @@ public:        // サウンド再生系
 	// 入力: なし / 出力: なし / 副作用: BGM再生の停止
 	void StopBGM();
 
+	void StopSE();
+
 private:    // メンバ変数
 	SoundBgm m_nowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
 	SoundSe m_nowPlayingSe;         // 直近に再生されたSE種別

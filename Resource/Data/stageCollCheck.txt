@@ -1,0 +1,100 @@
+	// ステージとの当たり判定をする
+	VECTOR hitPos = VGet(0.0f, 0.0f, 0.0f);
+	bool isHit = false;
+	int count = 0;
+	auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+	if (pStageObj == nullptr)
+	{
+		return;
+	}
+		Stage* pStage = dynamic_cast<Stage*>(pStageObj);
+		if (pStage == nullptr)
+		{
+			return;
+		}
+
+		// ステージとプレイヤーのカプセルが当たっている場合 (ステージの地面とプレイヤーとの当たり判定処理)
+		if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
+		{
+			// 当たっているであろうポリゴンとの接触点を求める
+			hitPos = pStage->CheckHit_Line(
+				VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
+				VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))  // プレイヤーの少し下あたりを線分として指定
+			);
+
+
+			// 当たった判定を取っておく
+			isHit = true;
+
+		}
+
+		// ---------------------------------------------------------
+		// 壁との当たり判定とスライド処理（ダッシュ対応版）
+		// ---------------------------------------------------------
+
+		// ① すでに「歩き・ダッシュ処理」で計算された最新の m_position をそのまま「目標位置」とします
+		// （ここで m_playerSpeed を掛け直さないことで、ダッシュの速度移動量が正しく反映されます）
+		VECTOR nextPosition = m_position;
+
+		// ② スライド・すり抜け防止のための最大5回ループ
+		const int SLIDE_MAX_ITERATION = 15;
+
+		for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
+		{
+			// 目標位置（nextPosition）でカプセルを作り、ステージの壁と当たっているかチェック
+			// ※ Y座標の m_playerHeight や 90.0f の数値は、敵に使う場合は敵のサイズ（70.0f等）に合わせてください
+			VECTOR capBottom = VAdd(nextPosition, VGet(0.0f, m_playerHeight, 0.0f));
+			VECTOR capTop = VAdd(nextPosition, VGet(0.0f, 90.0f, 0.0f));
+
+
+			// -------------------------------------------------
+			// ★ すべてのヒット情報を利用した新しい壁抜け防止ロジック ★
+			// -------------------------------------------------
+			if (pStage->CheckHit_Capsule(capBottom, capTop, 40.0f))
+			{
+				// ① まずは現在の壁の法線で勢いを打ち消す（1 回だけ）
+				VECTOR movePath = VSub(nextPosition, m_oldPosition);
+				VECTOR firstNorm = VNorm(pStage->GetNormal());
+				float  dot = VDot(movePath, firstNorm);
+				if (dot < 0.0f)
+				{
+					VECTOR pushBack = VScale(firstNorm, -dot);
+					nextPosition = VAdd(nextPosition, pushBack);
+					capBottom = VAdd(capBottom, pushBack);
+					capTop = VAdd(capTop, pushBack);
+				}
+
+				// ② MV1 の衝突関数から **全ヒット情報** を取得し、合成法線で押し出す
+				const int SLIDE_MAX_ITERATION = 150;
+				for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
+				{
+					// まだめり込んでいるか確認
+					MV1_COLL_RESULT_POLY_DIM result =
+						MV1CollCheck_Capsule(pStage->GetCollisionHandle(), -1, capBottom, capTop, 40.0f);
+					if (result.HitNum == 0) break;   // めり込みが解消された
+
+					// すべてのヒット法線を合成
+					VECTOR summed = VGet(0.0f, 0.0f, 0.0f);
+					for (int h = 0; h < result.HitNum; ++h)
+					{
+						summed = VAdd(summed, result.Dim[h].Normal);
+					}
+					VECTOR pushDir = VNorm(summed);
+
+					// 合成法線方向へ 1.0f だけ押し出す
+					nextPosition = VAdd(nextPosition, VScale(pushDir, 1.0f));
+					capBottom = VAdd(capBottom, VScale(pushDir, 1.0f));
+					capTop = VAdd(capTop, VScale(pushDir, 1.0f));
+				}
+			}
+		}
+
+		// 最終的な安全な位置を反映
+		m_position = nextPosition;
+
+		if (isHit)
+		{
+			// 地面に沿って歩いている状態として、Y座標をステージに合わせる
+			m_position.y = hitPos.y;
+
+		}

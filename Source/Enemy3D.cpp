@@ -522,92 +522,6 @@ void Enemy3D::Move()
 
 
 		// ステージとの当たり判定をする
-		VECTOR hitPos = VGet(0.0f, 0.0f, 0.0f);
-		bool isHit = false;
-		int count = 0;
-		auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-		if (pStageObj == nullptr)
-		{
-			return; // �X�e�[�W�̏�񂪎擾�ł��Ȃ������ꍇ�͏����𒆒f
-		}
-
-			Stage* pStage = dynamic_cast<Stage*>(pStageObj);
-			if (pStage == nullptr)
-			{
-				return; // �X�e�[�W�̏�񂪎擾�ł��Ȃ������ꍇ�͏����𒆒f
-			}
-
-			// ステージとプレイヤーのカプセルが当たっている場合 (ステージの地面とプレイヤーとの当たり判定処理)
-			if (pStage->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, 70.0f, 0.0f)), 40.0f))
-				{
-				// 当たっているであろうポリゴンとの接触点を求める
-				hitPos = pStage->CheckHit_Line(
-						VAdd(m_position, VGet(0.0f, 50.0f, 0.0f)),  // プレイヤーの膝辺り（多分）と
-						VAdd(m_position, VGet(0.0f, -50.0f, 0.0f))   // プレイヤーの少し下あたりを線分として指定
-					);
-
-
-				// 当たった判定を取っておく
-				isHit = true;
-
-				}
-
-
-			// -------------------------------------------------
-			// ★ 敵用：全ヒット情報で押し出すロジック ★
-			// -------------------------------------------------
-			VECTOR capBottom = VAdd(m_position, VGet(0.0f, 70.0f, 0.0f));
-				    VECTOR capTop = VAdd(m_position, VGet(0.0f, 90.0f, 0.0f));
-				
-				if (pStage->CheckHit_Capsule(capBottom, capTop, 50.0f))
-				{
-					// ① 現在の壁の法線で勢いを打ち消す
-					VECTOR stageNormal = VNorm(pStage->GetNormal());
-				       float   b = VDot(m_moveVec, stageNormal);
-				      if (b < 0.0f)
-				      {
-				          VECTOR pushBack = VScale(stageNormal, -b);
-				          m_moveVec = VAdd(m_moveVec, pushBack);
-				          m_position = VAdd(m_oldPosition, VScale(m_moveVec, Speed));
-				          capBottom = VAdd(m_position, VGet(0.0f, 70.0f, 0.0f));
-				          capTop = VAdd(m_position, VGet(0.0f, 90.0f, 0.0f));
-				      }
-				     
-					  // ② MV1 の衝突関数で全ヒット情報取得し、合成法線で押し出す
-					  const int SLIDE_MAX_ITERATION = 100;
-				      for (int i = 0; i < SLIDE_MAX_ITERATION; ++i)
-				      {
-				             MV1_COLL_RESULT_POLY_DIM result =
-				         	MV1CollCheck_Capsule(pStage->GetCollisionHandle(),
-				         	-1,
-				         	capBottom,
-				         	capTop,
-				         	50.0f);
-				          if (result.HitNum == 0) break;
-				          
-				         
-				           VECTOR summed = VGet(0.0f, 0.0f, 0.0f);
-				          for (int h = 0; h < result.HitNum; ++h)
-				          {
-				          	summed = VAdd(summed, result.Dim[h].Normal);
-				          }
-
-				          VECTOR pushDir = VNorm(summed);
-				          
-				          	m_position = VAdd(m_position, VScale(pushDir, 1.0f));
-				            capBottom = VAdd(capBottom, VScale(pushDir, 1.0f));
-				            capTop = VAdd(capTop, VScale(pushDir, 1.0f));
-				      }
-				}    
-			
-
-
-			if (isHit)
-			{
-				// �n�ʂɉ����ĕ����Ă����ԂƂ��āAY���W���X�e�[�W�ɍ��킹��
-				m_position.y = hitPos.y;
-
-			}
 
 
 		
@@ -744,21 +658,22 @@ void Enemy3D::CollScare()
 			// ジャンプスケアが一定時間たった場合
 			if (m_scareTimer > 100)
 			{
-				// ゲームオーバーシーンに遷移する
+				// プレイヤーの移動処理を再開する
 				pPlayer->SetFreeze(false);
 
-				// �J�����̈ړ����ĊJ����
+				// カメラの移動を再開する
 				Master::m_camera->SetFreeze(false);
 
-				// �Q�[���I�[�o�[�V�[���ɑJ�ڂ���
+				// リザルトの種類をゲームオーバーに設定
 				Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);
 
 				// リザルトシーンを呼び出す
 				Master::m_sceneManager->SetNextScene(SceneManager::SceneResult);
 
-				// BGMを止める
-				Master::m_soundManager->StopBGM();
+				// SEを止める
+				Master::m_soundManager->StopSE();
 
+				// 作成したジャンプすケア用のライトを消す
 				SetLightEnableHandle(m_scareLight, false);
 
 				// 終了

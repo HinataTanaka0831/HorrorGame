@@ -20,7 +20,7 @@ void SoundManager::Initialize()
 	// SE ‚Ì“Ç‚Ýž‚Ý
 	LoadSE(SoundSe::SeDecide, "Resource/SE/maou_se_system49.mp3");
 	LoadSE(SoundSe::SeWalk, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
-	LoadSE(SoundSe::SeJumpScare, "Resource/BGM/Jumpscare.mp3");
+	LoadSE(SoundSe::SeJumpScare, "Resource/SE/Jumpscare.mp3");
 }
 
 void SoundManager::Finalize()
@@ -161,4 +161,19 @@ void SoundManager::StopBGM()
 
 	}
 
+}
+
+void SoundManager::StopSE()
+{
+	for (auto it = m_seHandleList.begin(); it != m_seHandleList.end(); it++)
+	{
+		if (it->first == m_nowPlayingSe)
+		{
+			if (CheckSoundMem(it->second))
+			{
+				StopSoundMem(it->second);
+				break;
+			}
+		}
+	}
 }

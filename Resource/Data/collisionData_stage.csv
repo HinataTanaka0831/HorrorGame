@@ -1,0 +1,5 @@
+Type,MinX,MinY,MinZ,MaxX,MaxY,MaxZ
+Wall,-20,0,-100,-18,3,100
+Wall,18,0,-100,20,3,100
+ClassRooms,-2,0,-20,2,3,-18
+Stairs,20,0,10,30,5,20
