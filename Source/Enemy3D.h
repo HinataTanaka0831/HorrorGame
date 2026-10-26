@@ -2,7 +2,6 @@
 
 #include "DxLib.h"
 #include <string>
-#include <vector>
 #include "Object3D.h"
 #include "Model.h"
 

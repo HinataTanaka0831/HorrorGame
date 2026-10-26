@@ -6,6 +6,8 @@
 #include "Stage.h"
 #include "Collision.h"
 #include "Player3D.h"
+#include <vector>
+
 
 
 Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation)
@@ -164,13 +166,13 @@ void Enemy3D::Move()
 	Object3D* pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
 		if (pPlayerObj == nullptr)
 		{
-			return; // �v���C���[�̏�񂪎擾�ł��Ȃ������ꍇ�͏����𒆒f
+			return;
 		}
 
 		Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
 		if (pPlayer == nullptr)
 		{
-			return; // �v���C���[�̏��Player3D�^�ɃL���X�g�ł��Ȃ������ꍇ�͏����𒆒f
+			return; 
 		}
 
 		// プレイヤーの座標を取得
@@ -192,11 +194,11 @@ void Enemy3D::Move()
 			// カメラの移動を止める
 			Master::m_camera->SetFreeze(true);
 
-			// ジャンプスケアを発生させる
+			// 走らないようにする
 			m_isRun = false;
 
-				// �W�����v�X�P�A�𔭐�������
-				m_isScare = true;
+			// ジャンプスケアを発生させる 
+			m_isScare = true;
 				
 			}
 
@@ -228,7 +230,7 @@ void Enemy3D::Move()
 			// 視点と距離から内積を求める
 			float dot = VDot(forward, vDistanceToPlayer);
 
-			// �����鋗��
+			// プレイヤーを見つける距離
 			float foundDistance = 1500.0f;
 
 			// 敵の視点からプレイヤーが見えた場合かつ一定の距離以下なら
@@ -395,7 +397,7 @@ void Enemy3D::Move()
 
 				// 直接追尾を行う場合
 				if (isDistanceChase)
-					{
+				{
 					// プレイヤーの方向へ向かうベクトルを計算
 					VECTOR toPlayer = VSub(m_playerPos, m_position);
 						
@@ -408,7 +410,7 @@ void Enemy3D::Move()
 						// ベクトルを正規化（長さを1にする）して方向だけにする
 						toPlayer = VNorm(toPlayer);
 
-							// ��������߂āA�v���C���[�̕����ɑf�������������悤�ɂ���
+							// 敵がプレイヤーの方向を向いて向かってくるように設定
 							m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
 							m_moveVec = VNorm(m_moveVec); // 常の長さを1に保つことで、移動速度が爆発するのを防ぐ
 
@@ -419,60 +421,60 @@ void Enemy3D::Move()
 					// ※ステージの壁を避ける（滑り抜ける）処理自体は、
 					// Move()関数の後半にある「全ヒット情報で押し出すロジック」で自動的に行われます。
 
-							// プレイヤーに直接追尾できている間は、通過したとみなして足跡を古いものから少し消しておく
+					// プレイヤーに直接追尾できている間は、通過したとみなして足跡を古いものから少し消しておく
 					if (!playerRecord.empty())
-						{
-							playerRecord.erase(playerRecord.begin());
-						}
-					}
-					else
 					{
-					// 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる
-					// 足跡リストが空の場合
-					if (playerRecord.empty())
-						{
-						// 追尾すべき足跡がないので終了
-						return;
-						}
-
-					// 一番古い足跡（向かうべきターゲット）を取得
-					VECTOR playerRecordPosition = playerRecord.front();
-
-					// ターゲットと敵の距離を計算
-					VECTOR vec = VSub(playerRecordPosition, m_position);
-						vec.y = 0.0f; // 高さは無視
-
-						// ベクトルのサイズ（距離）を取得
-						float fDistanceToPlayerRecord = VSize(vec);
-						// ターゲットとの距離が一定以下（到着した）なら
-						if (fDistanceToPlayerRecord <= 30.0f)
-						{
-							// 足跡リストが空でない場合
-							if (!playerRecord.empty())
-							{
-								// 通過した足跡をリストから削除し、次の足跡に向かうようにする
-								playerRecord.erase(playerRecord.begin());
-							}
-						}
-						else
-						{
-							// ゼロ除算を避けるためのチェック
-							if (fDistanceToPlayerRecord > 0.001f)
-							{
-								// 方向ベクトルを正規化
-								vec = VNorm(vec);
-
-								// 慣性を弱める
-								m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
-								m_moveVec = VNorm(m_moveVec);
-
-								// 敵を足跡の方向に移動させる
-								m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
-							}
-						}
-
-
+							playerRecord.erase(playerRecord.begin());
 					}
+				}
+				else
+				{
+				    // 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる
+				    // 足跡リストが空の場合
+				    if (playerRecord.empty())
+				    {
+				    	// 追尾すべき足跡がないので終了
+				    	return;
+				    }
+				    
+				    // 一番古い足跡（向かうべきターゲット）を取得
+				    VECTOR playerRecordPosition = playerRecord.front();
+				    
+				    // ターゲットと敵の距離を計算
+				    VECTOR vec = VSub(playerRecordPosition, m_position);
+				    	vec.y = 0.0f; // 高さは無視
+				    
+				    // ベクトルのサイズ（距離）を取得
+				    float fDistanceToPlayerRecord = VSize(vec);
+				    // ターゲットとの距離が一定以下（到着した）なら
+				    if (fDistanceToPlayerRecord <= 30.0f)
+				    {
+				    	// 足跡リストが空でない場合
+				    	if (!playerRecord.empty())
+				    	{
+				    		// 通過した足跡をリストから削除し、次の足跡に向かうようにする
+				    		playerRecord.erase(playerRecord.begin());
+				    	}
+				    }
+				    else
+				    {
+				    	// ゼロ除算を避けるためのチェック
+				    	if (fDistanceToPlayerRecord > 0.001f)
+				    	{
+				    		// 方向ベクトルを正規化
+				    		vec = VNorm(vec);
+				    
+				    		// 慣性を弱める
+				    		m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
+				    		m_moveVec = VNorm(m_moveVec);
+				    
+				    		// 敵を足跡の方向に移動させる
+				    		m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
+				    	}
+					}
+
+
+				}
 
 			
 

@@ -53,8 +53,10 @@ void Stage::Draw()
 
 	for (const auto& walls : m_walls)
 	{
-		DrawCube3D(walls.min, walls.max, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE);
+		DrawCube3D(walls.min, walls.max, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
+
 	}
+
 }
 
 void Stage::LoadCollisionCSV(const char* fileName)

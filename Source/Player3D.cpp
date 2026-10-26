@@ -75,10 +75,12 @@ Player3D::~Player3D()
 
 void Player3D::Update()
 {
-	UpdateAABB();
-
 	// 移動処理
 	MoveEx();
+
+	UpdateAABB();
+
+	CheckStageCollision(); 
 
 	// アイテムとの当たり判定処理
 	ItemCollision();
@@ -103,7 +105,8 @@ void Player3D::Draw()
 	// 懐中電灯のモデルを描画
 	MV1DrawModel(m_lightHandle);
 
-	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %d, m_position.y : %d, m_position.z : %d", m_position.x, m_position.y, m_position.z);
+	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %.2f, m_position.y : %.2f, m_position.z : %.2f", m_position.x, m_position.y, m_position.z);
+
 }
 
 
@@ -120,12 +123,14 @@ void Player3D::UpdateAABB()
 
 void Player3D::MoveEx()
 {
+	// 前の座標を設定
+	m_oldPosition = m_position;
+
 	// フリーズさせる
 	if (m_isFreeze)
 	{
 		return;
 	}
-
 
 	VECTOR moveVec = VGet(0.0f, 0.0f, 0.0f);         // 移動方向
 	VECTOR upMoveVector = VGet(0.0f, 0.0f, 0.0f);    // カメラの上方向（奥方向）ベクトル
@@ -193,8 +198,6 @@ void Player3D::MoveEx()
 		moveVec = VNorm(moveVec);
 	}
 
-	// 前の座標を設定
-	m_oldPosition = m_position;
 
 	// 走る処理
 	if (StaminaUpdate(InputManager::GetInstance().CheckPressKey(KEY_INPUT_LSHIFT)))
@@ -262,61 +265,28 @@ void Player3D::MoveEx()
 			if (found)
 			{
 				// ベクトルのサイズを取得・距離を計測
-				m_distance = VSize(VSub(m_position, m_oldPosition));
+				m_distance = VSize(VSub(m_position, m_oldPlayerPosition));
 
 				// 距離が一定距離以上なら
 				if (m_distance >= 25.0f)
 				{
 					// プレイヤーの座標を保存
 					m_playerRecord.push_back(m_position);
-					m_oldPosition = m_position;
+					m_oldPlayerPosition = m_position;
 				}
 
 			}
 
-
-		
 	
 
-
-	     // ステージとの当たり判定をする
-		 auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-		 if (pStageObj == nullptr)
-		 {
-		 	return;
-		 }
-		 
-		 Stage* pStage = dynamic_cast<Stage*>(pStageObj);
-		 if (pStage == nullptr)
-		 {
-		 	return;
-		 }
-		 
-		 const auto& walls = pStage->GetWalls();
-		 for (const auto& wall : walls)
-		 {
-		 	if (Collision::CheckAABB(m_aabb, wall))
-		 	{
-		 		m_position = m_oldPosition;
-		 
-		 		UpdateAABB();
-		 
-		 		break;
-		 	}
-		 }
-
-
-		
-
-
-		// 脱出口との当たり判定をする
-		VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
-		bool ishit = false;
-		auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
-		if (object == nullptr)
-		{
-			return;
-		}
+			// 脱出口との当たり判定をする
+			VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
+			bool ishit = false;
+			auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
+			if (object == nullptr)
+			{
+				return;
+			}
 			Exitdoor* pDoor = dynamic_cast<Exitdoor*>(object);
 			if (pDoor == nullptr)
 			{
@@ -339,7 +309,7 @@ void Player3D::MoveEx()
 				ishit = true;
 			}
 
-			
+
 
 			// 当たった場合
 			if (ishit)
@@ -355,14 +325,46 @@ void Player3D::MoveEx()
 
 			}
 
-		
-
-
-
-	
 }
 
 
+void Player3D::CheckStageCollision()
+{
+	// ステージとの当たり判定をする
+	auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+	if (pStageObj == nullptr)
+	{
+		return;
+	}
+
+	Stage* pStage = dynamic_cast<Stage*>(pStageObj);
+	if (pStage == nullptr)
+	{
+		return;
+	}
+
+	const auto& walls = pStage->GetWalls();
+
+	for (const auto& wall : walls)
+	{
+		if (Collision::CheckAABB(m_aabb, wall))
+		{
+			DrawFormatString(
+				0,
+				200,
+				GetColor(255, 0, 0),
+				"HIT");
+
+			m_position = m_oldPosition;
+
+			UpdateAABB();
+
+			break;
+		}
+	}
+
+
+}
 
 void Player3D::PlayerSquat()
 {

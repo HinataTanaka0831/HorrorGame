@@ -36,6 +36,8 @@ public:
 	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
 	void MoveEx();                                
 
+	void CheckStageCollision();
+
 	// しゃがみ/直立姿勢の切り替えおよび視線高・移動速度の補正
 	// 入力: なし / 出力: なし / 副作用: isCrouchingフラグおよびplayerHeight/playerSpeedの変更
 	void PlayerSquat();                        
