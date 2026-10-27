@@ -75,19 +75,20 @@ private:
 	float m_speed = 5.0f;                            	// 敵の移動速度（メートル/秒 などはゲーム設定に合わせて調整可）
 	float m_avoidanceDist = 0.5f;        	            // 障害物回避時に横にずらす距離
 	int m_scareLight = 0;
-	int m_count = 0;                                   // カウント変数
-	int m_currentPoint = 0;                            // 現在の目標座標を示す変数
-	int m_maxPointCount = 28;                             // 目標座標の最大数を表す変数
-	int m_waitTimer = 0;                              // 待機時間
-	int m_enemyType = -1;                             // 敵のモデルによって目標地点を変更するための変数
-	int m_scareTimer = 0;                             // ジャンプスケアを行う時間
-	bool m_isWait = false;                            // 待機状態にするかどうか
-	bool m_isback = false;                            // 目標地点を全部通ったら
-	bool m_isScare = false;                          // ジャンプスケアを行うかどうか
-	bool m_foundPlayer = false;                      // プレイヤーを見つけたかどうか
-	bool m_isRun = false;                            // 走るかどうか
-	bool m_isStopItem = false;                       // 時間止めアイテムを使用したかどうか
+	int m_count = 0;                                    // カウント変数
+	int m_currentPoint = 0;                             // 現在の目標座標を示す変数
+	int m_maxPointCount = 28;                           // 目標座標の最大数を表す変数
+	int m_waitTimer = 0;                                // 待機時間
+	int m_enemyType = -1;                               // 敵のモデルによって目標地点を変更するための変数
+	int m_scareTimer = 0;                               // ジャンプスケアを行う時間
+	bool m_isWait = false;                              // 待機状態にするかどうか
+	bool m_isback = false;                              // 目標地点を全部通ったら
+	bool m_isScare = false;                             // ジャンプスケアを行うかどうか
+	bool m_foundPlayer = false;                         // プレイヤーを見つけたかどうか
+	bool m_isRun = false;                               // 走るかどうか
+	bool m_isStopItem = false;                          // 時間止めアイテムを使用したかどうか
 
+	size_t m_trackIndex;
 
 	struct Point              // 目標座標を設定するための構造体
 	{

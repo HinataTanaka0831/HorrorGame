@@ -18,7 +18,7 @@ Player3D::Player3D(VECTOR initPosition)
 	, FrameLight(25)
 	, m_doorPos(VGet(0.0f, 0.0f, 0.0f))
 	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
-	, m_oldPlayerPosition(m_position)
+	, m_oldFootprintPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_lightModelPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_angle(0.0f)
 	, m_targetAngle(0.0f)
@@ -63,6 +63,7 @@ Player3D::Player3D(VECTOR initPosition)
 	// 懐中電灯のモデルを生成
 	m_lightHandle = MV1LoadModel("Resource/Object/light/object_light.mv1");
 
+	m_playerRecord.reserve(500);
 }
 
 
@@ -107,6 +108,26 @@ void Player3D::Draw()
 
 	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %.2f, m_position.y : %.2f, m_position.z : %.2f", m_position.x, m_position.y, m_position.z);
 
+	DrawFormatString(
+		0,
+		250,
+		GetColor(255, 255, 255),
+		"RecordSize = %d",
+		(int)m_playerRecord.size());
+
+	DrawFormatString(
+		0, 350,
+		GetColor(255, 255, 255),
+		"Distance = %.2f",
+		m_distance);
+
+	DrawFormatString(
+		0, 390,
+		GetColor(255, 255, 255),
+		"OldPos %.2f %.2f %.2f",
+		m_oldPosition.x,
+		m_oldPosition.y,
+		m_oldPosition.z);
 }
 
 
@@ -123,7 +144,7 @@ void Player3D::UpdateAABB()
 
 void Player3D::MoveEx()
 {
-	// 前の座標を設定
+	//  前回の座標を更新
 	m_oldPosition = m_position;
 
 	// フリーズさせる
@@ -245,85 +266,71 @@ void Player3D::MoveEx()
 
 
 	// 足跡の記録処理 //
-   // 敵の情報を取得
-	Object3D* pEnemyObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
 
-	if (pEnemyObj == nullptr)
+	// 足跡リストが100より大きくなったら古いものから消していく
+	if (m_playerRecord.size() > 100)
 	{
-		return;
+		m_playerRecord.erase(m_playerRecord.begin());
 	}
-		Enemy3D* pEnemy = dynamic_cast<Enemy3D*>(pEnemyObj);
 
-		if (pEnemy == nullptr)
-		{
-			return;
-		}
-			// プレイヤーを見つけたかどうかのフラグを取得
-			bool found = pEnemy->GetfoundPlayer();
+	// ベクトルのサイズを取得・距離を計測
+	m_distance = VSize(VSub(m_position, m_oldFootprintPosition));
 
-			// 見つけたら
-			if (found)
-			{
-				// ベクトルのサイズを取得・距離を計測
-				m_distance = VSize(VSub(m_position, m_oldPlayerPosition));
-
-				// 距離が一定距離以上なら
-				if (m_distance >= 25.0f)
-				{
-					// プレイヤーの座標を保存
-					m_playerRecord.push_back(m_position);
-					m_oldPlayerPosition = m_position;
-				}
-
-			}
+	// 距離が一定距離以上なら
+	// プレイヤーの座標を保存して、古い足跡座標を更新する
+	if (m_distance >= 15.0f)
+	{
+		m_playerRecord.push_back(m_position);
+		m_oldFootprintPosition = m_position;
+	}
 
 	
 
-			// 脱出口との当たり判定をする
-			VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
-			bool ishit = false;
-			auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
-			if (object == nullptr)
-			{
-				return;
-			}
-			Exitdoor* pDoor = dynamic_cast<Exitdoor*>(object);
-			if (pDoor == nullptr)
-			{
-				return;
-			}
+	// 脱出口との当たり判定をする
+	VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
+	bool ishit = false;
+	auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
+	if (object == nullptr)
+	{
+		return;
+	}
+	Exitdoor* pDoor = dynamic_cast<Exitdoor*>(object);
+	if (pDoor == nullptr)
+	{
+		return;
+	}
 
-			m_doorPos = pDoor->GetPosition();
+	m_doorPos = pDoor->GetPosition();
 
-			// ステージとプレイヤーのカプセルが当たっている場合
-			if (pDoor->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
-			{
+	// ステージとプレイヤーのカプセルが当たっている場合
+	if (pDoor->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
+	{
 
-				// 当たっているであろうポリゴンとの接触点を求める
-				hitPosition = pDoor->CheckHit_Line(
-					VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
-					VAdd(m_position, VGet(0.0f, -m_playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
-				);
+		// 当たっているであろうポリゴンとの接触点を求める
+		hitPosition = pDoor->CheckHit_Line(
+			VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
+			VAdd(m_position, VGet(0.0f, -m_playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
+		);
 
-				// 当たった判定を取っておく
-				ishit = true;
-			}
+		// 当たった判定を取っておく
+		ishit = true;
+	}
 
 
 
-			// 当たった場合
-			if (ishit)
-			{
-				// 脱出口の法線を取得
-				VECTOR nurm = pDoor->GetNormal();
-				// 壁に沿っていくようなベクトルを取得
-				VECTOR slider = VGet(0.0f, 0.0f, 0.0f);  // 壁沿いベクトル
-				float a = VDot(VScale(moveVec, -1.0f), nurm); // 移動方向ベクトルの反対方向と、脱出口の法線との内積を求める
-				slider = VAdd(moveVec, VScale(nurm, a));   // 壁沿いベクトルを計算
+	// 当たった場合
+	if (ishit)
+	{
+		// 脱出口の法線を取得
+		VECTOR nurm = pDoor->GetNormal();
+		// 壁に沿っていくようなベクトルを取得
+		VECTOR slider = VGet(0.0f, 0.0f, 0.0f);  // 壁沿いベクトル
+		float a = VDot(VScale(moveVec, -1.0f), nurm); // 移動方向ベクトルの反対方向と、脱出口の法線との内積を求める
+		slider = VAdd(moveVec, VScale(nurm, a));   // 壁沿いベクトルを計算
 
-				m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
+		m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
 
-			}
+	}
 
 }
 

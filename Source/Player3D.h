@@ -97,7 +97,7 @@ private:
 
 	VECTOR m_doorPos;                                       // 脱出口の座標を取得するための変数
 	VECTOR m_oldPosition;                                   // 前の座標
-	VECTOR m_oldPlayerPosition;                             // プレイヤーの前回の座標
+	VECTOR m_oldFootprintPosition;                          // プレイヤーの前回の足跡座標
 	VECTOR m_lightModelPosition;                            // ライトモデルの位置
 							                            
 	float m_angle;                                          // 現在の回転値

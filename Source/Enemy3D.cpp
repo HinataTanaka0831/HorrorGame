@@ -43,6 +43,7 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	, m_foundPlayer(false)
 	, m_isRun(false)
 	, m_isStopItem(false)
+	, m_trackIndex(0)
 {
 	// タグ設定
 	SetTag(Object3D::TagEnemy3D);
@@ -102,6 +103,27 @@ void Enemy3D::Update()
 
 void Enemy3D::Draw()
 {
+	Object3D* pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
+	if (pPlayerObj == nullptr)
+	{
+		return;
+	}
+
+	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
+	if (pPlayer == nullptr)
+	{
+		return;
+	}
+
+	std::vector<VECTOR>& playerRecord = pPlayer->GetPlayerRecord();
+
+	DrawFormatString(
+		0, 120,
+		GetColor(255, 255, 255),
+		"TrackIndex=%d Size=%d",
+		(int)m_trackIndex,
+		(int)playerRecord.size());
+
 
 	if (m_model != nullptr)
 	{
@@ -392,9 +414,6 @@ void Enemy3D::Move()
 				// 距離が遠い場合は、プレイヤーの足跡（迂回ルート）をたどる
 				bool isDistanceChase = (fDistanceToPlayer <= 800.0f);
 
-				// プレイヤーの足跡リストを取得
-				std::vector<VECTOR>& playerRecord = pPlayer->GetPlayerRecord();
-
 				// 直接追尾を行う場合
 				if (isDistanceChase)
 				{
@@ -422,23 +441,28 @@ void Enemy3D::Move()
 					// Move()関数の後半にある「全ヒット情報で押し出すロジック」で自動的に行われます。
 
 					// プレイヤーに直接追尾できている間は、通過したとみなして足跡を古いものから少し消しておく
-					if (!playerRecord.empty())
-					{
-							playerRecord.erase(playerRecord.begin());
-					}
+					//if (!playerRecord.empty())
+					//{
+					//		playerRecord.erase(playerRecord.begin());
+					//}
 				}
 				else
 				{
+					// プレイヤーの足跡リストを取得
+					std::vector<VECTOR>& playerRecord = pPlayer->GetPlayerRecord();
+
+
 				    // 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる
 				    // 足跡リストが空の場合
-				    if (playerRecord.empty())
-				    {
-				    	// 追尾すべき足跡がないので終了
-				    	return;
-				    }
+					if (m_trackIndex >= playerRecord.size())
+					{
+						// 追尾すべき足跡がないので終了
+						m_trackIndex = 0;
+						return;
+					}
 				    
 				    // 一番古い足跡（向かうべきターゲット）を取得
-				    VECTOR playerRecordPosition = playerRecord.front();
+				    VECTOR playerRecordPosition = playerRecord[m_trackIndex];
 				    
 				    // ターゲットと敵の距離を計算
 				    VECTOR vec = VSub(playerRecordPosition, m_position);
@@ -446,15 +470,12 @@ void Enemy3D::Move()
 				    
 				    // ベクトルのサイズ（距離）を取得
 				    float fDistanceToPlayerRecord = VSize(vec);
+
 				    // ターゲットとの距離が一定以下（到着した）なら
-				    if (fDistanceToPlayerRecord <= 30.0f)
+				    if (fDistanceToPlayerRecord <= 80.0f)
 				    {
-				    	// 足跡リストが空でない場合
-				    	if (!playerRecord.empty())
-				    	{
-				    		// 通過した足跡をリストから削除し、次の足跡に向かうようにする
-				    		playerRecord.erase(playerRecord.begin());
-				    	}
+				    	// 通過した足跡をリストから削除し、次の足跡に向かうようにする
+						m_trackIndex++;
 				    }
 				    else
 				    {
@@ -463,16 +484,16 @@ void Enemy3D::Move()
 				    	{
 				    		// 方向ベクトルを正規化
 				    		vec = VNorm(vec);
-				    
+
 				    		// 慣性を弱める
-				    		m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
+				    		//m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
+							m_moveVec = vec;
 				    		m_moveVec = VNorm(m_moveVec);
 				    
 				    		// 敵を足跡の方向に移動させる
 				    		m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
 				    	}
 					}
-
 
 				}
 
