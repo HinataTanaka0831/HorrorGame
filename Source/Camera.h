@@ -36,13 +36,14 @@ public:
 	// 入力: time(継続秒), width(振幅), angleSpeed(角速度), stepTime(更新刻み) / 出力: なし / 副作用: 揺れカウンタのリセット
 	void SetUpShake(float time, float width, float angleSpeed, float stepTime = 1.0f); 
 
-	void ResetTarget() { m_target = nullptr; }  // 追従対象のリセット
+	// 追従対象のリセット
+	void ResetTarget() { m_target = nullptr; }
 
 	// 座標取得
-	VECTOR GetPosition() { return m_position; } 
+	VECTOR GetPosition() const { return m_position; } 
 
 	// 注視点取得
-	VECTOR GetLookAtPosition() { return m_lookAtPosition; } 
+	VECTOR GetLookAtPosition() const { return m_lookAtPosition; } 
 
 
 

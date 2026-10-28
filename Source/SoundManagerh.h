@@ -21,7 +21,7 @@ public:          // enum, struct などの定義
 	enum SoundSe
 	{
 		SeDecide = 0,  // UI決定音
-		SeWalk = 1,    // プレイヤー歩行・足音
+		SeFootSteps = 1,    // プレイヤー足音
 		SeJumpScare = 2, // ジャンプスケアSE
 		SeNoise = 3,     // 雑音SE
 	};

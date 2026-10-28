@@ -42,7 +42,7 @@ public:
 
 	bool GetScare() const { return m_isScare; }              
 
-	bool GetfoundPlayer() { return m_foundPlayer; }
+	bool GetfoundPlayer() const { return m_foundPlayer; }
 
 	void SetStopItem(bool stop) { m_isStopItem = stop; }
 

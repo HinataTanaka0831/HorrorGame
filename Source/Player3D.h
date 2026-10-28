@@ -6,7 +6,7 @@
 #include "ItemData.h"
 #include "Object3D.h"
 #include "Utility.h"
-#include "Collision.h"
+#include "CollisionManager.h"
 
 
 class Item;
@@ -35,8 +35,6 @@ public:
 	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
 	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
 	void MoveEx();                                
-
-	void CheckStageCollision();
 
 	// しゃがみ/直立姿勢の切り替えおよび視線高・移動速度の補正
 	// 入力: なし / 出力: なし / 副作用: isCrouchingフラグおよびplayerHeight/playerSpeedの変更
@@ -74,9 +72,9 @@ public:
 	// 入力: isKeyProssese(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
 	bool StaminaUpdate(bool isKeyProssese);    
 
-	bool GetCrouching() { return m_isCrouching; }
+	bool GetCrouching() const { return m_isCrouching; }
 
-	float GetHeight() { return m_playerHeight; } 
+	float GetHeight() const { return m_playerHeight; } 
 
 	void SetFreeze(bool freeze) { m_isFreeze = freeze; } 
 
@@ -84,7 +82,7 @@ public:
 
 	bool GetEscapeItem() const { return m_getEscapeItem; }
 	bool GetTimeItem() const { return m_getTimeItem; }
-	bool GetIsUseStopItem() { return m_isUseStopItem; }
+	bool GetIsUseStopItem() const { return m_isUseStopItem; }
 
 
 	std::vector<VECTOR>& GetPlayerRecord() { return m_playerRecord; } // プレイヤーの座標を保持する構造体を取得

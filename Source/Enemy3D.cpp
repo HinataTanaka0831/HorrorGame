@@ -4,7 +4,7 @@
 #include "ObjectManager.h"
 #include "Scene.h"
 #include "Stage.h"
-#include "Collision.h"
+#include "CollisionManager.h"
 #include "Player3D.h"
 #include <vector>
 

@@ -60,11 +60,12 @@ public:  // メンバ関数の定義
 
 	// リザルトシーンに遷移した際にリザルトの種別を設定する
 	// 入力: result(リザルト種別) / 出力: なし / 副作用: m_resultTypeの更新
-	void SetResultType(ResultType result);
+	void SetResultType(ResultType result) { m_resultType = result; }
 
 	// ゲームループ終了要求の発行
 	// 入力: なし / 出力: なし / 副作用: m_quitRequestフラグのtrue化
-	void RequestQuit();
+	void RequestQuit() { m_quitRequest = true;}
+
 
 	// ゲームループ終了要求の取得
 	bool IsQuitRequest() const { return m_quitRequest; }

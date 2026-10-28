@@ -54,7 +54,7 @@ Player3D::Player3D(VECTOR initPosition)
 	, DrawY(Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20)
 	, MaxSize(1)
 	, m_state(MoveState::Walk)
-	,m_aabb{ VGet(0.0f, 0.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f)}
+	, m_aabb{ VGet(0.0f, 0.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f)}
 
 {
 	// タグ設定
@@ -78,10 +78,6 @@ void Player3D::Update()
 {
 	// 移動処理
 	MoveEx();
-
-	UpdateAABB();
-
-	CheckStageCollision(); 
 
 	// アイテムとの当たり判定処理
 	ItemCollision();
@@ -224,17 +220,16 @@ void Player3D::MoveEx()
 	if (StaminaUpdate(InputManager::GetInstance().CheckPressKey(KEY_INPUT_LSHIFT)))
 	{
 		// 走り状態かつ動いている状態なら
+		// プレイヤーの速度を*3.0fにして、走っているスピードに合わせるように足音を再生させる
 		if (m_state == MoveState::Run && m_isMove)
 		{
-			m_position = VAdd(m_position, VScale(moveVec, m_speed * 3.0f));
+			m_speed = m_speed * 3.0f;
 
-			// 走りSEを流す時間を増やす
 			m_runSETimer++;
 
-			// フレーム以上なら
 			if (m_runSETimer >= SEframeRUN)
 			{
-				Master::m_soundManager->PlaySE(SoundManager::SeWalk);
+				Master::m_soundManager->PlaySE(SoundManager::SeFootSteps);
 				m_runSETimer = 0;
 			}
 		}
@@ -245,23 +240,21 @@ void Player3D::MoveEx()
 	}
 	else  // 歩き処理
 	{
-		// 歩き状態かつ動いている状態なら
+		// 歩き状態かつ動いている状態なら、歩くスピードに合わせるように足音を再生させる
 		if (m_state == MoveState::Walk && m_isMove)
 		{
-			m_position = VAdd(m_position, VScale(moveVec, m_speed));
-
-			// 歩きSEを流す時間を増やす
 			m_walkSETimer++;
 
-			// フレーム以上なら
 			if (m_walkSETimer >= SEframeWalk)
 			{
-				Master::m_soundManager->PlaySE(SoundManager::SeWalk);
+				Master::m_soundManager->PlaySE(SoundManager::SeFootSteps);
 				m_walkSETimer = 0;
 			}
 		}
 	}
 
+	// プレイヤーの座標を更新
+	m_position = VAdd(m_position, VScale(moveVec, m_speed));
 
 
 
@@ -284,7 +277,65 @@ void Player3D::MoveEx()
 		m_oldFootprintPosition = m_position;
 	}
 
+	// 移動処理の後にプレイヤーのAABB判定を更新させる
+	UpdateAABB();
 	
+
+	// ステージとの当たり判定をする
+	auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+	if (pStageObj == nullptr)
+	{
+		return;
+	}
+
+	Stage* pStage = dynamic_cast<Stage*>(pStageObj);
+	if (pStage == nullptr)
+	{
+		return;
+	}
+
+	const auto& getWall = CollisionManager::GetInstance().GetWalls();
+
+	for (const auto& wall : getWall)
+	{
+		// AABB判定が行われたら、プレイヤーと壁の中心から衝突法線を取得し、侵入量を比較して法線を決定させる
+		// 壁に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
+		if (CollisionManager::GetInstance().CheckAABB(m_aabb, wall))
+		{
+			VECTOR playerCenter = VGet((m_aabb.min.x + m_aabb.max.x) * 0.5f, 0, (m_aabb.min.z + m_aabb.max.z) * 0.5f);
+			VECTOR wallCenter = VGet((wall.min.x + wall.max.x) * 0.5f, 0, (wall.min.z + wall.max.z) * 0.5f);
+
+			VECTOR direction = VSub(playerCenter, wallCenter);
+
+			float overlapX = min(m_aabb.max.x, wall.max.x) - max(m_aabb.min.x, wall.min.x);
+			float overlapZ = min(m_aabb.max.z, wall.max.z) - max(m_aabb.min.z, wall.min.z);
+
+			VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
+			if (overlapX < overlapZ)
+			{
+				normal.x = (direction.x > 0.0f) ? 1.0f : -1.0f;
+			}
+			else
+			{
+				normal.z = (direction.z > 0.0f) ? 1.0f : -1.0f;
+			}
+
+			VECTOR slider = VGet(0.0f, 0.0f, 0.0f);
+			// 移動方向ベクトルの反対方向と取得した衝突法線との内積を求める
+			float dot = VDot(VScale(moveVec, -1.0f), normal);
+			//　壁沿いベクトルの計算
+			slider = VAdd(moveVec, VScale(normal, dot));
+			m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
+
+			// ステージに当たった後にもう一度プレイヤーのAABB判定を更新させる
+			UpdateAABB();
+
+			break;
+		}
+
+	}
+
+
 
 	// 脱出口との当たり判定をする
 	VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
@@ -335,43 +386,6 @@ void Player3D::MoveEx()
 }
 
 
-void Player3D::CheckStageCollision()
-{
-	// ステージとの当たり判定をする
-	auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-	if (pStageObj == nullptr)
-	{
-		return;
-	}
-
-	Stage* pStage = dynamic_cast<Stage*>(pStageObj);
-	if (pStage == nullptr)
-	{
-		return;
-	}
-
-	const auto& walls = pStage->GetWalls();
-
-	for (const auto& wall : walls)
-	{
-		if (Collision::CheckAABB(m_aabb, wall))
-		{
-			DrawFormatString(
-				0,
-				200,
-				GetColor(255, 0, 0),
-				"HIT");
-
-			m_position = m_oldPosition;
-
-			UpdateAABB();
-
-			break;
-		}
-	}
-
-
-}
 
 void Player3D::PlayerSquat()
 {
@@ -518,7 +532,7 @@ void Player3D::ItemCollision()
 		}
 
 				// 当たり判定
-				if (Collision::CheckCircleToCircle(
+				if (CollisionManager::GetInstance().CheckCircleToCircle(
 					m_position,
 					60.0f,
 					Escape->GetPosition(),
@@ -572,7 +586,7 @@ void Player3D::ItemCollision()
 		{
 			continue;
 		}
-				if (Collision::CheckCircleToCircle(
+				if (CollisionManager::GetInstance().CheckCircleToCircle(
 					m_position,
 					60.0f,
 					StopTime->GetPosition(),
@@ -635,7 +649,7 @@ void Player3D::UseItem()
 				return;
 			}
 				// 当たり判定
-				if (Collision::CheckCircleToCircle(
+				if (CollisionManager::GetInstance().CheckCircleToCircle(
 					m_position,
 					100.0f,
 					ExitDoor->GetPosition(),

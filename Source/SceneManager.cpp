@@ -109,17 +109,3 @@ void SceneManager::ChangeSceneIfNeeded()
 
 }
 
-void SceneManager::SetResultType(ResultType result)
-{
-	if (m_resultType == result)
-	{
-		return;
-	}
-
-	m_resultType = result;
-}
-
-void SceneManager::RequestQuit()
-{
-	m_quitRequest = true;
-}

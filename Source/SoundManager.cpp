@@ -19,7 +19,7 @@ void SoundManager::Initialize()
 	
 	// SE ÇÃì«Ç›çûÇ›
 	LoadSE(SoundSe::SeDecide, "Resource/SE/maou_se_system49.mp3");
-	LoadSE(SoundSe::SeWalk, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
+	LoadSE(SoundSe::SeFootSteps, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
 	LoadSE(SoundSe::SeJumpScare, "Resource/SE/Jumpscare.mp3");
 }
 

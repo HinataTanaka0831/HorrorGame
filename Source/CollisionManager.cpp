@@ -1,6 +1,28 @@
-#include "Collision.h"
+#include "CollisionManager.h"
+#include <fstream>
+#include <sstream>
 
-bool Collision::CheckCircleToCircle(
+
+CollisionManager& CollisionManager::GetInstance()
+{
+	static CollisionManager instance;
+	return instance;
+}
+
+
+CollisionManager::CollisionManager()
+{
+	LoadCollisionCSV("Resource/Data/collisionData_stage.csv");
+}
+
+
+CollisionManager::~CollisionManager()
+{
+
+}
+
+
+bool CollisionManager::CheckCircleToCircle(
 	const VECTOR& centerPositionA,
 	const float& radiusA,
 	const VECTOR& centerPositionB,
@@ -29,7 +51,8 @@ bool Collision::CheckCircleToCircle(
 	return false;
 }
 
-bool Collision::CheckPointToCircle(
+
+bool CollisionManager::CheckPointToCircle(
 	const VECTOR& pointPosition,
 	const VECTOR& centerPosition,
 	const float& radius
@@ -58,7 +81,7 @@ bool Collision::CheckPointToCircle(
 }
 
 
-bool Collision::CheckAABB(
+bool CollisionManager::CheckAABB(
 	const AABB& a,
 	const AABB& b
 )
@@ -67,5 +90,70 @@ bool Collision::CheckAABB(
 	return (a.min.x <= b.max.x && a.max.x >= b.min.x) &&
 		(a.min.y <= b.max.y && a.max.y >= b.min.y) &&
 		(a.min.z <= b.max.z && a.max.z >= b.min.z);
+
+}
+
+
+void CollisionManager::LoadCollisionCSV(const char* fileName)
+{
+	std::ifstream file(fileName);
+
+	if (!file.is_open())
+	{
+		return;
+	}
+
+	std::string line;
+
+	// 1çsñ⁄ÇéÃÇƒÇÈ
+	std::getline(file, line);
+
+	while (std::getline(file, line))
+	{
+		std::stringstream ss(line);
+
+		std::string token;
+
+		ColliderInfo info;
+
+		std::getline(ss, info.type, ',');
+
+		std::getline(ss, token, ',');
+		info.minX = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.minY = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.minZ = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.maxX = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.maxY = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.maxZ = std::stof(token);
+
+		AABB box;
+
+		box.min = { info.minX, info.minY, info.minZ };
+		box.max = { info.maxX, info.maxY, info.maxZ };
+
+		if (info.type == "Wall")
+		{
+			m_walls.push_back(box);
+		}
+		else if (info.type == "ClassRooms")
+		{
+			m_classrooms.push_back(box);
+		}
+		else if (info.type == "Stairs")
+		{
+			m_stairs.push_back(box);
+		}
+	}
+	file.close();
 
 }

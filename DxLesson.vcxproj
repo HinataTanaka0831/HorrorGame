@@ -22,7 +22,7 @@
     <ClCompile Include="Source\AttachmentModel.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
-    <ClCompile Include="Source\Collision.cpp" />
+    <ClCompile Include="Source\CollisionManager.cpp" />
     <ClCompile Include="Source\Enemy3D.cpp" />
     <ClCompile Include="Source\EscapeItem.cpp" />
     <ClCompile Include="Source\Exitdoor.cpp" />
@@ -54,7 +54,7 @@
     <ClInclude Include="Source\AttachmentModel.h" />
     <ClInclude Include="Source\Button.h" />
     <ClInclude Include="Source\Camera.h" />
-    <ClInclude Include="Source\Collision.h" />
+    <ClInclude Include="Source\CollisionManager.h" />
     <ClInclude Include="Source\Enemy3D.h" />
     <ClInclude Include="Source\EscapeItem.h" />
     <ClInclude Include="Source\Exitdoor.h" />

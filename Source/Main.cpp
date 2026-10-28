@@ -10,6 +10,7 @@
 #include <memory>
 #include <math.h>
 #include "Button.h"
+#include "CollisionManager.h"
 
 /* @note リファレンス https://dxlib.xsrv.jp/dxfunc.html
 */
@@ -24,13 +25,20 @@ InputManager& input = InputManager::GetInstance();
 /**
 * @fn WinMain
 * @brief Main関数
-* @param[in] HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow
+* @param[in] hInstance アプリケーションインスタンスハンドル
+* @param[in] hPrevInstance 以前のインスタンスハンドル（常にNULL）
+* @param[in] lpCmdLine コマンドライン引数
+* @param[in] nCmdShow ウィンドウ表示状態
 * @return int 0 正常終了／-1 エラー
 * @details Main関数
 */
-int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPSTR lpCmdLine,
+	_In_ int nCmdShow)
 {
+
 	// ウインドウモードで起動
 	ChangeWindowMode(true);
 
@@ -58,7 +66,7 @@ int WINAPI  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	loader.AddTask(std::make_unique<InitializeSoundManagerTask>());
 	loader.AddTask(std::make_unique<InitializeSceneManagerTask>());
 	loader.AddTask(std::make_unique<InitializeCameraTask>());
-
+	CollisionManager::GetInstance().LoadCollisionCSV("Resource/Data/collisionData_stage.csv");
 
 	// ローディング実行
 	loader.ExecuteAll();

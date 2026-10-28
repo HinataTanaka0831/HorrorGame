@@ -3,9 +3,6 @@
 #include "Master.h"
 #include "ObjectManager.h"
 #include "Scene.h"
-#include <fstream>
-#include <sstream>
-#include <string>
 
 
 Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
@@ -27,14 +24,13 @@ Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
 	// 当たり判定情報の作成
 	//MV1SetupCollInfo(m_collisionHandle);
 
-	LoadCollisionCSV("Resource/Data/collisionData_stage.csv");
 }
 
 Stage::~Stage()
 {
 	// 読み込んだモデルデータの破棄
 	MV1DeleteModel(m_modelHandle);
-	MV1DeleteModel(m_collisionHandle);
+	//MV1DeleteModel(m_collisionHandle);
 }
 
 void Stage::Update()
@@ -51,76 +47,8 @@ void Stage::Draw()
 	// コリジョンモデルの描画（ワイヤーフレームみたいな感じで描画）
 	//MV1DrawModelDebug(m_collisionHandle, GetColor(255, 255, 255), 1, 10, 1, 0);
 
-	for (const auto& walls : m_walls)
-	{
-		DrawCube3D(walls.min, walls.max, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-
-	}
-
 }
 
-void Stage::LoadCollisionCSV(const char* fileName)
-{
-	std::ifstream file(fileName);
-
-	if (!file.is_open())
-	{
-		return;
-	}
-
-	std::string line;
-
-	// 1行目を捨てる
-	std::getline(file, line);
-
-	while (std::getline(file, line))
-	{
-		std::stringstream ss(line);
-
-		std::string token;
-
-		ColliderInfo info;
-
-		std::getline(ss, info.type, ',');
-
-		std::getline(ss, token, ',');
-		info.minX = std::stof(token);
-
-		std::getline(ss, token, ',');
-		info.minY = std::stof(token);
-
-		std::getline(ss, token, ',');
-		info.minZ = std::stof(token);
-
-		std::getline(ss, token, ',');
-		info.maxX = std::stof(token);
-
-		std::getline(ss, token, ',');
-		info.maxY = std::stof(token);
-
-		std::getline(ss, token, ',');
-		info.maxZ = std::stof(token);
-
-		AABB box;
-
-		box.min = { info.minX, info.minY, info.minZ };
-		box.max = { info.maxX, info.maxY, info.maxZ };
-
-		if (info.type == "Wall")
-		{
-			m_walls.push_back(box);
-		}
-		else if (info.type == "ClassRooms")
-		{
-			m_classrooms.push_back(box);
-		}
-		else if (info.type == "Stairs")
-		{
-			m_stairs.push_back(box);
-		}
-	}
-	file.close();
-}
 
 //bool Stage::CheckHit_Capsule(VECTOR pos1, VECTOR pos2, float r)
 //{
