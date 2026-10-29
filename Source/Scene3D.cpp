@@ -108,6 +108,8 @@ void Scene3D::InitializeEnemyData()
 void Scene3D::InitializeItemData()
 {
 	// 脱出用アイテムの生成
+	// あらかじめ指定したアイテムの座標をゲーム起動時、ランダムに構造体に格納する
+	// その格納した座標を初期座標に設定してアイテムの位置を毎回別の場所に置かれるようにする
 	int currentPosition1 = GetRand(4);
 	int currentPosition2 = GetRand(3);
 	Point RandomPoint1[] = { VGet(-1615.0f, 120.0f, 2120.0f), VGet(350.0f, 53.0f, 2986.0f), VGet(-3270.0f, 52.0f, 2220.0f), VGet(-1440.0f, 444.0f, 2666.0f), VGet(3416.0f, 453.0f, 2537.0f) };

@@ -335,9 +335,7 @@ void Enemy3D::Move()
 						// 目標座標を正規化
 						d = VNorm(d);
 
-						// �ړ��x�N�g���ɉ�����
-						m_moveVec = VAdd(m_moveVec, d);
-
+						// 移動ベクトルに目標座標を加えて移動させる
 						m_moveVec = VAdd(m_moveVec, d);
 						m_position = VAdd(m_position, VScale(m_moveVec, Speed));
 
@@ -389,7 +387,6 @@ void Enemy3D::Move()
 
 							// 最大配列数が0になったら
 							if (m_currentPoint <= 0)
-								if (m_currentPoint <= 0)
 							{
 								m_isback = false;
 								m_currentPoint = 0;
@@ -431,7 +428,7 @@ void Enemy3D::Move()
 
 							// 敵がプレイヤーの方向を向いて向かってくるように設定
 							m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
-							m_moveVec = VNorm(m_moveVec); // 常の長さを1に保つことで、移動速度が爆発するのを防ぐ
+							m_moveVec = VNorm(m_moveVec); // 常に長さを1に保つことで、移動速度が爆発するのを防ぐ
 
 							// 敵をプレイヤーの方向に移動させる（速度は走るスピード）
 							m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
@@ -485,8 +482,6 @@ void Enemy3D::Move()
 				    		// 方向ベクトルを正規化
 				    		vec = VNorm(vec);
 
-				    		// 慣性を弱める
-				    		//m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(vec, 0.5f));
 							m_moveVec = vec;
 				    		m_moveVec = VNorm(m_moveVec);
 				    
