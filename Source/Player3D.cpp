@@ -12,49 +12,42 @@
 
 Player3D::Player3D(VECTOR initPosition)
 	: Object3D(initPosition)
-	, RotsteSpeed(0.2f)
 	, SEframeWalk(25)
 	, SEframeRUN(18)
-	, FrameLight(25)
-	, m_doorPos(VGet(0.0f, 0.0f, 0.0f))
+	, ItemSize(170)
+	, ItemMargin(10)
+	, DrawX(Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin))
+	, DrawY(Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20)
+	, MaxSize(1)
+	, MaxStamina(100)
+	, SplitCount(4)
 	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_oldFootprintPosition(VGet(0.0f, 0.0f, 0.0f))
-	, m_lightModelPosition(VGet(0.0f, 0.0f, 0.0f))
-	, m_angle(0.0f)
-	, m_targetAngle(0.0f)
 	, m_playerHeight(80.0f)
-	, m_speed(70.0f)
 	, m_distance(0.0f)
-	, m_isMove(false)
-	, m_isCrouching(false)
-	, m_isFreeze(false)
-	, m_isActiveLight(true)
-	, m_lightHandle(-1)
-	, MaxStamina(100)
+	, m_speed(70.0f)
+	, m_capsule{ VGet(0.0f, 0.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f), 0.0f }
 	, m_stamina(MaxStamina)
 	, m_staminaX(Utility::SCREEN_WIDTH / 2 - 260)
 	, m_staminaY(Utility::SCREEN_HEIGHT / 2 + 430)
 	, m_width(490)
 	, m_height(30)
 	, m_gaugeWidth(0)
-	, m_count(0)
-	, m_recordDis(0)
-	, m_addItemID(0)
 	, m_walkSETimer(0)
 	, m_runSETimer(0)
-	, m_fontHandle(CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING))
-	, m_getEscapeItem(false)
-	, m_getTimeItem(false)
+	, m_state(MoveState::Walk)
+	, m_isMove(false)
+	, m_isCrouching(false)
+	, m_isFreeze(false)
+	, m_isActiveLight(true)
+	, m_isGetEscapeItem(false)
+	, m_isGetTimeItem(false)
 	, m_isUseStopItem(false)
+	, m_lightHandle(-1)
+	, m_fontHandle(CreateFontToHandle(NULL, 40, -1, DX_FONTTYPE_ANTIALIASING))
 	, m_itemBoxX(0)
 	, m_itemBoxY(0)
-	, ItemSize(170)
-	, ItemMargin(10)
-	, DrawX(Utility::SCREEN_WIDTH / 2 + 850 - (ItemSize + ItemMargin))
-	, DrawY(Utility::SCREEN_HEIGHT / 2 + 550 - ItemSize - 20)
-	, MaxSize(1)
-	, m_state(MoveState::Walk)
-	, m_aabb{ VGet(0.0f, 0.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f)}
+	, m_addItemID(0)
 
 {
 	// タグ設定
@@ -63,7 +56,8 @@ Player3D::Player3D(VECTOR initPosition)
 	// 懐中電灯のモデルを生成
 	m_lightHandle = MV1LoadModel("Resource/Object/light/object_light.mv1");
 
-	m_playerRecord.reserve(500);
+	// 足跡記録用のコンテナの容量を大体の個数(300個)事前に確保しておくことで、大体の個数(300個)以下までは再確保が発生しないようにする
+	m_footprintsRecord.reserve(300);
 }
 
 
@@ -85,14 +79,11 @@ void Player3D::Update()
 	// アイテムの使用処理
 	UseItem();
 
-	// アイテムボックスの表示処理
-	ItemBox();
-
 	// ライトの処理
-	HaveLight();
+	//HaveLight();
 
 	// ライトのON/OFFを変更
-	SetLightEnable(m_isActiveLight);
+	//SetLightEnable(m_isActiveLight);
 
 }
 
@@ -102,39 +93,46 @@ void Player3D::Draw()
 	// 懐中電灯のモデルを描画
 	MV1DrawModel(m_lightHandle);
 
+	// デバッグ表示
 	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %.2f, m_position.y : %.2f, m_position.z : %.2f", m_position.x, m_position.y, m_position.z);
 
-	DrawFormatString(
-		0,
-		250,
-		GetColor(255, 255, 255),
-		"RecordSize = %d",
-		(int)m_playerRecord.size());
+	//DrawFormatString(
+	//	0,
+	//	250,
+	//	GetColor(255, 255, 255),
+	//	"RecordSize = %d",
+	//	(int)m_footprintsRecord.size());
 
-	DrawFormatString(
-		0, 350,
-		GetColor(255, 255, 255),
-		"Distance = %.2f",
-		m_distance);
+	//DrawFormatString(
+	//	0, 350,
+	//	GetColor(255, 255, 255),
+	//	"Distance = %.2f",
+	//	m_distance);
 
-	DrawFormatString(
-		0, 390,
-		GetColor(255, 255, 255),
-		"OldPos %.2f %.2f %.2f",
-		m_oldPosition.x,
-		m_oldPosition.y,
-		m_oldPosition.z);
+	//DrawFormatString(
+	//	0, 390,
+	//	GetColor(255, 255, 255),
+	//	"OldPos %.2f %.2f %.2f",
+	//	m_oldPosition.x,
+	//	m_oldPosition.y,
+	//	m_oldPosition.z);
+
+	DrawCube3D(
+		m_capsule.start,
+		m_capsule.end,
+		GetColor(0, 255, 0),
+		GetColor(0, 255, 0),
+		FALSE
+	);
 }
 
 
 void Player3D::UpdateAABB()
 {
-	float width = 0.5f;
-	float height = 1.8f;
 
-	m_aabb.min = { m_position.x - width, m_position.y, m_position.z - width };
-	m_aabb.max = { m_position.x + width, m_position.y + height, m_position.z + width };
-
+	m_capsule.start = m_position;
+	m_capsule.end = VAdd(m_position, VGet(0.0f, 160.0f, 0.0f));
+	m_capsule.radius = 30.0f;
 }
 
 
@@ -162,24 +160,14 @@ void Player3D::MoveEx()
 		upMoveVector = VSub(Master::m_camera->GetLookAtPosition(), Master::m_camera->GetPosition());
 		upMoveVector.y = 0.0f;
 
-		// 下方向
-		downMoveVector = VSub(Master::m_camera->GetLookAtPosition(), Master::m_camera->GetPosition());
-		downMoveVector.y = 0.0f;
-
 		// 左方向への移動ベクトルは、上方向への移動ベクトルと、Y軸のプラス方向へのベクトルに垂直な方向（外積）
 		leftMoveVector = VCross(upMoveVector, VGet(0.0f, 1.0f, 0.0f));
 		leftMoveVector.y = 0.0f;
-
-		// 右方向
-		rightMoveVector = VCross(upMoveVector, VGet(0.0f, 1.0f, 0.0f));
-		rightMoveVector.y = 0.0f;
 
 
 		// 移動ベクトルは移動量を加味しないので、正規化しておく（ベクトルの長さを１にすること）
 		upMoveVector = VNorm(upMoveVector);
 		leftMoveVector = VNorm(leftMoveVector);
-		downMoveVector = VNorm(downMoveVector);
-		rightMoveVector = VNorm(rightMoveVector);
 	}
 
 	// プレイヤーのしゃがみ状態の変更処理
@@ -253,17 +241,12 @@ void Player3D::MoveEx()
 		}
 	}
 
-	// プレイヤーの座標を更新
-	m_position = VAdd(m_position, VScale(moveVec, m_speed));
 
-
-
-	// 足跡の記録処理 //
-
-	// 足跡リストが100より大きくなったら古いものから消していく
-	if (m_playerRecord.size() > 100)
+	//---- 足跡の記録処理 ----//
+    // 足跡リストが200より大きくなったら古いものから消していく
+	if (m_footprintsRecord.size() > 200)
 	{
-		m_playerRecord.erase(m_playerRecord.begin());
+		m_footprintsRecord.erase(m_footprintsRecord.begin());
 	}
 
 	// ベクトルのサイズを取得・距離を計測
@@ -273,115 +256,142 @@ void Player3D::MoveEx()
 	// プレイヤーの座標を保存して、古い足跡座標を更新する
 	if (m_distance >= 15.0f)
 	{
-		m_playerRecord.push_back(m_position);
+		m_footprintsRecord.push_back(m_position);
 		m_oldFootprintPosition = m_position;
 	}
 
-	// 移動処理の後にプレイヤーのAABB判定を更新させる
-	UpdateAABB();
-	
 
-	// ステージとの当たり判定をする
-	auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-	if (pStageObj == nullptr)
+
+	// 移動処理を分割して行うことで、壁にめり込むのを防ぐ
+	for (int i = 0; i < 4; i++)
 	{
-		return;
-	}
+		// プレイヤーの座標を更新
+		m_position = VAdd(m_position, VScale(moveVec, m_speed / 4));
 
-	Stage* pStage = dynamic_cast<Stage*>(pStageObj);
-	if (pStage == nullptr)
-	{
-		return;
-	}
 
-	const auto& getWall = CollisionManager::GetInstance().GetWalls();
+		// 移動処理の後にプレイヤーのAABB判定を更新させる
+		UpdateAABB();
 
-	for (const auto& wall : getWall)
-	{
-		// AABB判定が行われたら、プレイヤーと壁の中心から衝突法線を取得し、侵入量を比較して法線を決定させる
-		// 壁に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
-		if (CollisionManager::GetInstance().CheckAABB(m_aabb, wall))
+
+		//---- ステージとの当たり判定 ----//
+		auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+		if (pStageObj == nullptr)
 		{
-			VECTOR playerCenter = VGet((m_aabb.min.x + m_aabb.max.x) * 0.5f, 0, (m_aabb.min.z + m_aabb.max.z) * 0.5f);
-			VECTOR wallCenter = VGet((wall.min.x + wall.max.x) * 0.5f, 0, (wall.min.z + wall.max.z) * 0.5f);
+			return;
+		}
 
-			VECTOR direction = VSub(playerCenter, wallCenter);
+		Stage* pStage = dynamic_cast<Stage*>(pStageObj);
+		if (pStage == nullptr)
+		{
+			return;
+		}
 
-			float overlapX = min(m_aabb.max.x, wall.max.x) - max(m_aabb.min.x, wall.min.x);
-			float overlapZ = min(m_aabb.max.z, wall.max.z) - max(m_aabb.min.z, wall.min.z);
+		const auto& getWall = CollisionManager::GetInstance().GetWalls();
 
+		for (const auto& wall : getWall)
+		{
+			// AABB判定が行われたら、プレイヤーと壁の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
+			// 壁に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
+			if (CollisionManager::GetInstance().CheckCapsuleAABB(m_capsule, wall))
+			{
+				VECTOR playerCenter = VGet((m_capsule.start.x + m_capsule.end.x) * 0.5f, 0.0f, (m_capsule.start.z + m_capsule.end.z) * 0.5f);
+				VECTOR wallCenter = VGet((wall.min.x + wall.max.x) * 0.5f, 0.0f, (wall.min.z + wall.max.z) * 0.5f);
+
+				// 壁の中心から見てプレイヤーがどっち側にいるのかを取得するためのベクトルを求める。
+				// 壁の中心からプレイヤーの中心への方向ベクトル
+				VECTOR directionToPlayer = VSub(playerCenter, wallCenter);
+
+				// プレイヤーが壁にどれだけめり込んだのかを求める
+				float overlapX = min(m_capsule.end.x, wall.max.x) - max(m_capsule.start.x, wall.min.x);
+				float overlapZ = min(m_capsule.end.z, wall.max.z) - max(m_capsule.start.z, wall.min.z);
+
+				VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
+				// 最も少ない移動で壁の外に出られる方向を求めるために、X軸方向の侵入量とZ軸方向の侵入量を比較して、少ない方の法線を取得する
+				if (overlapX < overlapZ)
+				{
+					normal.x = (directionToPlayer.x > 0.0f) ? 1.0 : -1.0f;
+				}
+				else
+				{
+					normal.z = (directionToPlayer.z > 0.0f) ? 1.0f : -1.0f;
+				}
+
+				// Debug用に侵入量と法線を表示
+				//DrawFormatString(0, 450, GetColor(255, 255, 255), "overlapX = %.5f, overlapZ = %.5f", overlapX, overlapZ);
+				//DrawFormatString(0, 500, GetColor(255, 255, 255), "normal.x = %.5f, normal.z = %.5f", normal.x, normal.z);
+
+				VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
+				// 移動方向ベクトルと取得した衝突法線との内積を求める
+				float dot = VDot(moveVec, normal);
+				//　壁沿いベクトルの計算
+				wallSlider = VSub(moveVec, VScale(normal, dot));
+				// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
+				wallSlider = VNorm(wallSlider);
+				m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
+
+				// ステージに当たった後にもう一度プレイヤーのAABB判定を更新させる
+				UpdateAABB();
+
+				break;
+			}
+
+		}
+
+
+	}
+
+
+	// 脱出口との当たり判定をする
+	const auto& getExitDoor = CollisionManager::GetInstance().GetExitDoor();
+
+	for (const auto& exitDoor : getExitDoor)
+	{
+		// AABB判定が行われたら、プレイヤーと脱出口の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
+		// 脱出口に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
+		if (CollisionManager::GetInstance().CheckCapsuleAABB(m_capsule, exitDoor))
+		{
+			VECTOR playerCenter = VGet((m_capsule.start.x + m_capsule.end.x) * 0.5f, 0.0f, (m_capsule.start.z + m_capsule.end.z) * 0.5f);
+			VECTOR exitDoorCenter = VGet((exitDoor.min.x + exitDoor.max.x) * 0.5f, 0.0f, (exitDoor.min.z + exitDoor.max.z) * 0.5f);
+
+			// 脱出口の中心から見てプレイヤーがどっち側にいるのかを取得するためのベクトルを求める。
+			VECTOR directionToPlayer = VSub(playerCenter, exitDoorCenter);
+
+			// 脱出口にどれだけめり込んだのかを求める
+			float overlapX = min(m_capsule.end.x, exitDoor.max.x) - max(m_capsule.start.x, exitDoor.min.x);
+			float overlapZ = min(m_capsule.end.z, exitDoor.max.z) - max(m_capsule.start.z, exitDoor.min.z);
+
+			// 最も少ない移動で当たり判定の外に出られる方向を求めるために侵入量を比較して、値が少ないほうの法線を取得する。
 			VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
 			if (overlapX < overlapZ)
 			{
-				normal.x = (direction.x > 0.0f) ? 1.0f : -1.0f;
+				normal.x = (directionToPlayer.x > 0.0f) ? overlapX : -overlapX;
 			}
 			else
 			{
-				normal.z = (direction.z > 0.0f) ? 1.0f : -1.0f;
+				normal.z = (directionToPlayer.z > 0.0f) ? overlapZ : -overlapZ;
 			}
 
-			VECTOR slider = VGet(0.0f, 0.0f, 0.0f);
-			// 移動方向ベクトルの反対方向と取得した衝突法線との内積を求める
-			float dot = VDot(VScale(moveVec, -1.0f), normal);
-			//　壁沿いベクトルの計算
-			slider = VAdd(moveVec, VScale(normal, dot));
-			m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
+			// Debug用に侵入量と法線を表示
+			//DrawFormatString(0, 450, GetColor(255, 255, 255), "overlapX = %.5f, overlapZ = %.5f", overlapX, overlapZ);
+			//DrawFormatString(0, 500, GetColor(255, 255, 255), "normal.x = %.5f, normal.z = %.5f", normal.x, normal.z);
 
-			// ステージに当たった後にもう一度プレイヤーのAABB判定を更新させる
+			VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
+			// 移動方向ベクトルと取得した衝突法線との内積を求める
+			float dot = VDot(moveVec, normal);
+			//　壁沿いベクトルの計算
+			wallSlider = VSub(moveVec, VScale(normal, dot));
+			// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
+			wallSlider = VNorm(wallSlider);
+			m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
+
+
 			UpdateAABB();
 
 			break;
 		}
-
 	}
 
 
-
-	// 脱出口との当たり判定をする
-	VECTOR hitPosition = VGet(0.0f, 0.0f, 0.0f);
-	bool ishit = false;
-	auto object = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
-	if (object == nullptr)
-	{
-		return;
-	}
-	Exitdoor* pDoor = dynamic_cast<Exitdoor*>(object);
-	if (pDoor == nullptr)
-	{
-		return;
-	}
-
-	m_doorPos = pDoor->GetPosition();
-
-	// ステージとプレイヤーのカプセルが当たっている場合
-	if (pDoor->CheckHit_Capsule(m_position, VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)), 40.0f))
-	{
-
-		// 当たっているであろうポリゴンとの接触点を求める
-		hitPosition = pDoor->CheckHit_Line(
-			VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f)),  // プレイヤーの膝辺り（多分）と
-			VAdd(m_position, VGet(0.0f, -m_playerHeight, 0.0f))  // プレイヤーの少し下あたりを線分として指定
-		);
-
-		// 当たった判定を取っておく
-		ishit = true;
-	}
-
-
-
-	// 当たった場合
-	if (ishit)
-	{
-		// 脱出口の法線を取得
-		VECTOR nurm = pDoor->GetNormal();
-		// 壁に沿っていくようなベクトルを取得
-		VECTOR slider = VGet(0.0f, 0.0f, 0.0f);  // 壁沿いベクトル
-		float a = VDot(VScale(moveVec, -1.0f), nurm); // 移動方向ベクトルの反対方向と、脱出口の法線との内積を求める
-		slider = VAdd(moveVec, VScale(nurm, a));   // 壁沿いベクトルを計算
-
-		m_position = VAdd(m_oldPosition, VScale(slider, m_speed));
-
-	}
 
 }
 
@@ -444,13 +454,13 @@ void Player3D::HaveLight()
 	VECTOR camUp = VNorm(VCross(camDirection, camRight));
 
 	// ライトのモデルの位置を設定
-	m_lightModelPosition = camPos;
-	m_lightModelPosition = VAdd(m_lightModelPosition, VScale(camDirection, 100.0f));
-	m_lightModelPosition = VAdd(m_lightModelPosition, VScale(camRight, 85.0f));
-	m_lightModelPosition = VAdd(m_lightModelPosition, VScale(camUp, -310.0f));
+	VECTOR lightModelPosition = camPos;
+	lightModelPosition = VAdd(lightModelPosition, VScale(camDirection, 100.0f));
+	lightModelPosition = VAdd(lightModelPosition, VScale(camRight, 85.0f));
+	lightModelPosition = VAdd(lightModelPosition, VScale(camUp, -310.0f));
 
 	// 懐中電灯のモデルの位置を設定
-	MV1SetPosition(m_lightHandle, m_lightModelPosition);
+	MV1SetPosition(m_lightHandle, lightModelPosition);
 
 
 
@@ -540,7 +550,7 @@ void Player3D::ItemCollision()
 					)
 				{
 
-					if (!m_getEscapeItem && !m_getTimeItem)
+					if (!m_isGetEscapeItem && !m_isGetTimeItem)
 					{
 						// 近づいたら表示
 						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), m_fontHandle);
@@ -549,7 +559,7 @@ void Player3D::ItemCollision()
 					// Rキーを押した場合
 					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
 					{
-						m_getEscapeItem = true;
+						m_isGetEscapeItem = true;
 
 						EscapeItem* pEscape = dynamic_cast<EscapeItem*>(Escape);
 						
@@ -593,7 +603,7 @@ void Player3D::ItemCollision()
 					90.0f)
 					)
 				{
-					if (!m_getTimeItem && !m_getEscapeItem)
+					if (!m_isGetTimeItem && !m_isGetEscapeItem)
 					{
 						// 近づいたら表示
 						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), m_fontHandle);
@@ -602,7 +612,7 @@ void Player3D::ItemCollision()
 					// もしRキーを押したら
 					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
 					{
-						m_getTimeItem = true;
+						m_isGetTimeItem = true;
 
 
 						TimeItem* pTimeItem = dynamic_cast<TimeItem*>(StopTime);
@@ -657,7 +667,7 @@ void Player3D::UseItem()
 					)
 				{
 					// 脱出アイテムを持っていたら
-					if (m_getEscapeItem)
+					if (m_isGetEscapeItem)
 					{
 						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), m_fontHandle);
 					}
@@ -668,7 +678,7 @@ void Player3D::UseItem()
 						LoseItem();
 
 						// 脱出アイテムを持っていない
-						m_getEscapeItem = false;
+						m_isGetEscapeItem = false;
 					}
 
 				}
@@ -678,7 +688,7 @@ void Player3D::UseItem()
 	}
 
 	// 時間止めアイテムを持っていたら
-	if (m_getTimeItem)
+	if (m_isGetTimeItem)
 	{
 		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), m_fontHandle);
 	}
@@ -693,7 +703,7 @@ void Player3D::UseItem()
 			}
 
 			// 時間止めアイテムを持っていない
-			m_getTimeItem = false;
+			m_isGetTimeItem = false;
 		}
 	}
 

@@ -72,82 +72,77 @@ public:
 	// 入力: isKeyProssese(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
 	bool StaminaUpdate(bool isKeyProssese);    
 
-	bool GetCrouching() const { return m_isCrouching; }
-
-	float GetHeight() const { return m_playerHeight; } 
-
-	void SetFreeze(bool freeze) { m_isFreeze = freeze; } 
-
+	 
+	void SetFreeze(bool freeze) { m_isFreeze = freeze; }
 	void SetUseStopItem(bool stop) { m_isUseStopItem = stop; }
-
-	bool GetEscapeItem() const { return m_getEscapeItem; }
-	bool GetTimeItem() const { return m_getTimeItem; }
+	bool GetCrouching() const { return m_isCrouching; }
+	float GetHeight() const { return m_playerHeight; } 
+	bool GetEscapeItem() const { return m_isGetEscapeItem; }
+	bool GetTimeItem() const { return m_isGetTimeItem; }
 	bool GetIsUseStopItem() const { return m_isUseStopItem; }
 
 
-	std::vector<VECTOR>& GetPlayerRecord() { return m_playerRecord; } // プレイヤーの座標を保持する構造体を取得
+	std::vector<VECTOR>& GetFootprintsRecord() { return m_footprintsRecord; } // プレイヤーの足跡を保持するコンテナを取得
 
 private:
-	const float RotsteSpeed;                                  // 回転速度
+	// 定数
 	const int SEframeWalk;                                  // 歩いているときのSEフレーム
 	const int SEframeRUN;                                   // 走っているときのSEフレーム
-	const int FrameLight;                                   // ライトの点滅フレーム
+	const int ItemSize;                                     // アイテムの大きさ
+	const int ItemMargin;                                   // アイテムの余白
+	const int DrawX;                                        // アイテム画像を表示するためのX座標
+	const int DrawY;                                        // アイテム画像を表示するためのY座標
+	const int MaxSize;                                      // インベントリのサイズ
+	const int MaxStamina;                                   // 最大スタミナ
+	const int SplitCount;                                   // 移動の分割数
 
-	VECTOR m_doorPos;                                       // 脱出口の座標を取得するための変数
+	// プレイヤーの情報を保持する変数
 	VECTOR m_oldPosition;                                   // 前の座標
 	VECTOR m_oldFootprintPosition;                          // プレイヤーの前回の足跡座標
-	VECTOR m_lightModelPosition;                            // ライトモデルの位置
-							                            
-	float m_angle;                                          // 現在の回転値
-	float m_targetAngle;                                    // 目標の回転値
 	float m_playerHeight;                                   // 高さ
-	float m_speed;                                          // 速度
 	float m_distance;                                       // 距離
+	float m_speed;                                          // 速度
+	Capsule m_capsule;                                      // プレイヤーの当たり判定用の構造体
+
 								                         
-	bool m_isMove;                                          // 動いているかどうか
-	bool m_isCrouching;                                     // しゃがんでいるかどうか
-	bool m_isFreeze;                                        // フリーズさせる
-	bool m_isActiveLight;                                   // ライトを点けるかどうか
-	int m_lightHandle;                                      // ライトモデルハンドル
-	const int MaxStamina;                                   // 最大スタミナ
+	// スタミナ関連の変数
 	int m_stamina;                                          // スタミナ
 	int m_staminaX;                                         // スタミナゲージのX座標
 	int m_staminaY;                                         // スタミナゲージのY座標
 	int m_width;                                            // 幅(スタミナゲージ)
 	int m_height;                                           // 高さ(スタミナゲージ)
 	int m_gaugeWidth;                                       // 現在値に応じたゲージの幅
-	int m_count;                                            // ステージの当たり判定用カウント
-	int m_recordDis;                                        // プレイヤーの保持した座標の距離
-	int m_addItemID;                                        // ID を背一定する変数
 	int m_walkSETimer;                                      // 歩いているときのSEを流す時間
 	int m_runSETimer;                                       // 走っているときのSEを流す時間
-	int m_fontHandle;                                       // 画面に表示するフォントのハンドル
 
-
-	std::vector<ItemData>m_items;                          // アイテム関係変数
-
-	bool m_getEscapeItem;                                  // 脱出アイテムを所持しているかどうか
-	bool m_getTimeItem;                                    // 時間止めアイテムを所持しているかどうか
-	bool m_isUseStopItem;                                  // 時間止めアイテムを使用するかどうか
-
-	// アイテム欄の変数
-	int m_itemBoxX;                                       // アイテムをボックスに表示するためのX座標
-	int m_itemBoxY;                                       // アイテムをボックスに表示するためのY座標
-	const int ItemSize;                                   // アイテムの大きさ
-	const int ItemMargin;                                 // アイテムの余白
-	const int DrawX;                                      // アイテム画像を表示するためのX座標
-	const int DrawY;                                      // アイテム画像を表示するためのY座標
-	const int MaxSize;                                    // インベントリのサイズ
-
-	enum class MoveState        // 動いている状態の構造体
+	// 移動状態の列挙型
+	enum class MoveState                                    // 動いている状態の構造体
 	{
 		Walk,
 		Run
 	};
+	MoveState m_state;                                      // 最初は歩いている状態
 
-	MoveState m_state; // 最初は歩いている状態
+	// 状態フラグ
+	bool m_isMove;                                          // 動いているかどうか
+	bool m_isCrouching;                                     // しゃがんでいるかどうか
+	bool m_isFreeze;                                        // フリーズさせる
+	bool m_isActiveLight;                                   // ライトを点けるかどうか
+	bool m_isGetEscapeItem;                                   // 脱出アイテムを所持しているかどうか
+	bool m_isGetTimeItem;                                     // 時間止めアイテムを所持しているかどうか
+	bool m_isUseStopItem;                                   // 時間止めアイテムを使用するかどうか
 
-	std::vector<VECTOR>m_playerRecord; // プレイヤーの座標を保持するVECTOR の構造体
+	// ハンドル関係の変数
+	int m_lightHandle;                                      // ライトモデルハンドル
+	int m_fontHandle;                                       // 画面に表示するフォントのハンドル
 
-	AABB m_aabb;
+	// アイテム関係の変数
+	int m_itemBoxX;                                       // アイテムをボックスに表示するためのX座標
+	int m_itemBoxY;                                       // アイテムをボックスに表示するためのY座標
+	int m_addItemID;                                      // ID を背一定する変数
+
+	//	コンテナ関係の変数
+	std::vector<ItemData>m_items;                          // アイテムデータを保持するコンテナ
+	std::vector<VECTOR>m_footprintsRecord;                // プレイヤーの足跡（プレイヤーの前回の座標）を記録するVECTOR のコンテナ
+
 };

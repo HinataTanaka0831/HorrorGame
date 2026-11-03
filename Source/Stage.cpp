@@ -3,14 +3,12 @@
 #include "Master.h"
 #include "ObjectManager.h"
 #include "Scene.h"
+#include "CollisionManager.h"
 
 
-Stage::Stage(std::string stageModelName, std::string stageCollisionModelName)
+Stage::Stage(std::string stageModelName)
 	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // 座標は原点としておく
 	, m_modelHandle(-1)
-	, m_collisionHandle(-1)
-	, m_normal(VGet(0.0f, 0.0f, 0.0f))
-	, m_hitpos(VGet(0.0f, 0.0f, 0.0f))
 
 {
 	SetTag(Object3D::TagStage);
@@ -46,7 +44,6 @@ void Stage::Draw()
 
 	// コリジョンモデルの描画（ワイヤーフレームみたいな感じで描画）
 	//MV1DrawModelDebug(m_collisionHandle, GetColor(255, 255, 255), 1, 10, 1, 0);
-
 }
 
 

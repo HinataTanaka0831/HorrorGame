@@ -145,13 +145,13 @@ void Scene3D::InitializeSkyBoxData()
 void Scene3D::InitializeStageData()
 {
 	// ステージの生成
-	new Stage("Resource/Object/Stage/object_school.mv1", "Resource/Object/Stage/object_schoolcollision.mv1");
+	new Stage("Resource/Object/Stage/object_school.mv1");
 }
 
 void Scene3D::InitializeExitDoorData()
 {
 	// 脱出ドアの生成
-	new Exitdoor("Resource/Object/Door/object_door.mv1", "Resource/Object/Door/object_doorcollision.mv1", VGet(500.0f, 0.0f, 1900.0f));
+	new Exitdoor("Resource/Object/Door/object_door.mv1", VGet(500.0f, 0.0f, 1900.0f));
 }
 
 
@@ -162,9 +162,11 @@ void Scene3D::Update()
 
 void Scene3D::Draw()
 {
+	CollisionManager::GetInstance().Draw3DLine();
+
 	Scene::Draw();
 
-	// Zバッファを使用する設定にする
+	// Zバッファを使用しない設定にする
 	SetUseZBufferFlag(FALSE);
 
 	// Zバッファへの書き込みはしない
@@ -181,6 +183,10 @@ void Scene3D::Draw()
 		return;
 	}
 
+	// アイテムボックスの描画
+	pPlayer->ItemBox();
+
+	// スタミナゲージの描画
 	pPlayer->DrawStamina();
 
 	if (pPlayer->GetCrouching())

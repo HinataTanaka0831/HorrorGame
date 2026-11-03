@@ -10,6 +10,13 @@ struct AABB
 	VECTOR max; // AABBの最大座標
 };
 
+struct Capsule
+{
+	VECTOR start; // カプセルの始点座標
+	VECTOR end;   // カプセルの終点座標
+	float radius; // カプセルの半径
+};
+
 // 球体・点同士の幾何学的当たり判定を計算する静的ユーティリティクラス
 class CollisionManager
 {
@@ -42,23 +49,25 @@ public:
 	);
 
 
-	static bool CheckAABB(
-		const AABB& a,
-		const AABB& b
+	static bool CheckCapsuleAABB(
+		const Capsule& capsule,
+		const AABB& aabb
 	);
 
 	// CSVファイルを読み取りAABB判定を行う
 	// 入力: fileName(CSVファイルの名前) / 出力: なし / 副作用: 読み込んだCSVファイルのデータを構造体(ColliderInfo)に格納
 	void LoadCollisionCSV(const char* fileName);
 
+	void Draw3DLine();
+
 
 	std::vector<AABB> GetWalls() const { return m_walls; }
 
 	std::vector<AABB> GetFloors() const { return m_floors; }
 
-	std::vector<AABB> GetClassrooms() const { return m_classrooms; }
-
 	std::vector<AABB> GetStairs() const { return m_stairs; }
+
+	std::vector<AABB> GetExitDoor() const { return m_exitDoor; }
 
 private:
 	// コンストラクタ
@@ -76,8 +85,8 @@ private:
 
 	std::vector<AABB> m_walls; // ステージの壁のAABB情報
 	std::vector<AABB> m_floors; // ステージの床のAABB情報
-	std::vector<AABB> m_classrooms; // 教室のAABB情報
 	std::vector<AABB> m_stairs; // 階段のAABB情報
+	std::vector<AABB> m_exitDoor; // 脱出口のAABB情報
 
 	struct ColliderInfo
 	{

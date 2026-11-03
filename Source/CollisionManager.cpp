@@ -1,6 +1,7 @@
 #include "CollisionManager.h"
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 
 CollisionManager& CollisionManager::GetInstance()
@@ -81,16 +82,35 @@ bool CollisionManager::CheckPointToCircle(
 }
 
 
-bool CollisionManager::CheckAABB(
-	const AABB& a,
-	const AABB& b
+bool CollisionManager::CheckCapsuleAABB(
+	const Capsule& capsule,
+	const AABB& aabb
 )
 {
+	for (int i = 0; i < 10; i++)
+	{
+		// カプセルの始点と終点の間を10分割して、各点がAABB内にあるかをチェックする
+		float t = static_cast<float>(i) / 10.0f; // 0.0fから1.0fまでの範囲で10分割
 
-	return (a.min.x <= b.max.x && a.max.x >= b.min.x) &&
-		(a.min.y <= b.max.y && a.max.y >= b.min.y) &&
-		(a.min.z <= b.max.z && a.max.z >= b.min.z);
+		VECTOR pointInCapsule = VGet((capsule.start.x + (capsule.end.x - capsule.start.x) * t),
+									 (capsule.start.y + (capsule.end.y - capsule.start.y) * t),
+									 (capsule.start.z + (capsule.end.z - capsule.start.z) * t));
 
+		VECTOR closest;
+		closest.x = (std::max)(aabb.min.x, (std::min)(pointInCapsule.x, aabb.max.x));
+		closest.y = (std::max)(aabb.min.y, (std::min)(pointInCapsule.y, aabb.max.y));
+		closest.z = (std::max)(aabb.min.z, (std::min)(pointInCapsule.z, aabb.max.z));
+
+		VECTOR difference = VSub(pointInCapsule, closest);
+		float distanceSquared = difference.x * difference.x + difference.y * difference.y + difference.z * difference.z;
+
+		if (distanceSquared < capsule.radius * capsule.radius)
+		{
+			return true; // カプセルとAABBが衝突している
+		}
+	}
+
+	return false; // カプセルとAABBが衝突していない
 }
 
 
@@ -145,15 +165,29 @@ void CollisionManager::LoadCollisionCSV(const char* fileName)
 		{
 			m_walls.push_back(box);
 		}
-		else if (info.type == "ClassRooms")
-		{
-			m_classrooms.push_back(box);
-		}
 		else if (info.type == "Stairs")
 		{
 			m_stairs.push_back(box);
 		}
+		else if (info.type == "ExitDoor")
+		{
+			m_exitDoor.push_back(box);
+		}
 	}
 	file.close();
 
+}
+
+void CollisionManager::Draw3DLine()
+{
+	for(const auto& walls : m_walls)
+	{
+		DrawCube3D(walls.min, walls.max, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
+
+	}
+
+	for (const auto& exitDoor : m_exitDoor)
+	{
+		DrawCube3D(exitDoor.min, exitDoor.max, GetColor(0, 0, 255), GetColor(0, 0, 255), false);
+	}
 }

@@ -115,7 +115,7 @@ void Enemy3D::Draw()
 		return;
 	}
 
-	std::vector<VECTOR>& playerRecord = pPlayer->GetPlayerRecord();
+	std::vector<VECTOR>& playerRecord = pPlayer->GetFootprintsRecord();
 
 	DrawFormatString(
 		0, 120,
@@ -446,7 +446,7 @@ void Enemy3D::Move()
 				else
 				{
 					// プレイヤーの足跡リストを取得
-					std::vector<VECTOR>& playerRecord = pPlayer->GetPlayerRecord();
+					std::vector<VECTOR>& playerRecord = pPlayer->GetFootprintsRecord();
 
 
 				    // 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる

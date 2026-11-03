@@ -83,7 +83,7 @@ int WINAPI WinMain(
 	SetUseLighting(TRUE);  // ライト処理ON
 
 	// アンビエント（環境光）は少し暗め
-	SetGlobalAmbientLight(GetColorF(0.2f, 0.2f, 0.2f, 0.0f));
+	//SetGlobalAmbientLight(GetColorF(0.2f, 0.2f, 0.2f, 0.0f));
 	
 
 
