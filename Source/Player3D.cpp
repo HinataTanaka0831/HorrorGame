@@ -341,6 +341,23 @@ void Player3D::MoveEx()
 	}
 
 
+	// ステージにある階段の当たり判定処理（坂による当たり判定）
+	for (const auto& stairs : CollisionManager::GetInstance().GetStairs())
+	{
+		if (m_position.x >= stairs.minX &&
+			m_position.x <= stairs.maxX &&
+			m_position.z >= stairs.minZ &&
+			m_position.z <= stairs.maxZ)
+		{
+			float t = (m_position.z - stairs.minZ) / (stairs.maxZ - stairs.minZ);
+
+			float slopeY = stairs.minY + (stairs.maxY - stairs.minY) * t;
+
+			m_position.y = slopeY;
+		}
+	}
+
+
 	// 脱出口との当たり判定をする
 	const auto& getExitDoor = CollisionManager::GetInstance().GetExitDoor();
 
