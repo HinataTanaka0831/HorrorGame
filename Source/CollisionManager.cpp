@@ -13,7 +13,8 @@ CollisionManager& CollisionManager::GetInstance()
 
 CollisionManager::CollisionManager()
 {
-	LoadCollisionCSV("Resource/Data/collisionData_stage.csv");
+	LoadAABBCollisionCSV("Resource/Data/collisionData_stage.csv");
+	LoadStairCollisionCSV("Resource/Data/collisionData_stairs.csv");
 }
 
 
@@ -114,7 +115,7 @@ bool CollisionManager::CheckCapsuleAABB(
 }
 
 
-void CollisionManager::LoadCollisionCSV(const char* fileName)
+void CollisionManager::LoadAABBCollisionCSV(const char* fileName)
 {
 	std::ifstream file(fileName);
 
@@ -165,14 +166,60 @@ void CollisionManager::LoadCollisionCSV(const char* fileName)
 		{
 			m_walls.push_back(box);
 		}
-		else if (info.type == "Stairs")
-		{
-			m_stairs.push_back(box);
-		}
 		else if (info.type == "ExitDoor")
 		{
 			m_exitDoor.push_back(box);
 		}
+	}
+	file.close();
+
+}
+
+void CollisionManager::LoadStairCollisionCSV(const char* fileName)
+{
+	std::ifstream file(fileName);
+
+	if (file.is_open())
+	{
+		return;
+	}
+
+	std::string line;
+
+	// 1çsñ⁄ÇéÃÇƒÇÈ
+	std::getline(file, line);
+
+	while (std::getline(file, line))
+	{
+		std::stringstream ss(line);
+
+		std::string token;
+		StairsInfo info;
+
+		std::getline(ss, token, ',');
+		info.startX = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.startY = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.startZ = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.endX = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.endY = std::stof(token);
+
+		std::getline(ss, token, ',');
+		info.endZ = std::stof(token);
+
+		Stairs stairs;
+
+		stairs.start = { info.startX, info.startY, info.startZ };
+		stairs.end = { info.endX, info.endY, info.endZ };
+
+		m_stairs.push_back(stairs);
 	}
 	file.close();
 

@@ -21,7 +21,6 @@ int LoadSoundTask::Execute() {
     if (m_handle == -1) {
         // 読み込み失敗時はログなどに出しても良い
         char buf[256] = { 0 };
-        //std::sprintf(buf, "Failed to load sound: %s", m_path);
         OutputDebugStringA(buf);
     }
 
@@ -49,9 +48,6 @@ int InitializeSoundManagerTask::Execute() {
     // サウンドマネージャーの初期化
     Master::m_soundManager->Initialize();    // 全てのサウンドが読み込まれる
 
-    // 今はダミーで待機だけ
-    //WaitTimer(100);
-
     return 0;
 }
 
@@ -67,13 +63,9 @@ const char* InitializeSoundManagerTask::GetTaskName() const {
 InitializeSceneManagerTask::InitializeSceneManagerTask() {}
 
 int InitializeSceneManagerTask::Execute() {
-    // シーンマネージャーの初期化処理をここに書く
     
     // シーンマネージャーの初期化
     Master::m_sceneManager->Initialize();
-
-    // 今はダミーで待機だけ
-    //WaitTimer(100);
 
     return 0;
 }
@@ -90,7 +82,6 @@ const char* InitializeSceneManagerTask::GetTaskName() const {
 InitializeCameraTask::InitializeCameraTask() {}
 
 int InitializeCameraTask::Execute() {
-
 
     // カメラ生成
     Master::m_camera->Initialize();   // 初期化
@@ -248,6 +239,14 @@ const char* InitializeExitDoorTask::GetTaskName() const {
 // LoadingManager 実装
 // ========================
 
+LoadingManager::~LoadingManager()
+{
+    if (m_scene3DGameRuleHandle != -1)
+    {
+        DeleteGraph(m_scene3DGameRuleHandle);
+    }
+}
+
 void LoadingManager::AddTask(std::unique_ptr<ILoadTask> task) {
     m_tasks.push_back(std::move(task));
 }
@@ -330,8 +329,6 @@ void LoadingManager::ExecuteScene3D()
 
     DrawBox(1280, 950, 1280 + 580, 990, GetColor(255, 255, 255), FALSE);
     DrawBox(1280, 950, 1280 + 580, 990, GetColor(100, 200, 255), TRUE);
-
-   if (m_scene3DGameRuleHandle != -1) DeleteGraph(m_scene3DGameRuleHandle);
 
     ScreenFlip();
 

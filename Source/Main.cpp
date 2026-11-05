@@ -66,7 +66,6 @@ int WINAPI WinMain(
 	loader.AddTask(std::make_unique<InitializeSoundManagerTask>());
 	loader.AddTask(std::make_unique<InitializeSceneManagerTask>());
 	loader.AddTask(std::make_unique<InitializeCameraTask>());
-	CollisionManager::GetInstance().LoadCollisionCSV("Resource/Data/collisionData_stage.csv");
 
 	// ローディング実行
 	loader.ExecuteAll();

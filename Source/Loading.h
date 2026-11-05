@@ -211,6 +211,8 @@ private:
 	int m_fontSize = CreateFontToHandle(NULL, 30, -1, -1);  // フォントサイズのハンドル
 
 public:
+
+	~LoadingManager();
 	
 	// AddTask はロードタスクを追加する
 	// 入力: task(ロードタスクのポインタ) / 出力: なし / 副作用: tasksにタスクを追加
