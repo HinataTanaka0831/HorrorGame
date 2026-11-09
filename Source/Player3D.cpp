@@ -309,16 +309,13 @@ void Player3D::MoveEx()
 				// 最も少ない移動で壁の外に出られる方向を求めるために、X軸方向の侵入量とZ軸方向の侵入量を比較して、少ない方の法線を取得する
 				if (overlapX < overlapZ)
 				{
-					normal.x = (directionToPlayer.x > 0.0f) ? 1.0 : -1.0f;
+					normal.x = (directionToPlayer.x > 0.0f) ? 1.0f : -1.0f;
 				}
 				else
 				{
 					normal.z = (directionToPlayer.z > 0.0f) ? 1.0f : -1.0f;
 				}
 
-				// Debug用に侵入量と法線を表示
-				//DrawFormatString(0, 450, GetColor(255, 255, 255), "overlapX = %.5f, overlapZ = %.5f", overlapX, overlapZ);
-				//DrawFormatString(0, 500, GetColor(255, 255, 255), "normal.x = %.5f, normal.z = %.5f", normal.x, normal.z);
 
 				VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
 				// 移動方向ベクトルと取得した衝突法線との内積を求める
@@ -388,9 +385,6 @@ void Player3D::MoveEx()
 				normal.z = (directionToPlayer.z > 0.0f) ? overlapZ : -overlapZ;
 			}
 
-			// Debug用に侵入量と法線を表示
-			//DrawFormatString(0, 450, GetColor(255, 255, 255), "overlapX = %.5f, overlapZ = %.5f", overlapX, overlapZ);
-			//DrawFormatString(0, 500, GetColor(255, 255, 255), "normal.x = %.5f, normal.z = %.5f", normal.x, normal.z);
 
 			VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
 			// 移動方向ベクトルと取得した衝突法線との内積を求める
@@ -402,6 +396,7 @@ void Player3D::MoveEx()
 			m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
 
 
+			// 脱出口に当たった後にもう一度プレイヤーのAABB判定を更新させる
 			UpdateAABB();
 
 			break;
@@ -664,6 +659,7 @@ void Player3D::ItemCollision()
 
 void Player3D::UseItem()
 {
+	// 脱出アイテムを持っていたら
 	if (m_addItemID == 1)
 	{
 		auto door = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagExitdoor);
@@ -709,7 +705,6 @@ void Player3D::UseItem()
 	{
 		DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "F : 使用", GetColor(255, 255, 255), m_fontHandle);
 	}
-
 	if (m_addItemID == 2)
 	{
 		if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_F))

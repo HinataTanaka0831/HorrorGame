@@ -43,10 +43,9 @@ private:
 	int m_playerCrouchingHandle;      // プレイヤーしゃがみハンドル
 	int m_playerMoveHandle;           // プレイヤー移動ハンドル
 
-	struct Point {                    // 脱出用アイテムの出現座標
-
+	struct Point                      // 脱出用アイテムの出現座標
+	{                   
 		VECTOR PointPosition;
-
 	};
 
 };

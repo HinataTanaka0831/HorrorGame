@@ -11,8 +11,6 @@ public:
 	Stage(std::string stageModelName);
 	~Stage() override;
 
-	void Update() override;
-
 	// ステージ3Dモデルの描画
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw() override;

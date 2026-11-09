@@ -7,19 +7,20 @@
 #include "Enemy3D.h"
 
 Camera::Camera()
-	: m_position(VGet(0.0f, 0.0f, 0.0f))        
+	: m_target(nullptr)
+	, m_position(VGet(0.0f, 0.0f, 0.0f))        
 	, m_lookAtPosition(VGet(0.0f, 0.0f, 0.0f))
+	, m_targetPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_shakePosition(VGet(0.0f, 0.0f, 0.0f))
-	, m_horizontalAngle(DX_PI_F / 1.2f)
+	, m_horizontalAngle(DX_PI_F / 2.0f)
 	, m_verticalAngle(0.0f)
+	, m_cameraMode(CameraMode::PlayerControll)
 	, m_shakeAngle(0.0f)
 	, m_shakeTimeCounter(0.0f)
 	, m_shakeTime(0.0f)
 	, m_shakeWidth(0.0f)
 	, m_shakeAngleSpeed(0.0f)
 	, m_stepTime(0.0f)
-	, m_isFreeze(false)
-	, m_target(nullptr)
 
 {
 
@@ -31,8 +32,6 @@ Camera::~Camera()
 
 void Camera::Initialize()
 {
-	m_position = VGet(m_position.x, m_position.y, m_position.z);
-
 	// カメラのクリッピング距離の設定  
 	SetCameraNearFar(20.0f, 50000.0f);
 
@@ -49,15 +48,8 @@ void Camera::Initialize()
 
 void Camera::Update()
 {
-
 	// マウスによる回転処理
 	UpdateRotation();
-
-	if (m_isFreeze)
-	{
-		// 画面揺れの処理
-		Shake();
-	}
 
 	if (m_target == nullptr)
 	{
@@ -84,12 +76,11 @@ void Camera::Update()
 			}
 		}
 
-	
 
 			// プレイヤーの位置に座標を設定
-			m_lookAtPosition.x = m_position.x + cosf(m_verticalAngle / 5.0f * DX_PI_F) * sinf(m_horizontalAngle / 5.0f * DX_PI_F);
-			m_lookAtPosition.y = m_position.y + sinf(m_verticalAngle / 5.0f * DX_PI_F);
-			m_lookAtPosition.z = m_position.z + cosf(m_verticalAngle / 5.0f * DX_PI_F) * cosf(m_horizontalAngle / 5.0f * DX_PI_F);
+			m_lookAtPosition.x = m_position.x + cosf(m_verticalAngle) * sinf(m_horizontalAngle);
+			m_lookAtPosition.y = m_position.y + sinf(m_verticalAngle);
+			m_lookAtPosition.z = m_position.z + cosf(m_verticalAngle) * cosf(m_horizontalAngle);
 
 
 			// カメラ設定を反映
@@ -101,38 +92,76 @@ void Camera::Update()
 }
 
 void Camera::UpdateRotation()
+{	
+	if (m_cameraMode == CameraMode::PlayerControll)
+	{
+		// マウス移動による更新処理を呼ぶ
+		InputManager::GetInstance().MouseRotationUpdate();
+
+		// マウスで上下左右に動かせるようにする
+		m_horizontalAngle += InputManager::GetInstance().GetDeltaX();
+		m_verticalAngle -= InputManager::GetInstance().GetDeltaY();
+
+
+
+		// 上下方向に制限をかける
+		float MAX = DX_PI_F / 2.0f - 0.01f;
+		if (m_verticalAngle >= MAX)
+		{
+			m_verticalAngle = MAX;
+		}
+		if (m_verticalAngle <= -MAX)
+		{
+			m_verticalAngle = -MAX;
+		}
+
+	}
+	else if (m_cameraMode == CameraMode::AutoLook)
+	{
+		// ジャンプスケアでターゲットの方向に視点を向ける
+		ScareLookAt(0.2f);
+
+		// 画面揺れの処理
+		Shake();
+	}
+
+
+}
+
+void Camera::ScareLookAt(float speed)
 {
+	VECTOR directionToTarget = VNorm(VSub(m_targetPosition, m_position));
 
-	// フリーズするなら終了
-	if (m_isFreeze)
+	float targetHorizontalAngle = atan2f(directionToTarget.x, directionToTarget.z);
+	float distanceXZ = sqrtf(directionToTarget.x * directionToTarget.x + directionToTarget.z * directionToTarget.z);
+	float targetVerticalAngle = atan2f(directionToTarget.y, distanceXZ);
+	
+	float horizontalAngleDifferenceToTarget = targetHorizontalAngle - m_horizontalAngle;
+	float verticalAngleDifferenceToTarget = targetVerticalAngle - m_verticalAngle;
+
+	while(horizontalAngleDifferenceToTarget > DX_PI_F)
 	{
-		return;
+		horizontalAngleDifferenceToTarget -= DX_PI_F * 2.0f;
 	}
 
-	// マウス移動による更新処理を呼ぶ
-	InputManager::GetInstance().MouseRotationUpdate();
-
-	// マウスで上下左右に動かせるようにする
-	m_horizontalAngle += InputManager::GetInstance().GetDeltaX();
-	m_verticalAngle -= InputManager::GetInstance().GetDeltaY();
-
-
-
-	// 上下方向に制限をかける
-	float MAX = DX_PI_F / 2.0f;
-	if (m_verticalAngle >= MAX)
+	while(horizontalAngleDifferenceToTarget < -DX_PI_F)
 	{
-		m_verticalAngle = MAX;
-	}
-	if (m_verticalAngle <= -MAX)
-	{
-		m_verticalAngle = -MAX;
+		horizontalAngleDifferenceToTarget += DX_PI_F * 2.0f;
 	}
 
+	while (verticalAngleDifferenceToTarget > DX_PI_F)
+	{
+		verticalAngleDifferenceToTarget -= DX_PI_F * 2.0f;
+	}
 
-	// デバッグ表示
-	//DrawFormatString(10, 50, GetColor(255, 255, 255), "VerticalAngle: %.2f", m_verticalAngle);
-	//DrawFormatString(10, 70, GetColor(255, 255, 255), "HorizontalAngle: %.2f", m_horizontalAngle);
+	while (verticalAngleDifferenceToTarget < -DX_PI_F)
+	{
+		verticalAngleDifferenceToTarget += DX_PI_F * 2.0f;
+	}
+
+	m_horizontalAngle += (targetHorizontalAngle - m_horizontalAngle) * speed;
+	m_verticalAngle += (targetVerticalAngle - m_verticalAngle) * speed;
+
 }
 
 void Camera::Shake()

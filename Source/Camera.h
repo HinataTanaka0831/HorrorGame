@@ -9,6 +9,13 @@ class Object3D;
 class Camera
 {
 public:
+	enum class CameraMode
+	{
+		PlayerControll,
+		AutoLook
+	};
+
+public:
 	Camera();   // コンストラクタ
 	~Camera();  // デストラクタ
 
@@ -24,13 +31,19 @@ public:
 	// 入力: なし / 出力: なし / 副作用: m_horizontalAngle/m_verticalAngleの更新
 	void UpdateRotation(); 
 
-	// ジャンプスケア時等の視点操作固定フラグ設定
-	// 入力: isFreeze(固定フラグ) / 出力: なし / 副作用: m_isFreezeの更新
-	void SetFreeze(bool isFreeze) { m_isFreeze = isFreeze; }       
+	// ジャンプスケア時にターゲットの方向に視点を向ける
+	// 入力: speed（回転速度） / 出力: なし / 副作用: m_horizontalAngle/m_verticalAngleの更新
+	void ScareLookAt(float speed);
 
 	// 正弦波衰減関数による画面振動オフセットの計算
 	// 入力: なし / 出力: なし / 副作用: m_shakePositionの更新
 	void Shake();                                
+
+	// 追従対象の設定
+	void SetCameraMode(CameraMode mode) { m_cameraMode = mode; }
+
+	// 追従対象の座標の設定
+	void SetTargetPosition(VECTOR position) { m_targetPosition = position; }
 
 	// 画面揺れ演出パラメータ（継続時間・振幅・周期速度）の設定
 	// 入力: time(継続秒), width(振幅), angleSpeed(角速度), stepTime(更新刻み) / 出力: なし / 副作用: 揺れカウンタのリセット
@@ -48,14 +61,19 @@ public:
 
 
 private:
+	Object3D* m_target;    // 追従対象（プレイヤーオブジェクト）
+
 	VECTOR m_position;        // カメラワールド座標
 	VECTOR m_lookAtPosition;   // カメラ注視点ワールド座標
+	VECTOR m_targetPosition;   // 追従対象の座標
 	VECTOR m_shakePosition;    // 画面揺れによる加算オフセット
 
 	float m_horizontalAngle;   // ヨー角（水平回転角度・ラジアン）
 	float m_verticalAngle;     // ピッチ角（垂直見渡し角度・ラジアン）
 
-	//↓ 画面揺れで使用する変数
+	CameraMode m_cameraMode;  // カメラモード（プレイヤー操作/自動注視）
+
+	// 画面揺れで使用する変数
 	float m_shakeAngle;       // 画面揺れ正弦波用アングル
 	float m_shakeTimeCounter;  // 画面揺れ経過時間
 	float m_shakeTime;         // 画面揺れ総継続時間
@@ -63,8 +81,4 @@ private:
 	float m_shakeAngleSpeed;    // 画面揺れ振動周波数
 	float m_stepTime;          // 画面揺れ更新刻み時間
 
-
-	bool m_isFreeze;           // 視点操作拘束フラグ
-
-	Object3D* m_target;    // 追従対象（プレイヤーオブジェクト）
 };

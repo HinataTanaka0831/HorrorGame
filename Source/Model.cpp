@@ -50,6 +50,7 @@ Model::~Model()
 	if (m_animation != nullptr)
 	{
 		delete m_animation;
+		m_animation = nullptr;
 	}
 
 	// Mixamo用処理
@@ -57,12 +58,14 @@ Model::~Model()
 	if (m_separateAnimation != nullptr)
 	{
 		delete m_separateAnimation;
+		m_separateAnimation = nullptr;
 	}
 
 	// アタッチモデルクラスの破棄
 	if (m_attachment != nullptr)
 	{
 		m_attachment->SetDeleteFlag(true);
+		m_attachment = nullptr;
 	}
 
 	// テクスチャを切り替えている場合はそのテクスチャを破棄
@@ -229,6 +232,14 @@ VECTOR Model::GetAttachmentPosition()
 
 	// アタッチメントが無い場合は原点を返しておく
 	return VGet(0.0f, 0.0f, 0.0f);
+}
+
+VECTOR Model::GetModelFramePosition(std::string frameName)
+{
+	// 指定フレームのワールド座標を取得
+	int frameIndex = MV1SearchFrame(m_handle, frameName.c_str());
+	VECTOR framePosition = MV1GetFramePosition(m_handle, frameIndex);
+	return framePosition;
 }
 
 void Model::SetScale(float scale)

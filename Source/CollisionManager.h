@@ -10,6 +10,7 @@ struct AABB
 	VECTOR max; // AABBの最大座標
 };
 
+// カプセル判定用の構造体
 struct Capsule
 {
 	VECTOR start; // カプセルの始点座標
@@ -17,14 +18,15 @@ struct Capsule
 	float radius; // カプセルの半径
 };
 
+// 階段判定用の構造体
 struct Slope
 {
-	float minX;
-	float minY;
-	float minZ;
-	float maxX;
-	float maxY;
-	float maxZ;
+	float minX;  // 階段の最小X座標
+	float minY;  // 階段の最小Y座標
+	float minZ;  // 階段の最小Z座標
+	float maxX;  // 階段の最大X座標
+	float maxY;  // 階段の最大Y座標
+	float maxZ;  // 階段の最大Z座標
 };
 
 
@@ -33,14 +35,11 @@ class CollisionManager
 {
 public:
 	// シングルトンインスタンスの取得
-	// 入力: なし / 出力: CollisionManager参照 / 副作用: 初回呼び出し時に性的インスタンス生成
+	// 入力: なし / 出力: CollisionManager参照 / 副作用: 初回呼び出し時に静的インスタンス生成
 	static  CollisionManager& GetInstance();
 
 	// 円と円の当たり判定をしてくれる関数
-	// const VECTOR& centerPositionA ... Aの円の中心座標
-	// const float& radiusA ... Aの円の半径
-	// const VECTOR& centerPositionB ... Bの円の中心座標
-	// const float& radiusB ... Bの円の半径
+	// 入力: centerPositionA（Aの円の中心座標）、radiusA（Aの円の半径）、centerPositionB（Bの円の中心座標）。radiusB（Bの円の半径）/ 出力: 円と円が当たっていたらtrue、それ以外ならfalse / 副作用: なし
 	bool CheckCircleToCircle(
 		const VECTOR& centerPositionA,
 		const float& radiusA,
@@ -50,9 +49,7 @@ public:
 
 
 	// 点と円の当たり判定
-	// const VECTOR& pointPosition ... 点の中心座標
-	// const VECTOR& centerPosition ... 円の中心座標
-	// const float& radius ... 円の半径
+	// 入力: pointPosition（点の中心座標）、centerPosition（円の中心座標）、radius（円の半径） / 出力: 点と円が当たったらtrue、それ以外ならfalse / 副作用: なし
 	bool CheckPointToCircle(
 		const VECTOR& pointPosition,
 		const VECTOR& centerPosition,
@@ -60,6 +57,8 @@ public:
 	);
 
 
+	// AABBによる当たり判定
+	// 入力: capsule（カプセル構造体の各情報）、aabb（AABB構造体の各情報） / 出力: カプセルとAABBが衝突していたらtrue、それ以外ならfalse / 副作用: なし
 	bool CheckCapsuleAABB(
 		const Capsule& capsule,
 		const AABB& aabb
@@ -73,14 +72,13 @@ public:
 
 	void Draw3DLine();
 
+	const std::vector<AABB>& GetWalls() const { return m_walls; }
 
-	std::vector<AABB> GetWalls() const { return m_walls; }
+	const std::vector<AABB>& GetFloors() const { return m_floors; }
 
-	std::vector<AABB> GetFloors() const { return m_floors; }
+	const std::vector<AABB>& GetExitDoor() const { return m_exitDoor; }
 
-	std::vector<AABB> GetExitDoor() const { return m_exitDoor; }
-
-	std::vector<Slope> GetStairs() const { return m_stairs; }
+	const std::vector<Slope>& GetStairs() const { return m_stairs; }
 
 private:
 	// コンストラクタ
@@ -95,17 +93,18 @@ private:
 	CollisionManager&& operator=(CollisionManager&&) = delete;      // ムーブ代入の禁止
 
 private:
+	// CSVファイルから読み込んだ当たり判定情報を格納する構造体
 	struct ColliderInfo
 	{
-		std::string type = "";
+		std::string type = "";  // 当たり判定の種類（wall, floor, exitDoor, stairsなど）
 
-		float minX = 0.0f;
-		float minY = 0.0f;
-		float minZ = 0.0f;
+		float minX = 0.0f;      // AABBの最小X座標
+		float minY = 0.0f;      // AABBの最小Y座標
+		float minZ = 0.0f;      // AABBの最小Z座標
 
-		float maxX = 0.0f;
-		float maxY = 0.0f;
-		float maxZ = 0.0f;
+		float maxX = 0.0f;      // AABBの最大X座標
+		float maxY = 0.0f;      // AABBの最大Y座標
+		float maxZ = 0.0f;      // AABBの最大Z座標
 	};
 
 

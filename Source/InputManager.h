@@ -51,10 +51,10 @@ public:
 
 	bool IsMouseLocked() const { return m_isLocked; }
 
-	float GetMouseX() { return m_mouseX; }
-	float GetMouseY() { return m_mouseY; }
-	float GetDeltaX() { return m_deltaX; }
-	float GetDeltaY() { return m_deltaY; }
+	float GetMouseX() const { return m_mouseX; }
+	float GetMouseY() const { return m_mouseY; }
+	float GetDeltaX() const { return m_deltaX; }
+	float GetDeltaY() const { return m_deltaY; }
 
 private:
 	// コンストラクタ

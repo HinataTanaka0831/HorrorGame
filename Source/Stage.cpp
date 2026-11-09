@@ -24,10 +24,6 @@ Stage::~Stage()
 	MV1DeleteModel(m_modelHandle);
 }
 
-void Stage::Update()
-{
-
-}
 
 void Stage::Draw()
 {

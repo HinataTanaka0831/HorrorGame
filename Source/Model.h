@@ -52,11 +52,15 @@ public:
 	// 入力: なし / 出力: ワールド座標 / 副作用: なし
 	VECTOR GetAttachmentPosition();
 
+	// モデルの指定フレームのワールド座標を取得
+	// 入力: frameName(フレーム名) / 出力: ワールド座標 / 副作用: なし
+	VECTOR GetModelFramePosition(std::string frameName);
 
-	VECTOR GetPosition() { return m_position; }  // 座標取得
+
+	VECTOR GetPosition() const { return m_position; }  // 座標取得
 	void SetPosition(VECTOR position) { m_position = position; }  // 座標設定
 
-	VECTOR GetRotation() { return m_rotation; }  // 回転取得
+	VECTOR GetRotation() const { return m_rotation; }  // 回転取得
 	void SetRotation(VECTOR rotation) { m_rotation = rotation; }  // 回転設定
 
 	// スケール取得・設定
@@ -73,7 +77,7 @@ private:
 	VECTOR m_position;              // 座標
 	VECTOR m_rotation;              // 回転
 	float m_scale;                  // 大きさ
-	int m_changeTextureHandle;     // 変更するテクスチャのハンドル番号
+	int m_changeTextureHandle;      // 変更するテクスチャのハンドル番号
 	int m_handle;                   // 読み込んだモデルのハンドル
 	std::string m_fileName;         // モデルの複製パス（キャッシュ用）
 	ModelAnimation* m_animation;    // モデルアニメーションクラスのポインタ

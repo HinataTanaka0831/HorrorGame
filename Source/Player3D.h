@@ -82,7 +82,7 @@ public:
 	bool GetIsUseStopItem() const { return m_isUseStopItem; }
 
 
-	std::vector<VECTOR>& GetFootprintsRecord() { return m_footprintsRecord; } // プレイヤーの足跡を保持するコンテナを取得
+	const std::vector<VECTOR>& GetFootprintsRecord() const { return m_footprintsRecord; } // プレイヤーの足跡を保持するコンテナを取得
 
 private:
 	// 定数

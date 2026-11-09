@@ -48,9 +48,13 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	// タグ設定
 	SetTag(Object3D::TagEnemy3D);
 
+	// カメラモードをプレイヤーが操作できるように設定
+	Master::m_camera->SetCameraMode(Camera::CameraMode::PlayerControll);
+
 	// 敵のモデルによって目標地点を変更する
 	SetEnemyType(enemyType);
 
+	// ジャンプすケア用のライトを作成
 	m_scareLight = CreateDirLightHandle(VGet(0.0f, m_position.y, 0.0f));
 	SetLightDifColorHandle(m_scareLight, GetColorF(0.6f, 0.2f, 0.2f, 0.0f));
 	SetLightAmbColorHandle(m_scareLight, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
@@ -84,14 +88,14 @@ void Enemy3D::Update()
 	// 移動処理
 	Move();
 
-	// プレイヤーが敵と当たった時の処理
-	CollScare();
-
+	// 移動による回転処理
 	if (!m_isScare)
 	{
-		// 移動による回転処理
 		RotationByMove();
 	}
+
+	// プレイヤーが敵と当たった時の処理
+	CollScare();
 
 	// モデルの更新
 	if (m_model != nullptr)
@@ -99,40 +103,15 @@ void Enemy3D::Update()
 		m_model->SetPosition(m_position);
 		m_model->Update();
 	}
+
 }
 
 void Enemy3D::Draw()
 {
-	Object3D* pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
-	if (pPlayerObj == nullptr)
-	{
-		return;
-	}
-
-	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
-	if (pPlayer == nullptr)
-	{
-		return;
-	}
-
-	std::vector<VECTOR>& playerRecord = pPlayer->GetFootprintsRecord();
-
-	DrawFormatString(
-		0, 120,
-		GetColor(255, 255, 255),
-		"TrackIndex=%d Size=%d",
-		(int)m_trackIndex,
-		(int)playerRecord.size());
-
-
 	if (m_model != nullptr)
 	{
 		m_model->Draw();
 	}
-
-	// デバック表示用
-	//DrawCapsule3D(mvPosition, VAdd(mvPosition, VGet(0.0f, 150.0f, 0.0f)), 40.0f, 8, GetColor(255, 255, 255), GetColor(255, 255, 255), false);
-
 }
 
 
@@ -206,15 +185,11 @@ void Enemy3D::Move()
 		// ベクトルのサイズを取得
 		float fDistanceToPlayer = VSize(vDistanceToPlayer);
 
-
 		// プレイヤーが敵に近づいたらゲームオーバー処理を行う
-		if (fDistanceToPlayer <= 60.0f)
-			{
+		if (fDistanceToPlayer <= 80.0f)
+		{
 			// プレイヤーの移動処理を止める
 			pPlayer->SetFreeze(true);
-
-			// カメラの移動を止める
-			Master::m_camera->SetFreeze(true);
 
 			// 走らないようにする
 			m_isRun = false;
@@ -222,7 +197,7 @@ void Enemy3D::Move()
 			// ジャンプスケアを発生させる 
 			m_isScare = true;
 				
-			}
+		}
 
 		// 確認する角度
 		float visionAngle = 45.0f;
@@ -422,31 +397,22 @@ void Enemy3D::Move()
 						
 					// ゼロ除算を避けるためのチェック
 					if (VSize(toPlayer) > 0.001f)
-						{
+					{
 						// ベクトルを正規化（長さを1にする）して方向だけにする
 						toPlayer = VNorm(toPlayer);
 
-							// 敵がプレイヤーの方向を向いて向かってくるように設定
-							m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
-							m_moveVec = VNorm(m_moveVec); // 常に長さを1に保つことで、移動速度が爆発するのを防ぐ
+						// 敵がプレイヤーの方向を向いて向かってくるように設定
+						m_moveVec = VAdd(VScale(m_moveVec, 0.5f), VScale(toPlayer, 0.5f));
 
-							// 敵をプレイヤーの方向に移動させる（速度は走るスピード）
-							m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
-						}
+						// 敵をプレイヤーの方向に移動させる（速度は走るスピード）
+						m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
+					}
 
-					// ※ステージの壁を避ける（滑り抜ける）処理自体は、
-					// Move()関数の後半にある「全ヒット情報で押し出すロジック」で自動的に行われます。
-
-					// プレイヤーに直接追尾できている間は、通過したとみなして足跡を古いものから少し消しておく
-					//if (!playerRecord.empty())
-					//{
-					//		playerRecord.erase(playerRecord.begin());
-					//}
 				}
 				else
 				{
 					// プレイヤーの足跡リストを取得
-					std::vector<VECTOR>& playerRecord = pPlayer->GetFootprintsRecord();
+					const std::vector<VECTOR>& playerRecord = pPlayer->GetFootprintsRecord();
 
 
 				    // 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる
@@ -483,7 +449,6 @@ void Enemy3D::Move()
 				    		vec = VNorm(vec);
 
 							m_moveVec = vec;
-				    		m_moveVec = VNorm(m_moveVec);
 				    
 				    		// 敵を足跡の方向に移動させる
 				    		m_position = VAdd(m_position, VScale(m_moveVec, Speed * 1.8f));
@@ -500,23 +465,15 @@ void Enemy3D::Move()
 
 
 
-
-
-
-		
-
-
-			// 移動している状態であれば
-			bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
+		// 移動している状態であれば
+		bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
 		if (isMove)
 		{
-
 			// 移動方向を正規化しておく
 			m_moveVec = VNorm(m_moveVec);
 
 			// 新しい回転をセット
 			m_targetAngle = atan2f(m_moveVec.x, m_moveVec.z);
-
 		}
 
 
@@ -537,12 +494,6 @@ void Enemy3D::Move()
 			m_model->ChangeAnimation(AnimationNeutral);
 		}
 
-
-
-		// ステージとの当たり判定をする
-
-
-		
 
 }
 
@@ -611,99 +562,76 @@ void Enemy3D::CollScare()
 
 	// ジャンプスケアなら
 	if (m_isScare)
-		{
+	{
+		// カメラの注視点を敵の頭の位置に設定する
+		Master::m_camera->SetTargetPosition(m_model->GetModelFramePosition("mixamorig:Head"));
+
+		// カメラの視点を自動で敵の方に向けるようにする
+		Master::m_camera->SetCameraMode(Camera::CameraMode::AutoLook);
+
 		// ジャンプスケア中は移動ベクトルをゼロにして敵を停止させる
 		m_moveVec = VGet(0.0f, 0.0f, 0.0f);
 
 		// ジャンプスケア中は敵のアニメーションをIdle（待機）状態にする
 		m_model->ChangeAnimation(AnimationNeutral);
 
-			SetLightEnableHandle(m_scareLight, true);
+		// ジャンプスケア用のライトを点灯させる
+		SetLightEnableHandle(m_scareLight, true);
 
-			// ジャンプスケアの時間を進める
-			m_scareTimer++;
+		// ジャンプスケアの時間を進める
+		m_scareTimer++;
 
-			// SE再生
-			Master::m_soundManager->PlaySE(SoundManager::SeJumpScare);
+		// SE再生
+		Master::m_soundManager->PlaySE(SoundManager::SeJumpScare);
 
-			// カメラの座標を取得
-			VECTOR camPos = Master::m_camera->GetPosition();
+		//// カメラの座標を取得
+		VECTOR camPos = Master::m_camera->GetPosition();		
 
-			// カメラの注視点を取得
-			VECTOR camLook = Master::m_camera->GetLookAtPosition();
+		// カメラと敵の位置から距離を計算
+		VECTOR Enemydir = VSub(camPos, m_position);
 
-			// ワールド座標の上方向
-			VECTOR worldUp = VGet(0.0f, 1.0f, 0.0f);
+		// 正規化する
+		Enemydir = VNorm(Enemydir);
 
-			// カメラが向いている方向を計算
-			VECTOR camDir = VNorm(VSub(camLook, camPos));
+		// 敵のモデルが向く方向を計算
+		float angle = atan2f(Enemydir.x, Enemydir.z);
 
-			// カメラの右方向
-			VECTOR camRight = VNorm(VCross(worldUp, camDir));
+		// 回転値を設定
+		m_rotation.y = angle + DX_PI_F;
 
-			// カメラの上方向
-			VECTOR camUp = VNorm(VCross(camDir, camRight));
+		// モデルに伝える
+		m_model->SetRotation(m_rotation);
 
-			// 敵のモデルを設定する位置を計算
-			m_currentPos = camPos;
-			m_currentPos = VAdd(m_currentPos, VScale(camDir, 55.0f));
-			m_currentPos = VAdd(m_currentPos, VScale(camRight, 5.0f));
-			m_currentPos = VAdd(m_currentPos, VScale(camUp, -185.0f));
+		Master::m_camera->SetUpShake((float)m_scareTimer, (float)Utility::SCREEN_WIDTH / 500, 15.0f);
 
-			// 敵のモデルの位置を設定する
-			m_position = m_currentPos;
-			
+		// ジャンプスケアが一定時間たった場合
+		if (m_scareTimer > 100)
+		{
+			// プレイヤーの移動処理を再開する
+			pPlayer->SetFreeze(false);
 
+			// リザルトの種類をゲームオーバーに設定
+			Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);
 
-			// カメラと敵の位置から距離を計算
-			VECTOR Enemydir = VSub(camPos, m_position);
+			// リザルトシーンを呼び出す
+			Master::m_sceneManager->SetNextScene(SceneManager::SceneResult);
 
-			// 正規化する
-			Enemydir = VNorm(Enemydir);
+			// SEを止める
+			Master::m_soundManager->StopSE();
 
-			// 敵のモデルが向く方向を計算
-			float angle = atan2f(Enemydir.x, Enemydir.z);
+			// 作成したジャンプすケア用のライトを消す
+			SetLightEnableHandle(m_scareLight, false);
 
-			// 回転値を設定
-			m_rotation.y = angle + DX_PI_F;
+			// 終了
+			m_isScare = false;
 
-			// モデルに伝える
-			m_model->SetRotation(m_rotation);
-
-
-			Master::m_camera->SetUpShake((float)m_scareTimer, (float)Utility::SCREEN_WIDTH / 500, 15.0f);
-
-			// ジャンプスケアが一定時間たった場合
-			if (m_scareTimer > 100)
-			{
-				// プレイヤーの移動処理を再開する
-				pPlayer->SetFreeze(false);
-
-				// カメラの移動を再開する
-				Master::m_camera->SetFreeze(false);
-
-				// リザルトの種類をゲームオーバーに設定
-				Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);
-
-				// リザルトシーンを呼び出す
-				Master::m_sceneManager->SetNextScene(SceneManager::SceneResult);
-
-				// SEを止める
-				Master::m_soundManager->StopSE();
-
-				// 作成したジャンプすケア用のライトを消す
-				SetLightEnableHandle(m_scareLight, false);
-
-				// 終了
-				m_isScare = false;
-
-				// タイマーを初期化
-				m_scareTimer = 0;
-
-			}
-
+			// タイマーを初期化
+			m_scareTimer = 0;
 
 		}
+
+
+	}
 
 
 
