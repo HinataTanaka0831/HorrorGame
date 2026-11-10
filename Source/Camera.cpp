@@ -48,7 +48,6 @@ void Camera::Initialize()
 
 void Camera::Update()
 {
-	// マウスによる回転処理
 	UpdateRotation();
 
 	if (m_target == nullptr)

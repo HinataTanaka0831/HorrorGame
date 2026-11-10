@@ -211,7 +211,7 @@ private:
 	int m_fontSize = CreateFontToHandle(NULL, 30, -1, -1);  // フォントサイズのハンドル
 
 public:
-
+	// デストラクタ
 	~LoadingManager();
 	
 	// AddTask はロードタスクを追加する
