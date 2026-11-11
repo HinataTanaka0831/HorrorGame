@@ -8,10 +8,10 @@
 
 GameRuleScene::GameRuleScene()
 	: Scene()
-	, m_backButton(nullptr)
-	, m_textureAnimation(nullptr)
 	, DrawX(Utility::SCREEN_WIDTH / 2 - 150)
 	, BackY(900)
+	, m_backButton(nullptr)
+	, m_textureAnimation(nullptr)
 	, m_keyHandle(-1)
 	, m_keyRHandle(-1)
 	, m_keyFHandle(-1)

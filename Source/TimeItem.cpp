@@ -20,6 +20,7 @@ int  TimeItem::m_timerFontHandle   = -1;    // フォントハンドル（未作
 TimeItem::TimeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
 	:Item(initPosition)
 	, m_model(nullptr)
+
 {
 	SetTag(Object3D::TagTimeItem);
 
@@ -91,10 +92,10 @@ void TimeItem::StopTime()
 		m_waitTimer = 0;
 
 		// 全ての敵の動きを止める
-		auto eobjList = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
-		for (int i = 0; i < eobjList.size(); i++)
+		auto eObjList = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
+		for (int i = 0; i < eObjList.size(); i++)
 		{
-			auto eobj = eobjList[i];
+			auto eobj = eObjList[i];
 			if (eobj != nullptr)
 			{
 				Enemy3D* Enemy = dynamic_cast<Enemy3D*>(eobj);
@@ -123,10 +124,10 @@ void TimeItem::StopTime()
 			// -----------------------------------------
 
 			// 全ての敵の動きを再開する
-			auto eobjList = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
-			for (int i = 0; i < (int)eobjList.size(); i++)
+			auto eObjList = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DListByTag(Object3D::TagEnemy3D);
+			for (int i = 0; i < (int)eObjList.size(); i++)
 			{
-				auto eobj = eobjList[i];
+				auto eobj = eObjList[i];
 				if (eobj != nullptr)
 				{
 					Enemy3D* Enemy = dynamic_cast<Enemy3D*>(eobj);

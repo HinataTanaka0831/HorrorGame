@@ -19,21 +19,29 @@ public:
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw();
 
-	bool IsClick() const { return m_isHover && m_isClicked; }
+public:
+	bool IsClick() const { return m_isHover && m_isClicked; }  // クリックされたかどうかを取得する
 
 private:
-	InputManager& m_input;        // InputManagerのインスタンスを参照
+	// 座標関係
 	int m_x1;                     // ボタンの左上X座標
 	int m_y1;                     // ボタンの左上Y座標
 	int m_x2;                     // ボタンの右下+1X座標
 	int m_y2;                     // ボタンの右下+1Y座標
+
+	// ボタン情報関係
 	std::string m_name;           // ボタンラベル文字列
 	int m_color;                 // 通常時・ホバー時の背景色
 	int m_changeColor;           // クリック時の背景色
-	int m_fontHandle;            // ラベル描画用フォントハンドル
 	int m_stringColor;           // 文字列カラー
 	float m_scale;               // ホバー演出用拡大率
 	bool m_isHover;              // カーソルがボタン上にあるか
 	bool m_isEnabled;            // ボタンの操作有効フラグ
-	bool m_isClicked;           // クリックされたか
+
+	// ハンドル関係
+	int m_fontHandle;             // ラベル描画用フォントハンドル
+
+	// 入力関係
+	InputManager& m_input;        // InputManagerのインスタンスを参照
+	bool m_isClicked;             // クリックされたか
 };

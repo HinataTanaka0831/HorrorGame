@@ -64,9 +64,12 @@ public:        // サウンド再生系
 
 	void StopSE();
 
-private:    // メンバ変数
+private:
+	// サウンド種別関係
 	SoundBgm m_nowPlayingBgm;       // 現在再生中のBGM種別（重複再生防止用）
 	SoundSe m_nowPlayingSe;         // 直近に再生されたSE種別
+
+	// コンテナ関係
 	std::vector<std::pair<SoundBgm, int>> m_bgmHandleList;  // BGM種別とDXライブラリハンドルの対応表
 	std::vector<std::pair<SoundSe, int>> m_seHandleList;    // SE種別とDXライブラリハンドルの対応表
 };

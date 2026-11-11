@@ -30,7 +30,7 @@ public:
     // 入力: state(ステート) / 出力: モーションモデルハンドル(-1で見つからない) / 副作用: なし
     int GetAnimationHandle(AnimationState state);
 
-
+public:
     // ループ設定
     void SetLoop(bool isLoop) { m_loop = isLoop; }
     // ループ終了時に再生するモーション
@@ -44,16 +44,22 @@ public:
     bool IsLoopFinish() { return m_loopFinish; }
 
 private:
-    int m_modelHandle;                   // モデルのハンドル
-    float m_animationTime;               // 再生しているモーションの現在の再生時間
-    int m_animationIndex;                // 再生しているモーションのインデックス
-    float m_oldAnimationTime;            // 1つ前のモーション再生時間
-    int m_oldAnimationIndex;             // １つ前のモーションのインデックス
-    float m_animBlendRate;               // モーションの切り替わり度合
-    AnimationState m_state;              // 現在再生しているモーションの番号  最初は最大値にしておく
-    bool m_loop;                         // モーションをループさせるかどうか
-    AnimationState m_loopFinishState;   // ループが終わった時に再生したいモーション番号
-    bool m_loopFinish;                  // モーションループが終わったかどうか
-    // モーションデータのリスト
-    std::vector<AnimationInfo*> m_animationInfoList;
+    // ハンドル関係
+    int m_modelHandle;                                   // モデルのハンドル
+
+    // 時間関係
+    float m_animationTime;                               // 再生しているモーションの現在の再生時間
+    float m_oldAnimationTime;                            // 1つ前のモーション再生時間
+
+    // アニメーション関係
+    int m_animationIndex;                                // 再生しているモーションのインデックス
+    int m_oldAnimationIndex;                             // １つ前のモーションのインデックス
+    float m_animBlendRate;                               // モーションの切り替わり度合
+    bool m_loop;                                         // モーションをループさせるかどうか
+    bool m_loopFinish;                                   // モーションループが終わったかどうか
+    AnimationState m_state;                              // 現在再生しているモーションの番号  最初は最大値にしておく
+    AnimationState m_loopFinishState;                    // ループが終わった時に再生したいモーション番号
+
+    // コンテナ関係
+    std::vector<AnimationInfo*> m_animationInfoList;     // モーションデータのリスト
 };

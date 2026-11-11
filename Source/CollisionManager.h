@@ -3,36 +3,38 @@
 #include <string>
 #include <vector>
 
-// AABB構造体
-struct AABB
-{
-	VECTOR min; // AABBの最小座標
-	VECTOR max; // AABBの最大座標
-};
 
 // カプセル判定用の構造体
 struct Capsule
 {
-	VECTOR start; // カプセルの始点座標
-	VECTOR end;   // カプセルの終点座標
-	float radius; // カプセルの半径
+	VECTOR start = VGet(0.0f, 0.0f, 0.0f); // カプセルの始点座標
+	VECTOR end = VGet(0.0f, 0.0f, 0.0f);   // カプセルの終点座標
+	float radius = 0.0f; // カプセルの半径
 };
 
 // 階段判定用の構造体
 struct Slope
 {
-	float minX;  // 階段の最小X座標
-	float minY;  // 階段の最小Y座標
-	float minZ;  // 階段の最小Z座標
-	float maxX;  // 階段の最大X座標
-	float maxY;  // 階段の最大Y座標
-	float maxZ;  // 階段の最大Z座標
+	float minX = 0.0f;  // 階段の最小X座標
+	float minY = 0.0f;  // 階段の最小Y座標
+	float minZ = 0.0f;  // 階段の最小Z座標
+	float maxX = 0.0f;  // 階段の最大X座標
+	float maxY = 0.0f;  // 階段の最大Y座標
+	float maxZ = 0.0f;  // 階段の最大Z座標
 };
 
 
 // 球体・点同士の幾何学的当たり判定を計算する静的ユーティリティクラス
 class CollisionManager
 {
+public:
+	// AABB構造体
+	struct AABB
+	{
+		VECTOR min = VGet(0.0f, 0.0f, 0.0f); // AABBの最小座標
+		VECTOR max = VGet(0.0f, 0.0f, 0.0f); // AABBの最大座標
+	};
+
 public:
 	// シングルトンインスタンスの取得
 	// 入力: なし / 出力: CollisionManager参照 / 副作用: 初回呼び出し時に静的インスタンス生成
@@ -72,12 +74,10 @@ public:
 
 	void Draw3DLine();
 
+public:
 	const std::vector<AABB>& GetWalls() const { return m_walls; }
-
 	const std::vector<AABB>& GetFloors() const { return m_floors; }
-
 	const std::vector<AABB>& GetExitDoor() const { return m_exitDoor; }
-
 	const std::vector<Slope>& GetStairs() const { return m_stairs; }
 
 private:
@@ -96,20 +96,20 @@ private:
 	// CSVファイルから読み込んだ当たり判定情報を格納する構造体
 	struct ColliderInfo
 	{
-		std::string type = "";  // 当たり判定の種類（wall, floor, exitDoor, stairsなど）
+		std::string type = "";    // 当たり判定の種類（wall, floor, exitDoor, stairsなど）
 
-		float minX = 0.0f;      // AABBの最小X座標
-		float minY = 0.0f;      // AABBの最小Y座標
-		float minZ = 0.0f;      // AABBの最小Z座標
+		float minX = 0.0f;        // AABBの最小X座標
+		float minY = 0.0f;        // AABBの最小Y座標
+		float minZ = 0.0f;        // AABBの最小Z座標
 
-		float maxX = 0.0f;      // AABBの最大X座標
-		float maxY = 0.0f;      // AABBの最大Y座標
-		float maxZ = 0.0f;      // AABBの最大Z座標
+		float maxX = 0.0f;        // AABBの最大X座標
+		float maxY = 0.0f;        // AABBの最大Y座標
+		float maxZ = 0.0f;        // AABBの最大Z座標
 	};
 
-
-	std::vector<AABB> m_walls; // ステージの壁のAABB情報
-	std::vector<AABB> m_floors; // ステージの床のAABB情報
+	// コンテナ関係
+	std::vector<AABB> m_walls;    // ステージの壁のAABB情報
+	std::vector<AABB> m_floors;   // ステージの床のAABB情報
 	std::vector<AABB> m_exitDoor; // 脱出口のAABB情報
-	std::vector<Slope> m_stairs; // 階段のAABB情報
+	std::vector<Slope> m_stairs;  // 階段のAABB情報
 };

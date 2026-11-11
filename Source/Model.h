@@ -22,6 +22,10 @@ public:
 	Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
 	~Model();
 
+	// 外部モーションファイルの追加登録（Mixamo分割ファイル用）
+    // 入力: state(紐づけるステート), fileName(アニメーションモデルパス) / 出力: なし / 副作用: SeparateModelAnimationへの登録
+	void AddAnimation(AnimationState state, std::string fileName);
+
 	// アニメーション再生時間の進行および座標・回転の3Dモデルへの反映
 	// 入力: なし / 出力: なし / 副作用: DXライブラリモデル変換行列の更新
 	void Update();
@@ -56,36 +60,38 @@ public:
 	// 入力: frameName(フレーム名) / 出力: ワールド座標 / 副作用: なし
 	VECTOR GetModelFramePosition(std::string frameName);
 
+	// スケール取得・設定
+	void SetScale(float scale);
 
+	// 読み込んだモデルのテクスチャを変更
+	// 入力: fileName(テクスチャパス), index(変更するテクスチャ番号) / 出力: なし / 副作用: MV1SetTextureGraphHandleの実行
+	void SetTexture(std::string fileName, int index = 0);
+
+
+public:
 	VECTOR GetPosition() const { return m_position; }  // 座標取得
 	void SetPosition(VECTOR position) { m_position = position; }  // 座標設定
 
 	VECTOR GetRotation() const { return m_rotation; }  // 回転取得
 	void SetRotation(VECTOR rotation) { m_rotation = rotation; }  // 回転設定
 
-	// スケール取得・設定
-	void SetScale(float scale);
-	// 読み込んだモデルのテクスチャを変更
-	// 入力: fileName(テクスチャパス), index(変更するテクスチャ番号) / 出力: なし / 副作用: MV1SetTextureGraphHandleの実行
-	void SetTexture(std::string fileName, int index = 0);
-
-	// 外部モーションファイルの追加登録（Mixamo分割ファイル用）
-	// 入力: state(紐づけるステート), fileName(アニメーションモデルパス) / 出力: なし / 副作用: SeparateModelAnimationへの登録
-	void AddAnimation(AnimationState state, std::string fileName);
 
 private:
-	VECTOR m_position;              // 座標
-	VECTOR m_rotation;              // 回転
-	float m_scale;                  // 大きさ
-	int m_changeTextureHandle;      // 変更するテクスチャのハンドル番号
-	int m_handle;                   // 読み込んだモデルのハンドル
-	std::string m_fileName;         // モデルの複製パス（キャッシュ用）
-	ModelAnimation* m_animation;    // モデルアニメーションクラスのポインタ
-
-	// Mixamo用
-	// 分割読み込みバージョンのモデルアニメーションクラスのポインタ
-	SeparateModelAnimation* m_separateAnimation;
-
-	AttachmentModel* m_attachment;  // アタッチモデル（複数持たせたい場合は std::vector や配列で管理すると良い）
+	// Transform情報
+	VECTOR m_position;                              // 座標
+	VECTOR m_rotation;                              // 回転
+	float m_scale;                                  // 大きさ
+								                  
+	// ハンドル関係				                  
+	int m_changeTextureHandle;                      // 変更するテクスチャのハンドル番号
+	int m_handle;                                   // 読み込んだモデルのハンドル
+	std::string m_fileName;                         // モデルの複製パス（キャッシュ用）
+								                  
+	// アニメーション関係		                  
+	ModelAnimation* m_animation;                    // モデルアニメーションクラスのポインタ
+	SeparateModelAnimation* m_separateAnimation;  	// Mixamo用	: 分割読み込みバージョンのモデルアニメーションクラスのポインタ
+	
+	// アタッチメント関係
+	AttachmentModel* m_attachment;                  // アタッチモデル（複数持たせたい場合は std::vector や配列で管理すると良い）
 
 };

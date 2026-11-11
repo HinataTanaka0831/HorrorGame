@@ -54,6 +54,7 @@ public:  // メンバ関数の定義
 	// 入力: なし / 出力: なし / 副作用: 旧シーンFinalize/delete、新シーンnew/Initialize
 	void ChangeSceneIfNeeded();
 
+public:
 	// 次フレームで遷移するシーン種別の予約設定
 	// 入力: next(遷移先シーン種別) / 出力: なし / 副作用: m_nextSceneTypeの更新
 	void SetNextScene(SceneType next) { m_nextSceneType = next; }
@@ -66,20 +67,19 @@ public:  // メンバ関数の定義
 	// 入力: なし / 出力: なし / 副作用: m_quitRequestフラグのtrue化
 	void RequestQuit() { m_quitRequest = true;}
 
-
-	// ゲームループ終了要求の取得
 	bool IsQuitRequest() const { return m_quitRequest; }
-
-	// 現在シーンの取得
 	Scene* GetCurrentScene() const { return m_currentScene; }
-
-	// リザルトの種別を取得
 	ResultType GetResultType() const { return m_resultType; }
 
 private:
+	// シーン関係
 	SceneType m_sceneType;        // 現在実行中のシーン種別
 	SceneType m_nextSceneType;    // 遷移予約されている次シーン種別
+	Scene* m_currentScene;        // 現在シーンのポインタ
+
+	// リザルト関係
 	ResultType m_resultType;      // リザルト画面の種類（クリア/ゲームオーバー）
-	Scene* m_currentScene;       // 現在シーンのポインタ
-	bool m_quitRequest;          // メインループ終了フラグ
+
+	// 状態関係
+	bool m_quitRequest;           // メインループ終了フラグ
 };

@@ -7,10 +7,11 @@
 class ModelCache
 {
 public:
+	// キャッシュエントリ。参照カウントと原本ハンドルを保持
 	struct CacheEntry
 	{
-		int masterHandle = -1;
-		int refCount = 0;
+		int masterHandle = -1;   // 原本ハンドル
+		int refCount = 0;        // 残りハンドル数
 	};
 
 	// 描画・姿勢・アニメアタッチ用の独立ハンドルを返す
@@ -32,8 +33,6 @@ public:
 	static int LoadMasterIfNeeded(CacheEntry& entry, const std::string& path);
 
 private:
-
 	static std::unordered_map<std::string, CacheEntry> m_instanceMasters;
 	static std::unordered_map<std::string, CacheEntry> m_sharedMasters;
-
 };

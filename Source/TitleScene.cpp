@@ -12,14 +12,14 @@
 
 TitleScene::TitleScene() 
     : Scene()     // 基底クラスのコンストラクタを呼び出す
-	, m_playButton(nullptr)
-	, m_playRuleButton(nullptr)
-	, m_quitButton(nullptr)
-	, m_textureAnimation(nullptr)
 	, DrawX(Utility::SCREEN_WIDTH / 2 - 150)
 	, PlayY(650)
 	, PlayRuleY(750)
 	, QuitY(850)
+	, m_playButton(nullptr)
+	, m_playRuleButton(nullptr)
+	, m_quitButton(nullptr)
+	, m_textureAnimation(nullptr)
 
 {
 

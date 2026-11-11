@@ -341,11 +341,13 @@ void Player3D::MoveEx()
 	// ステージにある階段の当たり判定処理（坂による当たり判定）
 	for (const auto& stairs : CollisionManager::GetInstance().GetStairs())
 	{
+
 		if (m_position.x >= stairs.minX &&
 			m_position.x <= stairs.maxX &&
 			m_position.z >= stairs.minZ &&
 			m_position.z <= stairs.maxZ)
 		{
+
 			float t = (m_position.z - stairs.minZ) / (stairs.maxZ - stairs.minZ);
 
 			float slopeY = stairs.minY + (stairs.maxY - stairs.minY) * t;
@@ -608,47 +610,47 @@ void Player3D::ItemCollision()
 		{
 			continue;
 		}
-				if (CollisionManager::GetInstance().CheckCircleToCircle(
-					m_position,
-					60.0f,
-					StopTime->GetPosition(),
-					90.0f)
-					)
+			if (CollisionManager::GetInstance().CheckCircleToCircle(
+				m_position,
+				60.0f,
+				StopTime->GetPosition(),
+				90.0f)
+				)
+			{
+				if (!m_isGetTimeItem && !m_isGetEscapeItem)
 				{
-					if (!m_isGetTimeItem && !m_isGetEscapeItem)
-					{
-						// 近づいたら表示
-						DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), m_fontHandle);
-					}
-
-					// もしRキーを押したら
-					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
-					{
-						m_isGetTimeItem = true;
-
-
-						TimeItem* pTimeItem = dynamic_cast<TimeItem*>(StopTime);
-
-						if (pTimeItem == nullptr)
-						{
-							continue;
-						}
-
-							// 時間止めアイテムをインベントリに追加
-							AddItem(pTimeItem->stoptime);
-
-							pTimeItem->SetDeleteFlag(true);
-
-							// ItemIDを2にする
-							m_addItemID = 2;
-
-
-						
-
-
-					}
+					// 近づいたら表示
+					DrawStringToHandle(Utility::SCREEN_WIDTH / 2 - 100, 900, "R : 取得", GetColor(255, 255, 255), m_fontHandle);
 				}
-			
+
+				// もしRキーを押したら
+				if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
+				{
+					m_isGetTimeItem = true;
+
+
+					TimeItem* pTimeItem = dynamic_cast<TimeItem*>(StopTime);
+
+					if (pTimeItem == nullptr)
+					{
+						continue;
+					}
+
+						// 時間止めアイテムをインベントリに追加
+						AddItem(pTimeItem->stoptime);
+
+						pTimeItem->SetDeleteFlag(true);
+
+						// ItemIDを2にする
+						m_addItemID = 2;
+
+
+					
+
+
+				}
+			}
+		
 		
 	}
 

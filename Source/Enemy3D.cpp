@@ -15,35 +15,32 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	, RotateSpeed(0.2f)
 	, Speed(6.0f)
 	, WaitFram(60)
-	, m_model(nullptr)
-	, m_playerPos(VGet(0.0f, 0.0f, 0.0f))
+	, MaxPointCount(28)
 	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
-	, m_moveVec(VGet(0.0f, 0.0f, 0.0f))
-	, m_currentPos(VGet(0.0f, 0.0f, 0.0f))
 	, m_angle(0.0f)
 	, m_targetAngle(0.0f)
+	, m_moveVec(VGet(0.0f, 0.0f, 0.0f))
+	, m_playerPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_targetX(0.0f)
 	, m_targetY(0.0f)
 	, m_targetZ(0.0f)
 	, m_distanceX(0.0f)
 	, m_distanceY(0.0f)
 	, m_distanceZ(0.0f)
-	, m_speed(5.0f)
-	, m_avoidanceDist(0.5f)
-	, m_scareLight(0)
-	, m_count(0)
 	, m_currentPoint(0)
-	, m_maxPointCount(28)
 	, m_waitTimer(0)
-	, m_enemyType(-1)
+	, m_trackIndex(0)
+	, m_scareLightHandle(-1)
+	, m_foundPlayer(false)
+	, m_isScare(false)
 	, m_scareTimer(0)
+	, m_isRun(false)
 	, m_isWait(false)
 	, m_isback(false)
-	, m_isScare(false)
-	, m_foundPlayer(false)
-	, m_isRun(false)
 	, m_isStopItem(false)
-	, m_trackIndex(0)
+	, m_model(nullptr)
+	, m_enemyType(-1)
+
 {
 	// タグ設定
 	SetTag(Object3D::TagEnemy3D);
@@ -55,10 +52,10 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	SetEnemyType(enemyType);
 
 	// ジャンプすケア用のライトを作成
-	m_scareLight = CreateDirLightHandle(VGet(0.0f, m_position.y, 0.0f));
-	SetLightDifColorHandle(m_scareLight, GetColorF(0.6f, 0.2f, 0.2f, 0.0f));
-	SetLightAmbColorHandle(m_scareLight, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
-	SetLightEnableHandle(m_scareLight, false);
+	m_scareLightHandle = CreateDirLightHandle(VGet(0.0f, m_position.y, 0.0f));
+	SetLightDifColorHandle(m_scareLightHandle , GetColorF(0.6f, 0.2f, 0.2f, 0.0f));
+	SetLightAmbColorHandle(m_scareLightHandle, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
+	SetLightEnableHandle(m_scareLightHandle, false);
 
 
 	// Mixamo用処理
@@ -74,7 +71,7 @@ void Enemy3D::AddAnimation(AnimationState state, std::string fileName)
 
 Enemy3D::~Enemy3D()
 {
-	DeleteLightHandle(m_scareLight);
+	DeleteLightHandle(m_scareLightHandle);
 
 	if (m_model != nullptr)
 	{
@@ -177,10 +174,10 @@ void Enemy3D::Move()
 		}
 
 		// プレイヤーの座標を取得
-		m_playerPos = pPlayer->GetPosition();
+		m_playerPosition = pPlayer->GetPosition();
 
 		// プレイヤーと敵の座標の距離を計算
-		VECTOR vDistanceToPlayer = VSub(m_playerPos, m_position);
+		VECTOR vDistanceToPlayer = VSub(m_playerPosition, m_position);
 
 		// ベクトルのサイズを取得
 		float fDistanceToPlayer = VSize(vDistanceToPlayer);
@@ -206,7 +203,7 @@ void Enemy3D::Move()
 		float sight = visionAngle * DX_PI_F / 180.0f;
 
 		// プレイヤーと敵の高さの差を計算する
-		float heightDistance = (m_playerPos.y + 80.0f) - (m_position.y + 80.0f);
+		float heightDistance = (m_playerPosition.y + 80.0f) - (m_position.y + 80.0f);
 
 		// スパイク防止のためのスムージング処理
 		static float smoothHeight = 0.0f;
@@ -353,7 +350,7 @@ void Enemy3D::Move()
 						// 目標地点を全部通るまで設定した目標地点を通っていく
 						if (!m_isback)
 						{
-							m_currentPoint = (m_currentPoint + 1) % m_maxPointCount;
+							m_currentPoint = (m_currentPoint + 1) % MaxPointCount;
 						}
 						else  // 目標地点を全部通ったら通ってきた地点を戻る
 						{
@@ -390,7 +387,7 @@ void Enemy3D::Move()
 				if (isDistanceChase)
 				{
 					// プレイヤーの方向へ向かうベクトルを計算
-					VECTOR toPlayer = VSub(m_playerPos, m_position);
+					VECTOR toPlayer = VSub(m_playerPosition, m_position);
 						
 					// 高さを無視して平面で追尾するように Y を 0 にする
 					toPlayer.y = 0.0f;
@@ -576,7 +573,7 @@ void Enemy3D::CollScare()
 		m_model->ChangeAnimation(AnimationNeutral);
 
 		// ジャンプスケア用のライトを点灯させる
-		SetLightEnableHandle(m_scareLight, true);
+		SetLightEnableHandle(m_scareLightHandle, true);
 
 		// ジャンプスケアの時間を進める
 		m_scareTimer++;
@@ -620,7 +617,7 @@ void Enemy3D::CollScare()
 			Master::m_soundManager->StopSE();
 
 			// 作成したジャンプすケア用のライトを消す
-			SetLightEnableHandle(m_scareLight, false);
+			SetLightEnableHandle(m_scareLightHandle, false);
 
 			// 終了
 			m_isScare = false;

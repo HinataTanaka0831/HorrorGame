@@ -17,6 +17,8 @@ public:
 	// 入力: なし / 出力: なし / 副作用: LoadingManagerによる非同期アセット生成、Cameraインスタンス生成
 	void Initialize() override;
 
+	// ステージ・敵・アイテム生成タスクの個別実行
+	// 入力: なし / 出力: なし / 副作用: 各種3Dオブジェクトの生成および配置
 	void InitializePlayerData();
 	void InitializeEnemyData();
 	void InitializeItemData();
@@ -37,15 +39,21 @@ public:
 	void Finalize() override;
 
 private:
-	Enemy3D* m_enemy;                 // 敵キャラクターのポインタ
-	Enemy3D* m_enemy2;                // 敵キャラクターのポインタ
-	SkyBox* m_skybox;                 // スカイボックスのポインタ
+	// アイテム関係
+	struct Point
+	{
+		VECTOR PointPosition = VGet(0.0f, 0.0f, 0.0f);         // 脱出用アイテムの出現座標
+	};
+
+	// プレイヤー関係
 	int m_playerCrouchingHandle;      // プレイヤーしゃがみハンドル
 	int m_playerMoveHandle;           // プレイヤー移動ハンドル
 
-	struct Point                      // 脱出用アイテムの出現座標
-	{                   
-		VECTOR PointPosition;
-	};
+	// 敵関係
+	Enemy3D* m_enemy;                 // 敵キャラクターアニメーションを追加するためのポインタ
+	Enemy3D* m_enemy2;                // 2対目の敵キャラクターアニメーションを追加するためのポインタ
+
+	// スカイボックス関係
+	SkyBox* m_skybox;                 // スカイボックスのテクスチャと大きさを変更するためのポインタ
 
 };

@@ -34,15 +34,15 @@ public:
 	void DrawTimer();
 
 private:
+	// モデル関係
 	Model* m_model;
-	static int m_waitTimer;           // 停止タイマー（フレーム単位でカウントアップ）
-	static bool m_isTimerActive;      // タイマーが動作中かどうか
-	static int m_lastProcessedFrame;  // 最後に処理したフレーム番号（1フレーム1回処理用）
 
-	// 20秒間 × 60FPS = 1200フレーム
-	static const int WaitFrame = 1200;  // 20秒間（60FPS × 20秒）
+	// 時間関係
+	static int m_waitTimer;             // 停止タイマー（フレーム単位でカウントアップ）
+	static bool m_isTimerActive;        // タイマーが動作中かどうか
+	static const int WaitFrame = 1200;  // 20秒間（60FPS × 20秒）： 20秒間 × 60FPS = 1200フレーム
 
-	// 残り時間表示用のフォントハンドル
-	static int m_timerFontHandle;
+	// ハンドル関係
+	static int m_timerFontHandle;      	// 残り時間表示用のフォントハンドル
 
 };

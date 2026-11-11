@@ -18,6 +18,7 @@ public:
     // 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw();
 
+public:
 	// セッター関数 //
 	// ポジション設定
 	void SetPosition(VECTOR centerPosition) { m_position = centerPosition; }
@@ -25,13 +26,19 @@ public:
 	// ゲッター関数
 	// ポジション取得
 	VECTOR GetPosition() { return m_position; }
+
 	// サイズ取得
 	int GetSizeX() { return m_sizeX; }
 	int GetSizeY() { return m_sizeY; }
+	
+	// 半径取得
 	float GetRadius() { return m_radius; }
 	
 private:
+	// ハンドル関係
 	int m_handle = -1;       // 読み込んだ画像のハンドル
+
+	// 画像情報関係
 	VECTOR m_position;       // ポジション
 	int m_sizeX = 0;         // 画像の幅
 	int m_sizeY = 0;         // 画像の高さ

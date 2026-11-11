@@ -36,12 +36,17 @@ public:
 
 
 private:
-	std::unique_ptr<Button> m_playButton;                  // ゲーム本編（3Dシーン）開始ボタン
-	std::unique_ptr<Button> m_playRuleButton;              // 操作方法画面遷移ボタン
-	std::unique_ptr<Button> m_quitButton;                  // ゲーム終了ボタン
-	std::unique_ptr<TextureAnimation> m_textureAnimation;  // 砂嵐アニメーション
+	// 定数
 	const int DrawX;                                       // UIボタン配置基準X座標
 	const int PlayY;                                       // プレイボタンY座標
 	const int PlayRuleY;                                   // 操作方法ボタンY座標
 	const int QuitY;                                       // 終了ボタンY座標
+
+	// ボタン関係
+	std::unique_ptr<Button> m_playButton;                  // ゲーム本編（3Dシーン）開始ボタン
+	std::unique_ptr<Button> m_playRuleButton;              // 操作方法画面遷移ボタン
+	std::unique_ptr<Button> m_quitButton;                  // ゲーム終了ボタン
+
+	//　アニメーション関係
+	std::unique_ptr<TextureAnimation> m_textureAnimation;  // 砂嵐アニメーション
 };

@@ -48,9 +48,8 @@ public:
 	// 入力: mouseCode(マウスコード) / 出力: 離された瞬間ならtrue、それ以外はfalse / 副作用: なし
 	bool CheckReleaseMouseClick(int mouseCode);
 
-
+public:
 	bool IsMouseLocked() const { return m_isLocked; }
-
 	float GetMouseX() const { return m_mouseX; }
 	float GetMouseY() const { return m_mouseY; }
 	float GetDeltaX() const { return m_deltaX; }
@@ -73,18 +72,24 @@ private:
 	void RecenterCursor();
 
 private:
-	bool m_isLocked;             // マウスカーソル固定状態のフラグ
+	// 定数
+	const int CenterX;           // 画面中央のX座標
+	const int CenterY;           // 画面中央のY座標
+
+	// キー関係
 	int m_downBuffer[256];       // 前フレームのキー押下状態（立ち上がりエッジ検知用）
 	int m_upBuffer[256];         // 前フレームのキー押下状態（立ち下がりエッジ検知用）
+
+	// マウス移動関係
+	bool m_isLocked;             // マウスカーソル固定状態のフラグ
 	float m_mouseX;              // マウスのX移動量
 	float m_mouseY;              // マウスのY移動量
 	float m_mouseSensitivity;    // マウス移動量から回転角への変換係数
 	float m_deltaX;              // フレーム間のX軸移動差分（感度適用済み）
 	float m_deltaY;              // フレーム間のY軸移動差分（感度適用済み）
+
+	// マウス入力関係
 	int m_currentMouseInput;     // 現フレームのマウス入力ビットフラグ
 	int m_previousMouseInput;    // 前フレームのマウス入力ビットフラグ
-	const int CenterX;           // 画面中央のX座標
-	const int CenterY;           // 画面中央のY座標
-
 
 };

@@ -16,5 +16,6 @@ public:
 	void Draw() override;
 
 private:
+	// ハンドル関係
 	int m_modelHandle;      // ステージモデルのハンドル
 };

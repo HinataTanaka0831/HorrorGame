@@ -35,15 +35,6 @@ Model::Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation
 
 }
 
-void Model::AddAnimation(AnimationState state, std::string fileName)
-{
-	if (m_separateAnimation != nullptr)
-	{
-		m_separateAnimation->AddAnimation(state, fileName);
-	}
-}
-
-
 Model::~Model()
 {
 	// アニメーションクラスの破棄
@@ -78,6 +69,14 @@ Model::~Model()
 	// note : 読み込んだモデルは勝手に破棄してくれないので、必要なくなったら手動で破棄する
 	ModelCache::ReleaseInstance(m_fileName, m_handle);
 	m_handle = -1;
+}
+
+void Model::AddAnimation(AnimationState state, std::string fileName)
+{
+	if (m_separateAnimation != nullptr)
+	{
+		m_separateAnimation->AddAnimation(state, fileName);
+	}
 }
 
 void Model::Update()

@@ -26,23 +26,29 @@ public:
 
 	// アニメーションをブレンドするかどうかの設定
 	// 入力: isBlend(ブレンドするかどうか) / 出力: なし / 副作用: ブレンド率の初期化
-	void SetAnimationBlend(bool isBlend);     // アニメーションのブレンド設定
+	void SetAnimationBlend(bool isBlend);
 
+public:
 	void SetLoop(bool isLoop) { m_loop = isLoop; }  // ループ設定
 	void SetLoopFinishState(AnimationState state) { m_loopFinishState = state; }  // ループ終了時に再生するアニメーション
 
-	AnimationState GetNowState() { return m_state; }     // 現在再生されているアニメーションの取得
-	bool IsLoopFinish() { return m_loopFinish; }         // アニメーションのループが終了しているかどうか
+	AnimationState GetNowState() const { return m_state; }     // 現在再生されているアニメーションの取得
+	bool IsLoopFinish() const { return m_loopFinish; }         // アニメーションのループが終了しているかどうか
 
 private:
+	// ハンドル関係
 	int m_modelHandle;                  // モデルのハンドル
+
+	// 時間関係
 	float m_animationTime;              // 再生しているアニメーションの現在の再生時間
-	int m_animationIndex;               // 再生しているアニメーションのインデックス
 	float m_oldAnimationTime;           // 1つ前のアニメーション再生時間
+
+	// アニメーション関係
+	int m_animationIndex;               // 再生しているアニメーションのインデックス
 	int m_oldAnimationIndex;            // 1つ前のアニメーションのインデックス
 	float m_animationBlendRate;         // モーションの切り替わり度合
-	AnimationState m_state;             // 現在再生しているアニメーションの番号 
 	bool m_loop;                        // モーションをループさせるかどうか
-	AnimationState m_loopFinishState;   // ループが終わったときに再生したいアニメーション番号
 	bool m_loopFinish;                  // モーションループが終わったかどうか
+	AnimationState m_state;             // 現在再生しているアニメーションの番号 
+	AnimationState m_loopFinishState;   // ループが終わったときに再生したいアニメーション番号
 };

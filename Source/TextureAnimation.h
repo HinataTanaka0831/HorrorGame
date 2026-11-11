@@ -29,6 +29,7 @@ public:
 	void Draw();   
 
 private:
+	// アニメーション画像情報関係
 	VECTOR m_position;      // ポジション
 	int m_interval;         // テクスチャ切り替えのフレーム数
 	int m_allNum;           // テクスチャ分割数

@@ -9,6 +9,7 @@ class Object3D;
 class Camera
 {
 public:
+	// カメラの視点変更に関するモード（プレイヤー操作/自動注視）
 	enum class CameraMode
 	{
 		PlayerControll,
@@ -61,19 +62,20 @@ public:
 
 
 private:
-	Object3D* m_target;    // 追従対象（プレイヤーオブジェクト）
-
+	// カメラ座標関係
 	VECTOR m_position;        // カメラワールド座標
 	VECTOR m_lookAtPosition;   // カメラ注視点ワールド座標
 	VECTOR m_targetPosition;   // 追従対象の座標
-	VECTOR m_shakePosition;    // 画面揺れによる加算オフセット
 
+	// 視点回転角度（ラジアン）関係
 	float m_horizontalAngle;   // ヨー角（水平回転角度・ラジアン）
 	float m_verticalAngle;     // ピッチ角（垂直見渡し角度・ラジアン）
 
+	// カメラモード関係
 	CameraMode m_cameraMode;  // カメラモード（プレイヤー操作/自動注視）
 
-	// 画面揺れで使用する変数
+	// 画面揺れ関係
+	VECTOR m_shakePosition;    // 画面揺れによる加算オフセット
 	float m_shakeAngle;       // 画面揺れ正弦波用アングル
 	float m_shakeTimeCounter;  // 画面揺れ経過時間
 	float m_shakeTime;         // 画面揺れ総継続時間
@@ -81,4 +83,6 @@ private:
 	float m_shakeAngleSpeed;    // 画面揺れ振動周波数
 	float m_stepTime;          // 画面揺れ更新刻み時間
 
+	// 追従対象関係
+	Object3D* m_target;    // 追従対象（プレイヤーオブジェクト）
 };

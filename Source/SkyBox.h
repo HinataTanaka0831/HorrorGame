@@ -11,7 +11,7 @@ public:
 	// スカイボックスモデルの生成
 	// 入力: fileName(モデルパス) / 出力: なし / 副作用: Modelインスタンス生成
 	SkyBox(std::string fileName);
-	~SkyBox();					
+	~SkyBox() override;					
 
 	// モデルクラスの更新処理を呼び出す
 	// 入力: なし / 出力: なし / 副作用: Modelクラスの更新呼び出し

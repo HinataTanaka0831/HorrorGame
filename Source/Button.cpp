@@ -1,20 +1,21 @@
 ﻿#include "Button.h"
 
 Button::Button(int x1, int y1, int x2, int y2, std::string name, int color, int changeColor, int fontHandle)
-	: m_input(InputManager::GetInstance())
-	, m_x1(x1)
+	: m_x1(x1)
 	, m_y1(y1)
 	, m_x2(x2)
 	, m_y2(y2)
 	, m_name(name)
 	, m_color(color)
 	, m_changeColor(changeColor)
-	, m_fontHandle(fontHandle)
 	, m_stringColor(GetColor(255, 255, 255))
 	, m_scale(1.0f)
 	, m_isHover(false)
 	, m_isEnabled(true)
+	, m_fontHandle(fontHandle)
+	, m_input(InputManager::GetInstance())
 	, m_isClicked(false)
+
 {
 }
 

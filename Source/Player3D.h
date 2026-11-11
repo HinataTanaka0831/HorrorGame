@@ -73,6 +73,7 @@ public:
 	bool StaminaUpdate(bool isKeyProssese);    
 
 	 
+public:
 	void SetFreeze(bool freeze) { m_isFreeze = freeze; }
 	void SetUseStopItem(bool stop) { m_isUseStopItem = stop; }
 	bool GetCrouching() const { return m_isCrouching; }
@@ -80,8 +81,6 @@ public:
 	bool GetEscapeItem() const { return m_isGetEscapeItem; }
 	bool GetTimeItem() const { return m_isGetTimeItem; }
 	bool GetIsUseStopItem() const { return m_isUseStopItem; }
-
-
 	const std::vector<VECTOR>& GetFootprintsRecord() const { return m_footprintsRecord; } // プレイヤーの足跡を保持するコンテナを取得
 
 private:
@@ -96,7 +95,7 @@ private:
 	const int MaxStamina;                                   // 最大スタミナ
 	const int SplitCount;                                   // 移動の分割数
 
-	// プレイヤーの情報を保持する変数
+	// プレイヤーの情報関係
 	VECTOR m_oldPosition;                                   // 前の座標
 	VECTOR m_oldFootprintPosition;                          // プレイヤーの前回の足跡座標
 	float m_playerHeight;                                   // 高さ
@@ -105,7 +104,7 @@ private:
 	Capsule m_capsule;                                      // プレイヤーの当たり判定用の構造体
 
 								                         
-	// スタミナ関連の変数
+	// スタミナ関連
 	int m_stamina;                                          // スタミナ
 	int m_staminaX;                                         // スタミナゲージのX座標
 	int m_staminaY;                                         // スタミナゲージのY座標
@@ -128,8 +127,8 @@ private:
 	bool m_isCrouching;                                     // しゃがんでいるかどうか
 	bool m_isFreeze;                                        // フリーズさせる
 	bool m_isActiveLight;                                   // ライトを点けるかどうか
-	bool m_isGetEscapeItem;                                   // 脱出アイテムを所持しているかどうか
-	bool m_isGetTimeItem;                                     // 時間止めアイテムを所持しているかどうか
+	bool m_isGetEscapeItem;                                 // 脱出アイテムを所持しているかどうか
+	bool m_isGetTimeItem;                                   // 時間止めアイテムを所持しているかどうか
 	bool m_isUseStopItem;                                   // 時間止めアイテムを使用するかどうか
 
 	// ハンドル関係の変数

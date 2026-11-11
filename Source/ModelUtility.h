@@ -2,11 +2,6 @@
 
 #include <string>
 
-// 
-// ★New★
-// 新規追加ファイル
-//
-
 
 // アニメーションの切り替え番号
 enum AnimationState

@@ -17,9 +17,11 @@ InputManager& InputManager::GetInstance()
 
 
 InputManager::InputManager()
-	: m_isLocked(false)
-	, m_downBuffer{0}
-	, m_upBuffer{0}
+	: CenterX(Utility::SCREEN_WIDTH / 4)
+	, CenterY(Utility::SCREEN_HEIGHT / 4)
+	, m_downBuffer{ 0 }
+	, m_upBuffer{ 0 }
+	, m_isLocked(false)
 	, m_mouseX(0.0f)
 	, m_mouseY(0.0f)
 	, m_mouseSensitivity(0.004f)
@@ -27,8 +29,6 @@ InputManager::InputManager()
 	, m_deltaY(0.0f)
 	, m_currentMouseInput(0)
 	, m_previousMouseInput(0)
-	, CenterX(Utility::SCREEN_WIDTH / 4)
-	, CenterY(Utility::SCREEN_HEIGHT / 4)
 
 {
 }

@@ -4,15 +4,15 @@
 SeparateModelAnimation::SeparateModelAnimation(int modelHandle)
     : m_modelHandle(modelHandle)
     , m_animationTime(0.0f)
-    , m_animationIndex(-1)
     , m_oldAnimationTime(0.0f)
+    , m_animationIndex(-1)
     , m_oldAnimationIndex(-1)
     , m_animBlendRate(1.0f)
-    , m_state(AnimationState::AnimationMax)
     , m_loop(true)
-    , m_loopFinishState(AnimationState::AnimationMax)
     , m_loopFinish(false)
-    , m_animationInfoList{}
+    , m_state(AnimationState::AnimationMax)
+    , m_loopFinishState(AnimationState::AnimationMax)
+
 {
     // アニメーションで移動をしているフレーム番号を検索する
     int moveAnimFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Hips");

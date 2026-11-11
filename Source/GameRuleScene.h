@@ -31,14 +31,20 @@ public:
 	void Finalize() override;
 
 private:
-	std::unique_ptr<Button> m_backButton;                    // タイトルへ戻るボタン
-	std::unique_ptr<TextureAnimation> m_textureAnimation;    // 砂嵐アニメーション
+	// 定数
 	const int DrawX;                                         // ボタン配置基準X座標
 	const int BackY;                                         // 戻るボタンY座標
+
+	// ボタン関係
+	std::unique_ptr<Button> m_backButton;                    // タイトルへ戻るボタン
+	std::unique_ptr<TextureAnimation> m_textureAnimation;    // 砂嵐アニメーション
+
+	// ハンドル関係
 	int m_keyHandle;                                         // WASD移動キーアイコン
 	int m_keyRHandle;                                        // Rキーアイコン（アイテム取得）
 	int m_keyFHandle;                                        // Fキーアイコン（アイテム使用）
 	int m_keyEHandle;                                        // Eキーアイコン（しゃがみ）
 	int m_mouseHandle;                                       // マウス左クリックアイコン（ライトON/OFF）
 	int m_mouseMoveHandle;                                   // マウス移動アイコン（視点回転）
+
 };														    

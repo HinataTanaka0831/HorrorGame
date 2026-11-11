@@ -15,11 +15,11 @@
 
 Scene3D::Scene3D()
 	: Scene()
+	, m_playerCrouchingHandle(-1)
+	, m_playerMoveHandle(-1)
 	, m_enemy(nullptr)
 	, m_enemy2(nullptr)
 	, m_skybox(nullptr)
-	, m_playerCrouchingHandle(-1)
-	, m_playerMoveHandle(-1)
 
 {
 
