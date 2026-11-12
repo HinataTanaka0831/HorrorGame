@@ -165,6 +165,9 @@ void CollisionManager::LoadAABBCollisionCSV(const char* fileName)
 		std::getline(ss, token, ',');
 		info.maxZ = std::stof(token);
 
+		// 0ˆÈã‚©0ˆÈ‰º‚Ì‚Ç‚Á‚¿‚È‚Ì‚©‚ğæ“¾
+		std::getline(ss, info.direction, ',');
+
 		// “–‚½‚è”»’è—p‚ÌAABB‚ğì¬
 		AABB box;
 		box.min = { info.minX, info.minY, info.minZ };

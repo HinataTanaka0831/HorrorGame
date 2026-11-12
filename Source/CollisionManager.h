@@ -21,6 +21,7 @@ struct Slope
 	float maxX = 0.0f;  // 階段の最大X座標
 	float maxY = 0.0f;  // 階段の最大Y座標
 	float maxZ = 0.0f;  // 階段の最大Z座標
+	std::string direction = "";
 };
 
 
@@ -105,6 +106,8 @@ private:
 		float maxX = 0.0f;        // AABBの最大X座標
 		float maxY = 0.0f;        // AABBの最大Y座標
 		float maxZ = 0.0f;        // AABBの最大Z座標
+
+		std::string direction = "";
 	};
 
 	// コンテナ関係

@@ -347,8 +347,15 @@ void Player3D::MoveEx()
 			m_position.z >= stairs.minZ &&
 			m_position.z <= stairs.maxZ)
 		{
-
-			float t = (m_position.z - stairs.minZ) / (stairs.maxZ - stairs.minZ);
+			float t = 0.0f;
+			if (stairs.direction == "+")
+			{
+				t = (m_position.z - stairs.minZ) / (stairs.maxZ - stairs.minZ);
+			}
+			else
+			{
+				t = (stairs.maxZ - m_position.z) / (stairs.maxZ - stairs.minZ);
+			}
 
 			float slopeY = stairs.minY + (stairs.maxY - stairs.minY) * t;
 
