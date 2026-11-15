@@ -19,6 +19,3 @@
 ## ✨ アピールポイント・頑張ったところ
 - 敵がステージ内を巡回する処理の作成に苦労しました。
 - タイトル画面の砂嵐やジャンプスケア等を実装し、怖いと感じられるような雰囲気にできるようこだわりました。
-
-## 🌐 実行ファイルダウンロードURL（GitHub Releases）
-https://github.com/HinataTanaka0831/HorrorGame/releases/download/v1.0.0/HorrorGameExecutableFolder.zip
