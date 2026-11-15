@@ -2,8 +2,9 @@
 
 #include "Item.h"
 #include <string>
-#include "Model.h"
 #include "ItemData.h"
+
+class Model;
 
 // 校舎脱出に必要な収集対象アイテム（おふだ）クラス
 class EscapeItem : public Item

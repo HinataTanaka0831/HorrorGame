@@ -89,7 +89,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{BDFC8402-337B-4CEB-AFEE-070D71436F48}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DxLesson</RootNamespace>
+    <RootNamespace>3DGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>HorrorGame</ProjectName>
   </PropertyGroup>

@@ -5,7 +5,7 @@
 #include <vector>
 #include "ItemData.h"
 #include "Object3D.h"
-#include "Utility.h"
+#include "InputManager.h"
 #include "CollisionManager.h"
 
 
@@ -30,7 +30,13 @@ public:
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw() override; 
 
+	// プレイヤーのAABBを更新する
+	// 入力: なし / 出力: なし / 副作用: m_aabbのmin/max座標をプレイヤーの現在座標に基づいて更新
 	void UpdateAABB();
+
+	// プレイヤーのカプセル判定を更新する
+	// 入力: なし / 出力: なし / 副作用: m_capsuleのstart/end座標をプレイヤーの現在座標に基づいて更新
+	void UpdateCapsule();
 					
 	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
 	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
@@ -93,7 +99,7 @@ private:
 	const int DrawY;                                        // アイテム画像を表示するためのY座標
 	const int MaxSize;                                      // インベントリのサイズ
 	const int MaxStamina;                                   // 最大スタミナ
-	const int SplitCount;                                   // 移動の分割数
+	const int SplitCount;                               // 移動の分割数
 
 	// プレイヤーの情報関係
 	VECTOR m_oldPosition;                                   // 前の座標
@@ -101,6 +107,7 @@ private:
 	float m_playerHeight;                                   // 高さ
 	float m_distance;                                       // 距離
 	float m_speed;                                          // 速度
+	AABB m_aabb;                                            // プレイヤーの当たり判定用の構造体
 	Capsule m_capsule;                                      // プレイヤーの当たり判定用の構造体
 
 								                         
@@ -139,6 +146,10 @@ private:
 	int m_itemBoxX;                                       // アイテムをボックスに表示するためのX座標
 	int m_itemBoxY;                                       // アイテムをボックスに表示するためのY座標
 	int m_addItemID;                                      // ID を背一定する変数
+
+	// インスタンス関係の変数
+	InputManager& m_inputManagerInstance;                 // インプットマネージャーのインスタンスを保持するための変数
+	CollisionManager& m_collisionManagerInstance;         // コリジョンインスタンスを保持するための変数
 
 	//	コンテナ関係の変数
 	std::vector<ItemData>m_items;                          // アイテムデータを保持するコンテナ

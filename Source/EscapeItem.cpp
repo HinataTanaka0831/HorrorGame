@@ -1,9 +1,6 @@
 #include "EscapeItem.h"
 #include "Model.h"
 #include "Master.h"
-#include "Scene.h"
-#include "ObjectManager.h"
-#include "Exitdoor.h"
 
 int EscapeItem::m_nowNeedItem = 0;
 

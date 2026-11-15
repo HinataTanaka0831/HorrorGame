@@ -1,6 +1,5 @@
 #pragma once
 #include "DxLib.h"
-#include "Button.h"
 
 // クラスの前方宣言
 class ObjectManager;
@@ -14,7 +13,6 @@ class ObjectManager;
 // 各画面（タイトル・ゲーム本編・リザルト等）の共通インターフェースおよびオブジェクト管理基底クラス
 class Scene
 {
-
 public:
 	// シーン専任のObjectManagerインスタンス生成
 	// 入力: なし / 出力: なし / 副作用: m_objectManagerのメモリ確保

@@ -1,10 +1,8 @@
 ﻿#include "Scene3D.h"
-#include "Model.h"
 #include "Loading.h"
 #include <memory>
 #include "Master.h"
 #include "ObjectManager.h"
-#include "Camera.h"
 #include "Player3D.h"
 #include "Enemy3D.h"
 #include "Stage.h"
@@ -17,8 +15,10 @@ Scene3D::Scene3D()
 	: Scene()
 	, m_playerCrouchingHandle(-1)
 	, m_playerMoveHandle(-1)
+	, m_player(nullptr)
 	, m_enemy(nullptr)
 	, m_enemy2(nullptr)
+	, m_timeItem(nullptr)
 	, m_skybox(nullptr)
 
 {
@@ -76,7 +76,7 @@ void Scene3D::Initialize()
 void Scene3D::InitializePlayerData()
 {
 	// プレイヤーの生成
-	new Player3D(VGet(-4000.0f, 82.0f, 1700.0f));
+	m_player = new Player3D(VGet(-4000.0f, 0.0f, 1700.0f));
 }
 
 void Scene3D::InitializeEnemyData()
@@ -128,7 +128,7 @@ void Scene3D::InitializeItemData()
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4);
 
 	// 時間停止アイテムの生成
-	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
+	m_timeItem = new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
 	new TimeItem("Resource/Object/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false);
 	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false);
 
@@ -175,21 +175,14 @@ void Scene3D::Draw()
 	// 残りアイテム数の表示
 	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), m_itemFontHandle, " 残りアイテム\n  %d / 4", EscapeItem::m_nowNeedItem);
 
-	auto pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
-	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
-
-	if (pPlayer == nullptr)
-	{
-		return;
-	}
 
 	// アイテムボックスの描画
-	pPlayer->ItemBox();
+	m_player->ItemBox();
 
 	// スタミナゲージの描画
-	pPlayer->DrawStamina();
+	m_player->DrawStamina();
 
-	if (pPlayer->GetCrouching())
+	if (m_player->GetCrouching())
 	{
 		// プレイヤーのしゃがみ状態画像の表示
 		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, m_playerCrouchingHandle, true);
@@ -200,14 +193,10 @@ void Scene3D::Draw()
 		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, m_playerMoveHandle, true);
 	}
 
-	
 
-	auto pTimeItemObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagTimeItem);
-	TimeItem* pTimeItem = dynamic_cast<TimeItem*>(pTimeItemObj);
-
-	if (pTimeItem != nullptr)
+	if (m_timeItem != nullptr)
 	{
-		pTimeItem->DrawTimer();
+		m_timeItem->DrawTimer();
 	}
 
 	// Zバッファを使用する設定にする

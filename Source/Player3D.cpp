@@ -1,10 +1,8 @@
 #include "Player3D.h"
 #include "Master.h"
-#include "InputManager.h"
 #include "Scene.h"
 #include "ObjectManager.h"
 #include "Enemy3D.h"
-#include "Stage.h"
 #include "Exitdoor.h"
 #include "EscapeItem.h"
 #include "TimeItem.h"
@@ -48,6 +46,8 @@ Player3D::Player3D(VECTOR initPosition)
 	, m_itemBoxX(0)
 	, m_itemBoxY(0)
 	, m_addItemID(0)
+	, m_inputManagerInstance(InputManager::GetInstance())
+	, m_collisionManagerInstance(CollisionManager::GetInstance())
 
 {
 	// タグ設定
@@ -93,6 +93,7 @@ void Player3D::Draw()
 	// 懐中電灯のモデルを描画
 	MV1DrawModel(m_lightHandle);
 
+
 	// デバッグ表示
 	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %.2f, m_position.y : %.2f, m_position.z : %.2f", m_position.x, m_position.y, m_position.z);
 
@@ -129,23 +130,32 @@ void Player3D::Draw()
 
 void Player3D::UpdateAABB()
 {
+	// AABBのサイズをプレイヤーの幅と高さに基づいて更新
+	float width = 40.0f;
+	float height = 80.0f;
 
-	m_capsule.start = m_position;
-	m_capsule.end = VAdd(m_position, VGet(0.0f, 160.0f, 0.0f));
-	m_capsule.radius = 30.0f;
+	m_aabb.min = { m_position.x - width, m_position.y, m_position.z - width };
+	m_aabb.max = { m_position.x + width, m_position.y + height, m_position.z + width };
 }
 
+void Player3D::UpdateCapsule()
+{
+	// カプセルの始点と終点をプレイヤーの座標に基づいて更新
+	m_capsule.start = m_position;
+	m_capsule.end = VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f));
+	m_capsule.radius = 40.0f;
+}
 
 void Player3D::MoveEx()
 {
-	//  前回の座標を更新
-	m_oldPosition = m_position;
-
 	// フリーズさせる
 	if (m_isFreeze)
 	{
 		return;
 	}
+
+	//  前回の座標を更新
+	m_oldPosition = m_position;
 
 	VECTOR moveVec = VGet(0.0f, 0.0f, 0.0f);         // 移動方向
 	VECTOR upMoveVector = VGet(0.0f, 0.0f, 0.0f);    // カメラの上方向（奥方向）ベクトル
@@ -173,26 +183,25 @@ void Player3D::MoveEx()
 	// プレイヤーのしゃがみ状態の変更処理
 	PlayerSquat();
 
-	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_A))  // 左方向
+	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_A))  // 左方向
 	{
 		moveVec = VAdd(moveVec, leftMoveVector);
 	}
 
-	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_D))  // 右方向
+	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_D))  // 右方向
 	{
 		moveVec = VAdd(moveVec, VScale(leftMoveVector, -1.0f)); // VScale...掛け算　-1.0fを掛けて反転している
 	}
 
-	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_W))  // 奥方向
+	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_W))  // 奥方向
 	{
 		moveVec = VAdd(moveVec, upMoveVector);
 	}
 
-	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_S))  // 手前方向
+	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_S))  // 手前方向
 	{
 		moveVec = VAdd(moveVec, VScale(upMoveVector, -1.0f));
 	}
-
 
 
 	// 移動している状態であれば
@@ -205,7 +214,7 @@ void Player3D::MoveEx()
 
 
 	// 走る処理
-	if (StaminaUpdate(InputManager::GetInstance().CheckPressKey(KEY_INPUT_LSHIFT)))
+	if (StaminaUpdate(m_inputManagerInstance.CheckPressKey(KEY_INPUT_LSHIFT)))
 	{
 		// 走り状態かつ動いている状態なら
 		// プレイヤーの速度を*3.0fにして、走っているスピードに合わせるように足音を再生させる
@@ -248,10 +257,8 @@ void Player3D::MoveEx()
 	{
 		m_footprintsRecord.erase(m_footprintsRecord.begin());
 	}
-
 	// ベクトルのサイズを取得・距離を計測
 	m_distance = VSize(VSub(m_position, m_oldFootprintPosition));
-
 	// 距離が一定距離以上なら
 	// プレイヤーの座標を保存して、古い足跡座標を更新する
 	if (m_distance >= 15.0f)
@@ -261,156 +268,176 @@ void Player3D::MoveEx()
 	}
 
 
-
-	// 移動処理を分割して行うことで、壁にめり込むのを防ぐ
-	for (int i = 0; i < 4; i++)
-	{
-		// プレイヤーの座標を更新
-		m_position = VAdd(m_position, VScale(moveVec, m_speed / 4));
-
-
-		// 移動処理の後にプレイヤーのAABB判定を更新させる
-		UpdateAABB();
-
-
-		//---- ステージとの当たり判定 ----//
-		auto pStageObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
-		if (pStageObj == nullptr)
+	//---- ステージとプレイヤーの当たり判定処理  -----//
+	    int wallnum = 0;
+		// 移動処理を分割して行うことで、壁にめり込むのを防ぐ
+		for (int i = 0; i < SplitCount; i++)
 		{
-			return;
-		}
-
-		Stage* pStage = dynamic_cast<Stage*>(pStageObj);
-		if (pStage == nullptr)
-		{
-			return;
-		}
-
-		const auto& getWall = CollisionManager::GetInstance().GetWalls();
-
-		for (const auto& wall : getWall)
-		{
-			// AABB判定が行われたら、プレイヤーと壁の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
-			// 壁に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
-			if (CollisionManager::GetInstance().CheckCapsuleAABB(m_capsule, wall))
-			{
-				VECTOR playerCenter = VGet((m_capsule.start.x + m_capsule.end.x) * 0.5f, 0.0f, (m_capsule.start.z + m_capsule.end.z) * 0.5f);
-				VECTOR wallCenter = VGet((wall.min.x + wall.max.x) * 0.5f, 0.0f, (wall.min.z + wall.max.z) * 0.5f);
-
-				// 壁の中心から見てプレイヤーがどっち側にいるのかを取得するためのベクトルを求める。
-				// 壁の中心からプレイヤーの中心への方向ベクトル
-				VECTOR directionToPlayer = VSub(playerCenter, wallCenter);
-
-				// プレイヤーが壁にどれだけめり込んだのかを求める
-				float overlapX = min(m_capsule.end.x, wall.max.x) - max(m_capsule.start.x, wall.min.x);
-				float overlapZ = min(m_capsule.end.z, wall.max.z) - max(m_capsule.start.z, wall.min.z);
-
-				VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
-				// 最も少ない移動で壁の外に出られる方向を求めるために、X軸方向の侵入量とZ軸方向の侵入量を比較して、少ない方の法線を取得する
-				if (overlapX < overlapZ)
-				{
-					normal.x = (directionToPlayer.x > 0.0f) ? 1.0f : -1.0f;
-				}
-				else
-				{
-					normal.z = (directionToPlayer.z > 0.0f) ? 1.0f : -1.0f;
-				}
+			// プレイヤーの座標を更新
+            m_position = VAdd(m_position, VScale(moveVec, m_speed / SplitCount));
+			//m_position = VAdd(m_position, VScale(moveVec, m_speed));
 
 
-				VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
-				// 移動方向ベクトルと取得した衝突法線との内積を求める
-				float dot = VDot(moveVec, normal);
-				//　壁沿いベクトルの計算
-				wallSlider = VSub(moveVec, VScale(normal, dot));
-				// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
-				wallSlider = VNorm(wallSlider);
-				m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
-
-				// ステージに当たった後にもう一度プレイヤーのAABB判定を更新させる
-				UpdateAABB();
-
-				break;
-			}
-
-		}
-
-
-	}
-
-
-	// ステージにある階段の当たり判定処理（坂による当たり判定）
-	for (const auto& stairs : CollisionManager::GetInstance().GetStairs())
-	{
-
-		if (m_position.x >= stairs.minX &&
-			m_position.x <= stairs.maxX &&
-			m_position.z >= stairs.minZ &&
-			m_position.z <= stairs.maxZ)
-		{
-			float t = 0.0f;
-			if (stairs.direction == "+")
-			{
-				t = (m_position.z - stairs.minZ) / (stairs.maxZ - stairs.minZ);
-			}
-			else
-			{
-				t = (stairs.maxZ - m_position.z) / (stairs.maxZ - stairs.minZ);
-			}
-
-			float slopeY = stairs.minY + (stairs.maxY - stairs.minY) * t;
-
-			m_position.y = slopeY;
-		}
-	}
-
-
-	// 脱出口との当たり判定をする
-	const auto& getExitDoor = CollisionManager::GetInstance().GetExitDoor();
-
-	for (const auto& exitDoor : getExitDoor)
-	{
-		// AABB判定が行われたら、プレイヤーと脱出口の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
-		// 脱出口に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
-		if (CollisionManager::GetInstance().CheckCapsuleAABB(m_capsule, exitDoor))
-		{
-			VECTOR playerCenter = VGet((m_capsule.start.x + m_capsule.end.x) * 0.5f, 0.0f, (m_capsule.start.z + m_capsule.end.z) * 0.5f);
-			VECTOR exitDoorCenter = VGet((exitDoor.min.x + exitDoor.max.x) * 0.5f, 0.0f, (exitDoor.min.z + exitDoor.max.z) * 0.5f);
-
-			// 脱出口の中心から見てプレイヤーがどっち側にいるのかを取得するためのベクトルを求める。
-			VECTOR directionToPlayer = VSub(playerCenter, exitDoorCenter);
-
-			// 脱出口にどれだけめり込んだのかを求める
-			float overlapX = min(m_capsule.end.x, exitDoor.max.x) - max(m_capsule.start.x, exitDoor.min.x);
-			float overlapZ = min(m_capsule.end.z, exitDoor.max.z) - max(m_capsule.start.z, exitDoor.min.z);
-
-			// 最も少ない移動で当たり判定の外に出られる方向を求めるために侵入量を比較して、値が少ないほうの法線を取得する。
-			VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
-			if (overlapX < overlapZ)
-			{
-				normal.x = (directionToPlayer.x > 0.0f) ? overlapX : -overlapX;
-			}
-			else
-			{
-				normal.z = (directionToPlayer.z > 0.0f) ? overlapZ : -overlapZ;
-			}
-
-
-			VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
-			// 移動方向ベクトルと取得した衝突法線との内積を求める
-			float dot = VDot(moveVec, normal);
-			//　壁沿いベクトルの計算
-			wallSlider = VSub(moveVec, VScale(normal, dot));
-			// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
-			wallSlider = VNorm(wallSlider);
-			m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
-
-
-			// 脱出口に当たった後にもう一度プレイヤーのAABB判定を更新させる
+			// 移動処理の後にプレイヤーのAABB判定を更新させる
 			UpdateAABB();
+			// 移動処理の後にプレイヤーのカプセル判定を更新させる
+			UpdateCapsule();
 
-			break;
+
+			//---- ステージ（壁）との当たり判定 ----//
+
+			for (const auto& wall : m_collisionManagerInstance.GetWalls())
+			{
+
+				// AABB判定が行われたら、プレイヤーと壁の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
+				// 壁に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
+				if (m_collisionManagerInstance.CheckAABB(m_aabb, wall))
+				{
+					// 当たった壁の枚数を数える
+					wallnum++;
+
+					// プレイヤーが壁にどれだけめり込んだのかを求める
+					float overlapX = min(m_aabb.max.x, wall.max.x) - max(m_aabb.min.x, wall.min.x);
+					float overlapZ = min(m_aabb.max.z, wall.max.z) - max(m_aabb.min.z, wall.min.z);
+
+					VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
+
+					// 最も少ない移動で壁の外に出られる方向を求めるために、X軸方向の侵入量とZ軸方向の侵入量を比較して、少ない方の法線を取得する
+					if (overlapX < overlapZ)
+					{
+						normal.x = (moveVec.x > 0.0f) ? 1.0f : -1.0f;
+					}
+					else
+					{
+						normal.z = (moveVec.z > 0.0f) ? 1.0f : -1.0f;
+					}
+
+					VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
+					// 移動方向ベクトルと取得した衝突法線との内積を求める
+					float dot = VDot(moveVec, normal);
+					//　壁沿いベクトルの計算
+					wallSlider = VSub(moveVec, VScale(normal, dot));
+					// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
+					wallSlider = VNorm(wallSlider);
+					wallSlider.y = 0.0f;
+
+					// 当たった壁の枚数が2枚以上なら移動を止めて、それ以外ならスライド処理を行う
+					if (wallnum > SplitCount)
+					{
+						m_position = m_oldPosition;
+					}
+					else
+					{
+						m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
+					}
+
+					// ステージに当たった後にもう一度プレイヤーのAABB判定を更新させる
+					UpdateAABB();
+
+				}
+
+
+			}
+
+
+			// ステージにある「階段」の当たり判定処理（坂による当たり判定）
+			for (const auto& stairs : m_collisionManagerInstance.GetStairs())
+			{
+					float t = 0.0f;
+					// 階段の方向に応じて、プレイヤーの座標を階段の傾斜に沿って補正する
+					if (stairs.direction == "+")
+					{
+						t = (m_position.z - stairs.min.z) / (stairs.max.z - stairs.min.z);
+					}
+					else
+					{
+						t = (stairs.max.z - m_position.z) / (stairs.max.z - stairs.min.z);
+					}
+
+					// tの値を0.0fから1.0fの範囲に制限する
+					if (t < 0.0f)
+					{
+						t = 0.0f;
+					}
+					if (t > 1.0f)
+					{
+						t = 1.0f;
+					}
+
+					// 階段の範囲内にプレイヤーがいる場合のみ、Y座標を補正する
+					if (m_position.x >= stairs.min.x &&
+						m_position.x <= stairs.max.x &&
+						m_position.z >= stairs.min.z &&
+						m_position.z <= stairs.max.z)
+					{
+
+						float slopeY = stairs.min.y + (stairs.max.y - stairs.min.y) * t;
+
+						m_position.y = slopeY;
+
+					}
+
+			}
+
+
+
+			// ステージにある「脱出口」との当たり判定をする
+			for (const auto& exitDoor : m_collisionManagerInstance.GetExitDoor())
+			{
+				// AABB判定が行われたら、プレイヤーと脱出口の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
+				// 脱出口に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
+				if (m_collisionManagerInstance.CheckAABB(m_aabb, exitDoor))
+				{
+					// 脱出口にどれだけめり込んだのかを求める
+					float overlapX = min(m_aabb.max.x, exitDoor.max.x) - max(m_aabb.min.x, exitDoor.min.x);
+					float overlapZ = min(m_aabb.max.z, exitDoor.max.z) - max(m_aabb.min.z, exitDoor.min.z);
+
+					// 最も少ない移動で当たり判定の外に出られる方向を求めるために侵入量を比較して、値が少ないほうの法線を取得する。
+					VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
+					if (overlapX < overlapZ)
+					{
+						normal.x = (moveVec.x > 0.0f) ? 1.0f : -1.0f;
+					}
+					else
+					{
+						normal.z = (moveVec.z > 0.0f) ? 1.0f : -1.0f;
+					}
+
+
+					VECTOR doorSlider = VGet(0.0f, 0.0f, 0.0f);
+					// 移動方向ベクトルと取得した衝突法線との内積を求める
+					float dot = VDot(moveVec, normal);
+					//　壁沿いベクトルの計算
+					doorSlider = VSub(moveVec, VScale(normal, dot));
+					// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
+					doorSlider = VNorm(doorSlider);
+					doorSlider.y = 0.0f;
+					m_position = VAdd(m_oldPosition, VScale(doorSlider, m_speed));
+
+					// 脱出口に当たった後にもう一度プレイヤーのAABB判定を更新させる
+					UpdateAABB();
+				}
+			}
+
+			// ステージの「床」との当たり判定処理
+			for (const auto& floors : m_collisionManagerInstance.GetFloors())
+			{
+					bool insideX = m_position.x >= floors.min.x && m_position.z <= floors.max.x;
+					bool insideZ = m_position.z >= floors.min.z && m_position.z <= floors.max.z;
+
+					float footY = m_position.y - m_playerHeight;
+
+					if (insideX && insideZ && footY <= floors.max.y)
+					{
+						m_position.y = floors.max.y + m_playerHeight;
+					}
+
+			}
+
 		}
-	}
+
+
+		
 
 
 
@@ -421,7 +448,7 @@ void Player3D::MoveEx()
 void Player3D::PlayerSquat()
 {
 	// Eキーを押した場合
-	if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_E))
+	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_E))
 	{
 		// しゃがみ状態
 		m_isCrouching = true;
@@ -507,43 +534,39 @@ void Player3D::HaveLight()
 
 
 	Object3D* Eobj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagEnemy3D);
-	if (Eobj != nullptr)
+	if (Eobj == nullptr)
 	{
-		Enemy3D* Ene = dynamic_cast<Enemy3D*>(Eobj);
-		if (Ene != nullptr)
-		{
-			bool getScare = Ene->GetScare();
-
-			if (getScare)
-			{
-				m_isActiveLight = false;
-			}
-
-
-
-
-			if (InputManager::GetInstance().CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
-			{
-				// ライトを点ける
-				m_isActiveLight = true;
-			}
-
-
-			// ライトが照らされていたら
-			if (GetLightEnable() == TRUE && !getScare)
-			{
-				if (InputManager::GetInstance().CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
-				{
-					// ライトを消す
-					m_isActiveLight = false;
-				}
-
-			}
-
-
-		}
+		return;
+	}
+	Enemy3D* Ene = dynamic_cast<Enemy3D*>(Eobj);
+	if (Ene != nullptr)
+	{
+		return;
 	}
 
+
+	bool getScare = Ene->GetScare();
+	if (getScare)
+	{
+		m_isActiveLight = false;
+	}
+
+	if (m_inputManagerInstance.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
+	{
+		// ライトを点ける
+		m_isActiveLight = true;
+	}
+
+	// ライトが照らされていたら
+	if (GetLightEnable() == TRUE && !getScare)
+	{
+		if (m_inputManagerInstance.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
+		{
+			// ライトを消す
+			m_isActiveLight = false;
+		}
+
+	}
 
 }
 
@@ -563,7 +586,7 @@ void Player3D::ItemCollision()
 		}
 
 				// 当たり判定
-				if (CollisionManager::GetInstance().CheckCircleToCircle(
+				if (m_collisionManagerInstance.CheckCircleToCircle(
 					m_position,
 					60.0f,
 					Escape->GetPosition(),
@@ -578,7 +601,7 @@ void Player3D::ItemCollision()
 					}
 
 					// Rキーを押した場合
-					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
+					if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_R))
 					{
 						m_isGetEscapeItem = true;
 
@@ -617,7 +640,7 @@ void Player3D::ItemCollision()
 		{
 			continue;
 		}
-			if (CollisionManager::GetInstance().CheckCircleToCircle(
+			if (m_collisionManagerInstance.CheckCircleToCircle(
 				m_position,
 				60.0f,
 				StopTime->GetPosition(),
@@ -631,7 +654,7 @@ void Player3D::ItemCollision()
 				}
 
 				// もしRキーを押したら
-				if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_R))
+				if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_R))
 				{
 					m_isGetTimeItem = true;
 
@@ -681,7 +704,7 @@ void Player3D::UseItem()
 				return;
 			}
 				// 当たり判定
-				if (CollisionManager::GetInstance().CheckCircleToCircle(
+				if (m_collisionManagerInstance.CheckCircleToCircle(
 					m_position,
 					100.0f,
 					ExitDoor->GetPosition(),
@@ -695,7 +718,7 @@ void Player3D::UseItem()
 					}
 
 					// Fキーを押した場合
-					if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_F))
+					if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_F))
 					{
 						LoseItem();
 
@@ -716,7 +739,7 @@ void Player3D::UseItem()
 	}
 	if (m_addItemID == 2)
 	{
-		if (InputManager::GetInstance().CheckPressKey(KEY_INPUT_F))
+		if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_F))
 		{
 			if (!m_isUseStopItem)
 			{
@@ -880,5 +903,3 @@ bool Player3D::StaminaUpdate(bool isKeyProsses)
 	}
 
 }
-
-

@@ -3,7 +3,9 @@
 #include "DxLib.h"
 #include "Scene.h"
 
+class Player3D;
 class Enemy3D;
+class TimeItem;
 class SkyBox;
 
 // 3Dホラーゲーム本編のステージ構築、ローディング、HUD描画を統括するシーンクラス
@@ -50,8 +52,10 @@ private:
 	int m_playerMoveHandle;           // プレイヤー移動ハンドル
 
 	// 敵関係
+	Player3D* m_player;               // プレイヤーのポインタ
 	Enemy3D* m_enemy;                 // 敵キャラクターアニメーションを追加するためのポインタ
 	Enemy3D* m_enemy2;                // 2対目の敵キャラクターアニメーションを追加するためのポインタ
+	TimeItem* m_timeItem;             // 時間止めアイテムのポインタ
 
 	// スカイボックス関係
 	SkyBox* m_skybox;                 // スカイボックスのテクスチャと大きさを変更するためのポインタ

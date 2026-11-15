@@ -81,6 +81,18 @@ bool CollisionManager::CheckPointToCircle(
 	return false;
 }
 
+bool CollisionManager::CheckAABB(
+	const AABB& a,
+	const AABB& b
+)
+{
+
+	return (a.min.x <= b.max.x && a.max.x >= b.min.x) &&
+		(a.min.y <= b.max.y && a.max.y >= b.min.y) &&
+		(a.min.z <= b.max.z && a.max.z >= b.min.z);
+
+}
+
 
 bool CollisionManager::CheckCapsuleAABB(
 	const Capsule& capsule,
@@ -172,21 +184,18 @@ void CollisionManager::LoadAABBCollisionCSV(const char* fileName)
 		AABB box;
 		box.min = { info.minX, info.minY, info.minZ };
 		box.max = { info.maxX, info.maxY, info.maxZ };
-
-		// 階段（坂）用の情報を作成
-		Slope slope;
-		slope.minX = info.minX;
-		slope.minY = info.minY;
-		slope.minZ = info.minZ;
-		slope.maxX = info.maxX;
-		slope.minY = info.maxY;
-		slope.maxZ = info.maxZ;
+		box.direction = info.direction;
 
 		// 当たり判定の種類ごとにコンテナに情報を格納
 		if (info.type == "Wall")
 		{
 			// 壁の当たり判定情報を追加
 			m_walls.push_back(box);
+		}
+		else if (info.type == "Floor")
+		{
+			// 床の当たり判定情報を追加
+			m_floors.push_back(box);
 		}
 		else if (info.type == "ExitDoor")
 		{
@@ -196,7 +205,7 @@ void CollisionManager::LoadAABBCollisionCSV(const char* fileName)
 		else if (info.type == "Stairs")
 		{
 			// 階段（坂）の当たり判定情報を追加
-			m_stairs.push_back(slope);
+			m_stairs.push_back(box);
 		}
 	}
 	// ファイルを閉じる
@@ -213,6 +222,11 @@ void CollisionManager::Draw3DLine()
 
 	}
 
+	for (const auto& floors : m_floors)
+	{
+		DrawCube3D(floors.min, floors.max, GetColor(255, 230, 200), GetColor(255, 230, 200), false);
+	}
+
 	for (const auto& exitDoor : m_exitDoor)
 	{
 		DrawCube3D(exitDoor.min, exitDoor.max, GetColor(0, 0, 255), GetColor(0, 0, 255), false);
@@ -220,8 +234,6 @@ void CollisionManager::Draw3DLine()
 
 	for (const auto& stair : m_stairs)
 	{
-		VECTOR min = VGet(stair.minX, stair.minY, stair.minZ);
-		VECTOR max = VGet(stair.maxX, stair.maxY, stair.maxZ);
-		DrawCube3D(min, max, GetColor(0, 255, 0), GetColor(0, 255, 0), false);
+		DrawCube3D(stair.min, stair.max, GetColor(0, 255, 0), GetColor(0, 255, 0), false);
 	}
 }
