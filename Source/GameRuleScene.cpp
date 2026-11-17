@@ -58,7 +58,7 @@ void GameRuleScene::Initialize()
 
 	if (m_mouseMoveHandle == -1)
 	{
-		m_mouseMoveHandle = LoadGraph("Resource/UI/playRule_MouseMove_UI.png");
+		m_mouseMoveHandle = LoadGraph("Resource/UI/ui_ruleMouseMove.png");
 	}
 
 
@@ -122,9 +122,9 @@ void GameRuleScene::Draw()
 	DrawExtendGraph(1185, 230, 1185 + 225 / 2, 230 + 214 / 2, m_keyFHandle, true);
 
 	DrawExtendGraph(1545, 230, 1545 + 210 / 2, 230 + 215 / 2, m_keyEHandle, true);
-	DrawExtendGraph(440, 530, 440 + 400 / 3, 530 + 660 / 3, m_mouseHandle, true);
+	DrawExtendGraph(440, 530, 440 + 400 / 3, 530 + 666 / 3, m_mouseHandle, true);
 
-	DrawGraph(1095, 420, m_mouseMoveHandle, true);
+	DrawExtendGraph(1090, 420, 1080 + 1100 / 3, 420 + 1100 / 3, m_mouseMoveHandle, true);
 
 
 	// 文字列の表示
@@ -134,7 +134,7 @@ void GameRuleScene::Draw()
 
 	DrawStringToHandle(350, 760, "ライトのON/OFF", GetColor(255, 255, 255), m_fontSize50);
 
-	DrawStringToHandle(1165, 920, "視点移動", GetColor(255, 255, 255), m_fontSize50);
+	DrawStringToHandle(1160, 770, "視点移動", GetColor(255, 255, 255), m_fontSize50);
 
 
 	// 戻るボタンの表示
