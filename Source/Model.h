@@ -20,6 +20,9 @@ public:
 	// 3Dモデルのロードおよび通常/分割アニメーションコントローラの生成
 	// 入力: fileName(モデルファイルパス), initPosition(初期配置座標), isSeparateAnimation(外部分割アニメーションを使用するか) / 出力: なし / 副作用: MV1LoadModelおよびアニメーションクラス生成
 	Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
+
+	// 3Dモデルおよび通常/分割アニメーション等の解放
+	// 入力: なし / 出力: なし / 副作用: 生成したモデルやテクスチャ、アニメーションを解放する
 	~Model();
 
 	// 外部モーションファイルの追加登録（Mixamo分割ファイル用）
@@ -36,8 +39,10 @@ public:
 
 	// 指定アニメーションステートへの切り替え
 	// 入力: state(変更先ステート) / 出力: なし / 副作用: アニメーションコントローラのステート変更
-	void ChangeAnimation(AnimationState state);	// ループ設定
+	void ChangeAnimation(AnimationState state);
 
+	// 3Dモデルのアニメーションのループ設定
+	// 入力: loop(ループするかどうか) / 出力: なし / 副作用: ループ設定関数の呼び出し
 	void SetLoop(bool loop);
 	void SetLoopFinishState(AnimationState state);
 	// アニメーションのブレンド設定
@@ -69,11 +74,14 @@ public:
 
 
 public:
-	VECTOR GetPosition() const { return m_position; }  // 座標取得
-	void SetPosition(VECTOR position) { m_position = position; }  // 座標設定
-
-	VECTOR GetRotation() const { return m_rotation; }  // 回転取得
-	void SetRotation(VECTOR rotation) { m_rotation = rotation; }  // 回転設定
+	// 座標取得
+	VECTOR GetPosition() const { return m_position; }
+	// 座標設定
+	void SetPosition(VECTOR position) { m_position = position; }
+	// 回転取得
+	VECTOR GetRotation() const { return m_rotation; }
+	// 回転設定
+	void SetRotation(VECTOR rotation) { m_rotation = rotation; }
 
 
 private:
@@ -89,7 +97,7 @@ private:
 								                  
 	// アニメーション関係		                  
 	ModelAnimation* m_animation;                    // モデルアニメーションクラスのポインタ
-	SeparateModelAnimation* m_separateAnimation;  	// Mixamo用	: 分割読み込みバージョンのモデルアニメーションクラスのポインタ
+	SeparateModelAnimation* m_separateAnimation;  	// 分割読み込みバージョンのモデルアニメーションクラスのポインタ(Mixamo用)
 	
 	// アタッチメント関係
 	AttachmentModel* m_attachment;                  // アタッチモデル（複数持たせたい場合は std::vector や配列で管理すると良い）

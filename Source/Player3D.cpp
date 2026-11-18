@@ -180,7 +180,7 @@ void Player3D::MoveEx()
 		leftMoveVector = VNorm(leftMoveVector);
 	}
 
-	// プレイヤーのしゃがみ状態の変更処理
+	// プレイヤーのしゃがみ状態の変更処理を更新
 	PlayerSquat();
 
 	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_A))  // 左方向
@@ -212,8 +212,9 @@ void Player3D::MoveEx()
 		moveVec = VNorm(moveVec);
 	}
 
-
+	// ------------------------
 	// 走る処理
+	// ------------------------
 	if (StaminaUpdate(m_inputManagerInstance.CheckPressKey(KEY_INPUT_LSHIFT)))
 	{
 		// 走り状態かつ動いている状態なら
@@ -250,8 +251,9 @@ void Player3D::MoveEx()
 		}
 	}
 
-
-	//---- 足跡の記録処理 ----//
+	// ------------------------
+	// 足跡の記録処理 
+	// -----------------------
     // 足跡リストが200より大きくなったら古いものから消していく
 	if (m_footprintsRecord.size() > 200)
 	{
@@ -267,8 +269,9 @@ void Player3D::MoveEx()
 		m_oldFootprintPosition = m_position;
 	}
 
-
-	//---- ステージとプレイヤーの当たり判定処理  -----//
+	// -----------------------------------------
+	// ステージとプレイヤーの当たり判定処理
+	// -----------------------------------------
 	    int wallnum = 0;
 		// 移動処理を分割して行うことで、壁にめり込むのを防ぐ
 		for (int i = 0; i < SplitCount; i++)
@@ -284,8 +287,7 @@ void Player3D::MoveEx()
 			UpdateCapsule();
 
 
-			//---- ステージ（壁）との当たり判定 ----//
-
+			// ステージにある「壁」との当たり判定処理
 			for (const auto& wall : m_collisionManagerInstance.GetWalls())
 			{
 
@@ -301,7 +303,6 @@ void Player3D::MoveEx()
 					float overlapZ = min(m_aabb.max.z, wall.max.z) - max(m_aabb.min.z, wall.min.z);
 
 					VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
-
 					// 最も少ない移動で壁の外に出られる方向を求めるために、X軸方向の侵入量とZ軸方向の侵入量を比較して、少ない方の法線を取得する
 					if (overlapX < overlapZ)
 					{
@@ -340,7 +341,7 @@ void Player3D::MoveEx()
 			}
 
 
-			// ステージにある「階段」の当たり判定処理（坂による当たり判定）
+			// ステージにある「階段」との当たり判定処理（坂による当たり判定）
 			for (const auto& stairs : m_collisionManagerInstance.GetStairs())
 			{
 					float t = 0.0f;
@@ -370,18 +371,15 @@ void Player3D::MoveEx()
 						m_position.z >= stairs.min.z &&
 						m_position.z <= stairs.max.z)
 					{
-
 						float slopeY = stairs.min.y + (stairs.max.y - stairs.min.y) * t;
-
 						m_position.y = slopeY;
-
 					}
 
 			}
 
 
 
-			// ステージにある「脱出口」との当たり判定をする
+			// ステージにある「脱出口」との当たり判定処理
 			for (const auto& exitDoor : m_collisionManagerInstance.GetExitDoor())
 			{
 				// AABB判定が行われたら、プレイヤーと脱出口の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
@@ -422,24 +420,22 @@ void Player3D::MoveEx()
 			// ステージの「床」との当たり判定処理
 			for (const auto& floors : m_collisionManagerInstance.GetFloors())
 			{
-					bool insideX = m_position.x >= floors.min.x && m_position.z <= floors.max.x;
-					bool insideZ = m_position.z >= floors.min.z && m_position.z <= floors.max.z;
+				// プレイヤーの座標が床の設定した幅上にいるかどうかを確認
+				bool insideX = m_position.x >= floors.min.x && m_position.z <= floors.max.x;
+				bool insideZ = m_position.z >= floors.min.z && m_position.z <= floors.max.z;
 
-					float footY = m_position.y - m_playerHeight;
+				// プレイヤーの足元座標を出力
+				float footY = m_position.y - m_playerHeight;
 
-					if (insideX && insideZ && footY <= floors.max.y)
-					{
-						m_position.y = floors.max.y + m_playerHeight;
-					}
+				// プレイヤーが床の幅上におり、足元のY座標が当たり判定のY座標以下ならプレイヤーのY座標を床に合わせる
+				if (insideX && insideZ && footY <= floors.max.y)
+				{
+					m_position.y = floors.max.y + m_playerHeight;
+				}
 
 			}
 
 		}
-
-
-		
-
-
 
 }
 
@@ -545,24 +541,24 @@ void Player3D::HaveLight()
 	}
 
 
+	// ジャンプすケア状態の場合プレイヤーのライトを消す
 	bool getScare = Ene->GetScare();
 	if (getScare)
 	{
 		m_isActiveLight = false;
 	}
 
+	//  左クリックした場合ライトを点ける
 	if (m_inputManagerInstance.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 	{
-		// ライトを点ける
 		m_isActiveLight = true;
 	}
 
-	// ライトが照らされていたら
+	// ライトが照らされており、左クリックした場合ライトを消す
 	if (GetLightEnable() == TRUE && !getScare)
 	{
 		if (m_inputManagerInstance.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 		{
-			// ライトを消す
 			m_isActiveLight = false;
 		}
 

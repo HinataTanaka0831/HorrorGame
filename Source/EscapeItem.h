@@ -4,7 +4,6 @@
 #include <string>
 #include "ItemData.h"
 
-class Model;
 
 // 校舎脱出に必要な収集対象アイテム（おふだ）クラス
 class EscapeItem : public Item
@@ -15,22 +14,22 @@ public:
 
 public:
 	// 脱出アイテム3Dモデルのロードおよび配置
-	// 入力: fileName(モデルパス), initPosition(ワールド配置座標) / 出力: なし / 副作用: TagEscapeItem3D設定、Model生成
-	EscapeItem(std::string fileName, VECTOR initPosition);
+	// 入力: fileName(モデルパス), initPosition(ワールド配置座標), isSeparateAnimation(分割モーションフラグ) / 出力: なし / 副作用: TagEscapeItem3D設定
+	EscapeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
+
+	// 生成したクラスの削除
+	// 入力: なし / 出力: なし / 副作用: m_modelの解放
 	~EscapeItem() override;
 
-	// アイテムの浮遊回転アニメーション更新
-	// 入力: なし / 出力: なし / 副作用: 3Dモデルの回転・座標更新
+	// アイテムの浮遊回転アニメーション設定、基底クラスの更新呼び出し
+	// 入力: なし / 出力: なし / 副作用: 3Dモデルの回転設定、Item::Update()の呼び出し
 	void Update() override;
 
 	// アイテム3Dモデル描画
-	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
+	// 入力: なし / 出力: なし / 副作用: Item::Draw()の呼び出し
 	void Draw() override;
 
 	// 収集数のインクリメントおよび4個達成時のクリアシーン遷移
 	// 入力: なし / 出力: なし / 副作用: NowNeedItemの加算、クリア時のSceneManager遷移予約
 	static void Escape();
-
-private:
-	Model* m_model;  // モデルクラスのポインタ
 };

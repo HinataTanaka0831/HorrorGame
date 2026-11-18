@@ -67,8 +67,11 @@ public:
 	// 入力: なし / 出力: なし / 副作用: m_quitRequestフラグのtrue化
 	void RequestQuit() { m_quitRequest = true;}
 
+	// ゲームを終了するかのフラグを取得
 	bool IsQuitRequest() const { return m_quitRequest; }
+	// 現在シーンを取得
 	Scene* GetCurrentScene() const { return m_currentScene; }
+	// リザルトの種類を取得
 	ResultType GetResultType() const { return m_resultType; }
 
 private:

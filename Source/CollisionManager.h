@@ -8,7 +8,7 @@ struct AABB
 {
 	VECTOR min = VGet(0.0f, 0.0f, 0.0f); // AABBの最小座標
 	VECTOR max = VGet(0.0f, 0.0f, 0.0f); // AABBの最大座標
-	std::string direction = "";
+	std::string direction = "";          // 階段用の上る方向
 };
 
 // カプセル判定用の構造体
@@ -31,7 +31,7 @@ struct Slope
 };
 
 
-// 球体・点同士の幾何学的当たり判定を計算する静的ユーティリティクラス
+// 球体・点同士の幾何学的当たり判定を計算するシングルトンクラス
 class CollisionManager
 {
 public:
@@ -81,9 +81,13 @@ public:
 	void Draw3DLine();
 
 public:
+	// 壁（当たり判定）の情報を取得
 	const std::vector<AABB>& GetWalls() const { return m_walls; }
+	// 床（当たり判定）の情報を取得 
 	const std::vector<AABB>& GetFloors() const { return m_floors; }
+	// 脱出口（当たり判定）の情報を取得
 	const std::vector<AABB>& GetExitDoor() const { return m_exitDoor; }
+	// 階段（当たり判定）の情報を取得
 	const std::vector<AABB>& GetStairs() const { return m_stairs; }
 
 private:
@@ -102,22 +106,22 @@ private:
 	// CSVファイルから読み込んだ当たり判定情報を格納する構造体
 	struct ColliderInfo
 	{
-		std::string type = "";    // 当たり判定の種類（wall, floor, exitDoor, stairsなど）
+		std::string type = "";       // 当たり判定の種類（wall, floor, exitDoor, stairsなど）
+								    
+		float minX = 0.0f;           // AABBの最小X座標
+		float minY = 0.0f;           // AABBの最小Y座標
+		float minZ = 0.0f;           // AABBの最小Z座標
+								    
+		float maxX = 0.0f;           // AABBの最大X座標
+		float maxY = 0.0f;           // AABBの最大Y座標
+		float maxZ = 0.0f;           // AABBの最大Z座標
 
-		float minX = 0.0f;        // AABBの最小X座標
-		float minY = 0.0f;        // AABBの最小Y座標
-		float minZ = 0.0f;        // AABBの最小Z座標
-
-		float maxX = 0.0f;        // AABBの最大X座標
-		float maxY = 0.0f;        // AABBの最大Y座標
-		float maxZ = 0.0f;        // AABBの最大Z座標
-
-		std::string direction = "";
+		std::string direction = "";  // 階段の上る向き
 	};
 
 	// コンテナ関係
 	std::vector<AABB> m_walls;    // ステージの壁のAABB情報
 	std::vector<AABB> m_floors;   // ステージの床のAABB情報
 	std::vector<AABB> m_exitDoor; // 脱出口のAABB情報
-	std::vector<AABB> m_stairs;  // 階段のAABB情報
+	std::vector<AABB> m_stairs;   // 階段のAABB情報
 };

@@ -29,11 +29,14 @@ public:
 	void SetAnimationBlend(bool isBlend);
 
 public:
-	void SetLoop(bool isLoop) { m_loop = isLoop; }  // ループ設定
-	void SetLoopFinishState(AnimationState state) { m_loopFinishState = state; }  // ループ終了時に再生するアニメーション
-
-	AnimationState GetNowState() const { return m_state; }     // 現在再生されているアニメーションの取得
-	bool IsLoopFinish() const { return m_loopFinish; }         // アニメーションのループが終了しているかどうか
+	// ループ設定
+	void SetLoop(bool isLoop) { m_loop = isLoop; }
+	// ループ終了時に再生するアニメーション
+	void SetLoopFinishState(AnimationState state) { m_loopFinishState = state; }
+	// 現在再生されているアニメーションの取得
+	AnimationState GetNowState() const { return m_state; }
+	// アニメーションのループが終了しているかどうか
+	bool IsLoopFinish() const { return m_loopFinish; }
 
 private:
 	// ハンドル関係

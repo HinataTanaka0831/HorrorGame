@@ -13,6 +13,9 @@ class Scene3D : public Scene
 {
 public:
 	Scene3D();
+
+	// カメラのリセット
+	// 入力: なし / 出力: なし / 副作用: ResetTarget()の呼び出し
 	~Scene3D() override;
 
 	// ステージ・敵・アイテム生成タスクの実行およびFPSマウス拘束の有効化

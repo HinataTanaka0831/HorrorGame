@@ -11,7 +11,10 @@ class SeparateModelAnimation
 public:
     // 呼び出されたアニメーションで移動しているフレームがある場合、移動を無効にするためのフレーム番号を検索し無効にさせる。初期アニメーション状態は待機モーションにしておく
     // 入力: modelHandle(モデルハンドル) / 出力: なし / 副作用: モデルのアタッチアニメーションの移動を無効化、初期アニメーション状態を待機モーションに設定
-    SeparateModelAnimation(int modelHandle);   
+    SeparateModelAnimation(int modelHandle);  
+
+    // 読み込んだアニメーションを解放する
+    // 入力: なし / 出力: なし / 副作用: m_animationInfoListの解放
     ~SeparateModelAnimation();  
 
     // モーション再生時間の進行および前後モーションのクロスフェードブレンド制御

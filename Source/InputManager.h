@@ -10,6 +10,8 @@ public:
 	// 入力: なし / 出力: InputManager参照 / 副作用: 初回呼び出し時に静的インスタンス生成
 	static InputManager& GetInstance();
 
+	//---- キーボードに関係する関数 ----//
+
 	// キーが押された瞬間（立ち上がりエッジ）の検知
 	// 入力: keyCode(DXライブラリのキーコード) / 出力: 押下瞬間なら1、それ以外は0 / 副作用: 前フレーム状態バッファを更新
 	int CheckDownKey(int keyCode);
@@ -23,8 +25,9 @@ public:
 	int CheckPressKey(int keyCode);
 
 
-	// ----FPS視点操作用のマウスカーソル固定および表示状態の切り替え----
-	
+	//---- マウスに関係する関数 ----//
+
+	// FPS視点操作用のマウスカーソル固定および表示状態の切り替え
 	// 入力: enable(trueで固定/非表示、falseで解除/表示) / 出力: なし / 副作用: OSカーソル表示設定および画面中央への強制移動
 	void EnableMouseLock(bool enable);
 
@@ -49,11 +52,11 @@ public:
 	bool CheckReleaseMouseClick(int mouseCode);
 
 public:
-	bool IsMouseLocked() const { return m_isLocked; }
-	float GetMouseX() const { return m_mouseX; }
-	float GetMouseY() const { return m_mouseY; }
-	float GetDeltaX() const { return m_deltaX; }
-	float GetDeltaY() const { return m_deltaY; }
+	bool IsMouseLocked() const { return m_isLocked; } // マウスカーソルの固定状態を取得
+	float GetMouseX() const { return m_mouseX; }      // マウスカーソルX移動量を取得
+	float GetMouseY() const { return m_mouseY; }      // マウスカーソルY移動量を取得
+	float GetDeltaX() const { return m_deltaX; }      // マウスカーソルのX軸移動差分の取得
+	float GetDeltaY() const { return m_deltaY; }      // マウスカーソルのY軸移動差分の取得
 
 private:
 	// コンストラクタ

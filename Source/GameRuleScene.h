@@ -4,6 +4,7 @@
 #include "Utility.h"
 #include <memory>
 
+// ‘O•ûéŒ¾
 class Button;
 class TextureAnimation;
 

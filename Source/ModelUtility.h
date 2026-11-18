@@ -31,7 +31,7 @@ enum AnimationState
 // 分割されているアニメーションのデータ
 struct AnimationInfo
 {
-    AnimationState m_state = AnimationMax;
-    int m_animationHandle = -1;
-	std::string m_fileName = ""; // 共有用モーションのファイル名を保持するメンバ変数
+    AnimationState m_state = AnimationMax; // 現在のアニメーション
+    int m_animationHandle = -1;            // アニメーションのハンドル
+	std::string m_fileName = "";           // 共有用モーションのファイル名を保持するメンバ変数
 };

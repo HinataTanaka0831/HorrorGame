@@ -31,6 +31,12 @@ Scene3D::~Scene3D()
 	{
 		Master::m_camera->ResetTarget();
 	}
+
+	m_player = nullptr;
+	m_enemy = nullptr;
+	m_enemy2 = nullptr;
+	m_timeItem = nullptr;
+	m_skybox = nullptr;
 }
 
 void Scene3D::Initialize()
@@ -122,10 +128,10 @@ void Scene3D::InitializeItemData()
 	VECTOR RandomPosition3 = RandomPoint3[currentPosition1].PointPosition;
 	VECTOR RandomPosition4 = RandomPoint4[currentPosition2].PointPosition;
 
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition1);
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition2);
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3);
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition1, false);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition2, false);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3, false);
+	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4, false);
 
 	// 時間停止アイテムの生成
 	m_timeItem = new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
@@ -213,11 +219,13 @@ void Scene3D::Finalize()
 	if (m_playerCrouchingHandle != -1)
 	{
 		DeleteGraph(m_playerCrouchingHandle);
+		m_playerCrouchingHandle = -1;
 	}
 
 	// 画像の削除
 	if (m_playerMoveHandle != -1)
 	{
 		DeleteGraph(m_playerMoveHandle);
+		m_playerMoveHandle = -1;
 	}
 }

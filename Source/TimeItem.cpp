@@ -18,13 +18,11 @@ int  TimeItem::m_timerFontHandle   = -1;    // フォントハンドル（未作
 
 
 TimeItem::TimeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
-	:Item(initPosition)
-	, m_model(nullptr)
+	:Item(fileName, initPosition)
 
 {
 	SetTag(Object3D::TagTimeItem);
 
-	m_model = new Model(fileName, initPosition, isSeparateAnimation);
 
 	// フォントハンドルをまだ作っていなければ作成する
 	// （最初のTimeItemが生成されたときに1回だけ作る）
@@ -36,10 +34,7 @@ TimeItem::TimeItem(std::string fileName, VECTOR initPosition, bool isSeparateAni
 
 TimeItem::~TimeItem()
 {
-	if (m_model != nullptr)
-	{
-		delete m_model;
-	}
+
 }
 
 void TimeItem::Update()
@@ -47,20 +42,12 @@ void TimeItem::Update()
 	// 敵の動きを止める処理
 	StopTime();
 
-	if (m_model != nullptr)
-	{
-		m_model->SetPosition(m_position);
-		m_model->Update();
-	}
-
+	Item::Update();
 }
 
 void TimeItem::Draw()
 {
-	if (m_model != nullptr)
-	{
-		m_model->Draw();
-	}
+	Item::Draw();
 }
 
 void TimeItem::StopTime()

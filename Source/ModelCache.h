@@ -14,6 +14,10 @@ public:
 		int refCount = 0;        // 残りハンドル数
 	};
 
+	// 原本ハンドルをロードする
+    // 入力: entry(キャッシュエントリ構造体の参照), path(モデルパス) / 出力: 原本ハンドル(-1は失敗) / 副作用: 未ロードならモデルを読み込む
+	static int LoadMasterIfNeeded(CacheEntry& entry, const std::string& path);
+
 	// 描画・姿勢・アニメアタッチ用の独立ハンドルを返す
 	// 入力: path(モデルパス) / 出力: 複製ハンドル(-1は失敗) / 副作用: 未ロードなら原本を読み、参照カウント増加
 	static int AcquireInstance(const std::string& path);
@@ -30,7 +34,6 @@ public:
 	// 入力: path(モーションモデルパス) / 出力: なし / 副作用: 参照が0なら MV1DeleteModel
 	static void ReleaseShared(const std::string& path);
 
-	static int LoadMasterIfNeeded(CacheEntry& entry, const std::string& path);
 
 private:
 	static std::unordered_map<std::string, CacheEntry> m_instanceMasters;

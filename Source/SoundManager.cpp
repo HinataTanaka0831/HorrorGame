@@ -169,9 +169,10 @@ void SoundManager::StopSE()
 	{
 		if (it->first == m_nowPlayingSe)
 		{
+			// SEÇ™çƒê∂Ç≥ÇÍÇƒÇ¢ÇÈÇ©
 			if (CheckSoundMem(it->second))
 			{
-				StopSoundMem(it->second);
+				StopSoundMem(it->second);  // SEí‚é~
 				break;
 			}
 		}

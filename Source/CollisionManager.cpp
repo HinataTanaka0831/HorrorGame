@@ -177,7 +177,7 @@ void CollisionManager::LoadAABBCollisionCSV(const char* fileName)
 		std::getline(ss, token, ',');
 		info.maxZ = std::stof(token);
 
-		// 0以上か0以下のどっちなのかを取得
+		// CSVに記入されている「＋」か「－」のどちらかを取得
 		std::getline(ss, info.direction, ',');
 
 		// 当たり判定用のAABBを作成
