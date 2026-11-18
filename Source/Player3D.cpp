@@ -143,7 +143,7 @@ void Player3D::UpdateCapsule()
 	// カプセルの始点と終点をプレイヤーの座標に基づいて更新
 	m_capsule.start = m_position;
 	m_capsule.end = VAdd(m_position, VGet(0.0f, m_playerHeight, 0.0f));
-	m_capsule.radius = 40.0f;
+	m_capsule.radius = 30.0f;
 }
 
 void Player3D::MoveEx()
@@ -420,17 +420,24 @@ void Player3D::MoveEx()
 			// ステージの「床」との当たり判定処理
 			for (const auto& floors : m_collisionManagerInstance.GetFloors())
 			{
-				// プレイヤーの座標が床の設定した幅上にいるかどうかを確認
-				bool insideX = m_position.x >= floors.min.x && m_position.z <= floors.max.x;
-				bool insideZ = m_position.z >= floors.min.z && m_position.z <= floors.max.z;
-
-				// プレイヤーの足元座標を出力
-				float footY = m_position.y - m_playerHeight;
-
-				// プレイヤーが床の幅上におり、足元のY座標が当たり判定のY座標以下ならプレイヤーのY座標を床に合わせる
-				if (insideX && insideZ && footY <= floors.max.y)
+				if (m_collisionManagerInstance.CheckCapsuleAABB(m_capsule, floors))
 				{
-					m_position.y = floors.max.y + m_playerHeight;
+					// プレイヤーの座標が床の設定した幅上にいるかどうかを確認
+					bool insideX = m_position.x >= floors.min.x && m_position.z <= floors.max.x;
+					bool insideY = m_position.y >= floors.min.y && m_position.y <= floors.max.y;
+					bool insideZ = m_position.z >= floors.min.z && m_position.z <= floors.max.z;
+
+					// プレイヤーの足元座標を出力
+					float footY = m_position.y - m_playerHeight;
+
+					// プレイヤーが床の幅上におり、足元のY座標が当たり判定のY座標以下ならプレイヤーのY座標を床に合わせる
+					if (insideX && insideZ && insideY && footY <= floors.max.y)
+					{
+						m_position.y = floors.max.y + m_playerHeight;
+					}
+
+					// 床に当たった後にもう一度プレイヤーのカプセル判定を更新させる
+					UpdateCapsule();
 				}
 
 			}
