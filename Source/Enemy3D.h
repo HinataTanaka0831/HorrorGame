@@ -4,6 +4,7 @@
 #include <string>
 #include "Object3D.h"
 #include "Model.h"
+#include "Collision.h"
 
 
 // 徘徊巡回・視界索敵・プレイヤー追跡および捕獲時ジャンプスケア演出を実行する3D敵AIクラス

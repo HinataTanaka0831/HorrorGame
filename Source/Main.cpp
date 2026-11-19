@@ -10,7 +10,7 @@
 #include <memory>
 #include <math.h>
 #include "Button.h"
-#include "CollisionManager.h"
+#include "Collision.h"
 
 /* @note リファレンス https://dxlib.xsrv.jp/dxfunc.html
 */

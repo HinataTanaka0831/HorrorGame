@@ -6,7 +6,7 @@
 #include "ItemData.h"
 #include "Object3D.h"
 #include "InputManager.h"
-#include "CollisionManager.h"
+#include "Collision.h"
 
 
 class Item;
@@ -87,7 +87,8 @@ public:
 	bool GetEscapeItem() const { return m_isGetEscapeItem; }
 	bool GetTimeItem() const { return m_isGetTimeItem; }
 	bool GetIsUseStopItem() const { return m_isUseStopItem; }
-	const std::vector<VECTOR>& GetFootprintsRecord() const { return m_footprintsRecord; } // プレイヤーの足跡を保持するコンテナを取得
+	// プレイヤーの足跡を保持するコンテナを取得
+	const std::vector<VECTOR>& GetFootprintsRecord() const { return m_footprintsRecord; } 
 
 private:
 	// 定数
@@ -149,7 +150,6 @@ private:
 
 	// インスタンス関係の変数
 	InputManager& m_inputManagerInstance;                 // インプットマネージャーのインスタンスを保持するための変数
-	CollisionManager& m_collisionManagerInstance;         // コリジョンインスタンスを保持するための変数
 
 	//	コンテナ関係の変数
 	std::vector<ItemData>m_items;                          // アイテムデータを保持するコンテナ

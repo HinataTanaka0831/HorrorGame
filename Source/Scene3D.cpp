@@ -168,8 +168,6 @@ void Scene3D::Update()
 
 void Scene3D::Draw()
 {
-	CollisionManager::GetInstance().Draw3DLine();
-
 	Scene::Draw();
 
 	// Zバッファを使用しない設定にする

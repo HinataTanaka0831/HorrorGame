@@ -6,6 +6,7 @@
 #include "Exitdoor.h"
 #include "EscapeItem.h"
 #include "TimeItem.h"
+#include "Stage.h"
 
 
 Player3D::Player3D(VECTOR initPosition)
@@ -47,7 +48,6 @@ Player3D::Player3D(VECTOR initPosition)
 	, m_itemBoxY(0)
 	, m_addItemID(0)
 	, m_inputManagerInstance(InputManager::GetInstance())
-	, m_collisionManagerInstance(CollisionManager::GetInstance())
 
 {
 	// タグ設定
@@ -278,22 +278,27 @@ void Player3D::MoveEx()
 		{
 			// プレイヤーの座標を更新
             m_position = VAdd(m_position, VScale(moveVec, m_speed / SplitCount));
-			//m_position = VAdd(m_position, VScale(moveVec, m_speed));
-
 
 			// 移動処理の後にプレイヤーのAABB判定を更新させる
 			UpdateAABB();
 			// 移動処理の後にプレイヤーのカプセル判定を更新させる
 			UpdateCapsule();
 
+			auto obj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagStage);
+			if (obj == nullptr)
+			{
+				return;
+			}
+			Stage* pStage = dynamic_cast<Stage*>(obj);
+			if (pStage == nullptr)
+			{
+				return;
+			}
 
 			// ステージにある「壁」との当たり判定処理
-			for (const auto& wall : m_collisionManagerInstance.GetWalls())
+			for (const auto& wall : pStage->GetWalls())
 			{
-
-				// AABB判定が行われたら、プレイヤーと壁の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
-				// 壁に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
-				if (m_collisionManagerInstance.CheckAABB(m_aabb, wall))
+				if (Collision::CheckAABB(m_aabb, wall))
 				{
 					// 当たった壁の枚数を数える
 					wallnum++;
@@ -332,18 +337,18 @@ void Player3D::MoveEx()
 						m_position = VAdd(m_oldPosition, VScale(wallSlider, m_speed));
 					}
 
-					// ステージに当たった後にもう一度プレイヤーのAABB判定を更新させる
+					// もう一度プレイヤーのAABB判定を更新させる
 					UpdateAABB();
 
 				}
 
-
 			}
 
-
 			// ステージにある「階段」との当たり判定処理（坂による当たり判定）
-			for (const auto& stairs : m_collisionManagerInstance.GetStairs())
+			for (const auto& stairs : pStage->GetStairs())
 			{
+				if (Collision::CheckCapsuleAABB(m_capsule, stairs))
+				{
 					float t = 0.0f;
 					// 階段の方向に応じて、プレイヤーの座標を階段の傾斜に沿って補正する
 					if (stairs.direction == "+")
@@ -375,16 +380,16 @@ void Player3D::MoveEx()
 						m_position.y = slopeY;
 					}
 
+					// もう一度プレイヤーのカプセル判定を更新させる
+					UpdateCapsule();
+				}
+
 			}
 
-
-
 			// ステージにある「脱出口」との当たり判定処理
-			for (const auto& exitDoor : m_collisionManagerInstance.GetExitDoor())
+			for (const auto& exitDoor : pStage->GetExitDoor())
 			{
-				// AABB判定が行われたら、プレイヤーと脱出口の中心から衝突法線を取得し、侵入量（その方向にどれだけめり込んでいるのか）を比較して法線を決定させる
-				// 脱出口に沿って行くようなスライド処理を行うためのベクトルを取得してプレイヤーの座標を更新する
-				if (m_collisionManagerInstance.CheckAABB(m_aabb, exitDoor))
+				if (Collision::CheckAABB(m_aabb, exitDoor))
 				{
 					// 脱出口にどれだけめり込んだのかを求める
 					float overlapX = min(m_aabb.max.x, exitDoor.max.x) - max(m_aabb.min.x, exitDoor.min.x);
@@ -410,17 +415,18 @@ void Player3D::MoveEx()
 					// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
 					doorSlider = VNorm(doorSlider);
 					doorSlider.y = 0.0f;
+
 					m_position = VAdd(m_oldPosition, VScale(doorSlider, m_speed));
 
-					// 脱出口に当たった後にもう一度プレイヤーのAABB判定を更新させる
+					// もう一度プレイヤーのAABB判定を更新させる
 					UpdateAABB();
 				}
 			}
 
 			// ステージの「床」との当たり判定処理
-			for (const auto& floors : m_collisionManagerInstance.GetFloors())
+			for (const auto& floors : pStage->GetFloors())
 			{
-				if (m_collisionManagerInstance.CheckCapsuleAABB(m_capsule, floors))
+				if (Collision::CheckCapsuleAABB(m_capsule, floors))
 				{
 					// プレイヤーの座標が床の設定した幅上にいるかどうかを確認
 					bool insideX = m_position.x >= floors.min.x && m_position.z <= floors.max.x;
@@ -436,7 +442,7 @@ void Player3D::MoveEx()
 						m_position.y = floors.max.y + m_playerHeight;
 					}
 
-					// 床に当たった後にもう一度プレイヤーのカプセル判定を更新させる
+					// もう一度プレイヤーのカプセル判定を更新させる
 					UpdateCapsule();
 				}
 
@@ -482,7 +488,6 @@ void Player3D::PlayerSquat()
 
 void Player3D::HaveLight()
 {
-
 	// ライトモデルの光らせる位置を取得
 	VECTOR lightPosition = MV1GetFramePosition(m_lightHandle, 0);
 
@@ -589,7 +594,7 @@ void Player3D::ItemCollision()
 		}
 
 				// 当たり判定
-				if (m_collisionManagerInstance.CheckCircleToCircle(
+				if (Collision::CheckCircleToCircle(
 					m_position,
 					60.0f,
 					Escape->GetPosition(),
@@ -615,13 +620,13 @@ void Player3D::ItemCollision()
 							continue;
 						}
 
-							// 脱出アイテムをインベントリに追加
-							AddItem(pEscape->escape);
+						// 脱出アイテムをインベントリに追加
+						AddItem(pEscape->escape);
 
-							pEscape->SetDeleteFlag(true);
+						pEscape->SetDeleteFlag(true);
 
-							// ItemIDを1にする
-							m_addItemID = 1;
+						// ItemIDを1にする
+						m_addItemID = 1;
 						
 
 					}
@@ -643,7 +648,7 @@ void Player3D::ItemCollision()
 		{
 			continue;
 		}
-			if (m_collisionManagerInstance.CheckCircleToCircle(
+			if (Collision::CheckCircleToCircle(
 				m_position,
 				60.0f,
 				StopTime->GetPosition(),
@@ -669,17 +674,13 @@ void Player3D::ItemCollision()
 						continue;
 					}
 
-						// 時間止めアイテムをインベントリに追加
-						AddItem(pTimeItem->stoptime);
+					// 時間止めアイテムをインベントリに追加
+					AddItem(pTimeItem->stoptime);
 
-						pTimeItem->SetDeleteFlag(true);
+					pTimeItem->SetDeleteFlag(true);
 
-						// ItemIDを2にする
-						m_addItemID = 2;
-
-
-					
-
+					// ItemIDを2にする
+					m_addItemID = 2;
 
 				}
 			}
@@ -707,7 +708,7 @@ void Player3D::UseItem()
 				return;
 			}
 				// 当たり判定
-				if (m_collisionManagerInstance.CheckCircleToCircle(
+				if (Collision::CheckCircleToCircle(
 					m_position,
 					100.0f,
 					ExitDoor->GetPosition(),
@@ -813,7 +814,6 @@ void Player3D::LoseItem()
 		if (m_items[i].id == 1)
 		{
 			EscapeItem::Escape();
-
 		}
 
 		// アイテム番号が 2 の場合のアイテムを使用したときの処理を呼び出す
@@ -836,6 +836,7 @@ void Player3D::DrawStamina()
 {
 	int r = 20, g = 150, b = 20;
 
+	// スタミナゲージが少なくなったら揺れて点滅表示されるようにする
 	if ((float)m_stamina <= 0.5f)
 	{
 		int noise = GetRand(30) - 20;
@@ -852,8 +853,10 @@ void Player3D::DrawStamina()
 	}
 	else
 	{
-		m_staminaX = Utility::SCREEN_WIDTH / 2 - 260; // スタミナゲージのX座標
-		m_staminaY = Utility::SCREEN_HEIGHT / 2 + 430; // スタミナゲージのY座標
+		// スタミナゲージのX座標
+		m_staminaX = Utility::SCREEN_WIDTH / 2 - 260; 
+		// スタミナゲージのY座標
+		m_staminaY = Utility::SCREEN_HEIGHT / 2 + 430; 
 
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 	}
