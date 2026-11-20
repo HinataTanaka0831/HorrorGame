@@ -12,7 +12,7 @@ Camera::Camera()
 	, m_targetPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_horizontalAngle(DX_PI_F / 2.0f)
 	, m_verticalAngle(0.0f)
-	, m_cameraMode(CameraMode::PlayerControll)
+	, m_cameraMode(CameraMode::PlayerControl)
 	, m_shakePosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_shakeAngle(0.0f)
 	, m_shakeTimeCounter(0.0f)
@@ -92,7 +92,7 @@ void Camera::Update()
 
 void Camera::UpdateRotation()
 {	
-	if (m_cameraMode == CameraMode::PlayerControll)
+	if (m_cameraMode == CameraMode::PlayerControl)
 	{
 		// マウス移動による更新処理を呼ぶ
 		InputManager::GetInstance().MouseRotationUpdate();

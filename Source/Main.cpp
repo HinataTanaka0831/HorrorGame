@@ -137,7 +137,6 @@ int WINAPI WinMain(
 
 
 		// 削除する必要のあるオブジェクトがあれば削除する
-		Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll2DIfNeeded();
 		Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->DeleteAll3DIfNeeded();
 
 		// ループする直前にシーン遷移チェックを入れておく

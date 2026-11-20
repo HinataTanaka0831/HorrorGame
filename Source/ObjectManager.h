@@ -2,7 +2,6 @@
 
 #include <list>
 #include <vector>
-#include "Object2D.h"
 #include "Object3D.h"
 
 
@@ -23,27 +22,6 @@ public:
 	// 入力: なし / 出力: なし / 副作用: 各オブジェクトのDraw呼び出し
 	void Draw();
 
-
-public:         // 2D系の関数宣言
-	// 2Dオブジェクトのリスト登録
-	// 入力: object2D(追加するオブジェクトポインタ) / 出力: なし / 副作用: m_object2DListへの追加
-	void AddObject(Object2D* object2D);
-
-	// 登録された全2Dオブジェクトのメモリ解放
-	// 入力: なし / 出力: なし / 副作用: 全要素のdeleteおよびリストクリア
-	void DeleteAll2D();
-
-	// 破棄フラグが有効化された2Dオブジェクトの安全な遅延削除
-	// 入力: なし / 出力: なし / 副作用: 対象オブジェクトのdeleteおよびイテレータ更新
-	void DeleteAll2DIfNeeded();
-
-	// 指定タグを持つ先頭の2Dオブジェクト検索取得
-	// 入力: tag(検索タグ) / 出力: 一致するオブジェクトポインタ(見つからなければnullptr) / 副作用: なし
-	Object2D* GetObject2DByTag(Object2D::Tag tag);
-
-	// 指定タグを持つ全2Dオブジェクトのリスト取得
-	// 入力: tag(検索タグ) / 出力: 一致オブジェクトのポインタ配列 / 副作用: なし
-	std::vector<Object2D*> GetObject2DListByTag(Object2D::Tag tag);
 
 public:      // 3D系の関数宣言
 	// 3Dオブジェクトのリスト登録
@@ -69,6 +47,5 @@ public:      // 3D系の関数宣言
 
 
 private:
-	std::list<Object2D*> m_object2DList;         // 2Dオブジェクトを管理するリスト
 	std::list<Object3D*> m_object3DList;         // 3Dオブジェクトを管理するリスト
 };

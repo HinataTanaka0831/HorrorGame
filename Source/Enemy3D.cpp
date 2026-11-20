@@ -13,7 +13,7 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	: Object3D(initPosition)
 	, RotateSpeed(0.2f)
 	, Speed(6.0f)
-	, WaitFram(60)
+	, WaitFrame(60)
 	, MaxPointCount(28)
 	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_angle(0.0f)
@@ -45,7 +45,7 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	SetTag(Object3D::TagEnemy3D);
 
 	// カメラモードをプレイヤーが操作できるように設定
-	Master::m_camera->SetCameraMode(Camera::CameraMode::PlayerControll);
+	Master::m_camera->SetCameraMode(Camera::CameraMode::PlayerControl);
 
 	// 敵のモデルによって目標地点を変更する
 	SetEnemyType(enemyType);
@@ -114,27 +114,10 @@ void Enemy3D::Draw()
 
 void Enemy3D::Move()
 {
-	// ジャンプスケア中は移動処理を全てスキップする
-	if (m_isScare)
-	{
-		return;
-	}
-
-	if (m_isStopItem)
-	{
-		m_model->ChangeAnimation(AnimationNeutral);
-		return;
-	}
-
-	// 現在再生中のアニメーションを取得
-	AnimationState state = m_model->GetNowState();
-	if (state == AnimationAttack || state == AnimationJumpOut)
-	{
-		return; // 特定のモーション中であれば何もしない
-	}
+	if (!CanMove()) return;  // スケア中・時間停止中なら動かない
 
 	// 目標座標の設定 ステージの横3680.0f高さ400.0f 階段-180.0f z2590.0f h:1027, h(中間):1224
-	Point weipoint[] = { {0.0f, 44.0f, 1700.0f},                                                                                          // �������W�ɍs��
+	Point waypointsRouteA[] = { {0.0f, 44.0f, 1700.0f},                                                                                          // �������W�ɍs��
 					   {3680.0f, 44.0f, 1700.0f }, {3680.0f, 241.0f, 2590.0f},  {3980.0f, 241.0f, 2590.0f},  {3980.0f, 438.0f, 1700.0f},  // �E�K�i1��2
 					   {-3680.0f, 438.0f, 1700.0f},{-3680.0f, 634.0f, 2590.0f}, {-3980.0f, 634.0f, 2590.0f}, {-3980.0f, 831.0f, 1700.0f}, // ���K�i2��3
 					   {0.0f, 831.0f, 1700.0f},    {-100.0f, 831.0, -1600.0f},  {-100.0f, 831.0f, 1700.0f},  {-100.0f, 1027.0f, 2590.0f}, // �����K�i3��4
@@ -145,7 +128,7 @@ void Enemy3D::Move()
 					   {100.0f, 44.0f, 1700.0f} };                                                                                        // �������W�ɖ߂�
 
 
-	Point weipointNex[] = { {0.0f, 44.0f, -1700.0f},                                                                                               // �������W�ɍs��
+	Point waypointsRouteB[] = { {0.0f, 44.0f, -1700.0f},                                                                                               // �������W�ɍs��
 						  {-3680.0f, 44.0f, -1700.0f},  {-3680.0f, 241.0f, -2500.0f}, {-3980.0f, 241.0f, -2500.0f}, {-3980.0f, 438.0f, -1700.0f}, // ���K�i1��2
 						  {3680.0f, 438.0f, -1700.0f},  {3680.0f, 634.0f, -2500.0f},  {3980.0f, 634.0f, -2500.0f},  {3980.0f, 831.0f, -1700.0f},  // �E�K�i2��3
 						  {0.0f, 831.0f, -1700.0f},     {100.0f, 831.0f, 1600.0f},    {100.0f, 831.0f, -1700.0f},   {100.0f, 1027.0f, -2500.0f},  // �����K�i3��4
@@ -156,86 +139,6 @@ void Enemy3D::Move()
 						  {100.0f, 44.0f, -1700.0f} };                                                                                            // �������W�ɖ߂�
 
 
-	m_oldPosition = m_position;  // 前回の座標をいったん保持
-
-
-	// プレイヤーの情報を取得
-	Object3D* pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
-		if (pPlayerObj == nullptr)
-		{
-			return;
-		}
-
-		Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
-		if (pPlayer == nullptr)
-		{
-			return; 
-		}
-
-		// プレイヤーの座標を取得
-		m_playerPosition = pPlayer->GetPosition();
-
-		// プレイヤーと敵の座標の距離を計算
-		VECTOR vDistanceToPlayer = VSub(m_playerPosition, m_position);
-
-		// ベクトルのサイズを取得
-		float fDistanceToPlayer = VSize(vDistanceToPlayer);
-
-		// プレイヤーが敵に近づいたらゲームオーバー処理を行う
-		if (fDistanceToPlayer <= 80.0f)
-		{
-			// プレイヤーの移動処理を止める
-			pPlayer->SetFreeze(true);
-
-			// 走らないようにする
-			m_isRun = false;
-
-			// ジャンプスケアを発生させる 
-			m_isScare = true;
-				
-		}
-
-		// 確認する角度
-		float visionAngle = 45.0f;
-
-		// プレイヤーを確認する範囲
-		float sight = visionAngle * DX_PI_F / 180.0f;
-
-		// プレイヤーと敵の高さの差を計算する
-		float heightDistance = (m_playerPosition.y + 80.0f) - (m_position.y + 80.0f);
-
-		// スパイク防止のためのスムージング処理
-		static float smoothHeight = 0.0f;
-			smoothHeight = (smoothHeight * 0.8f) + (heightDistance * 0.2f);
-
-			// 高さの差が一定距離より大きいならプレイヤーを見つけていない
-			if (fabs(smoothHeight) > 150.0f)
-			{
-				m_foundPlayer = false;
-			}
-
-			// 敵の視点を設定
-			VECTOR forward = VGet(sinf(m_angle), 0.0f, cosf(m_angle));
-
-			// 距離を正規化
-			vDistanceToPlayer = VNorm(vDistanceToPlayer);
-
-			// 視点と距離から内積を求める
-			float dot = VDot(forward, vDistanceToPlayer);
-
-			// プレイヤーを見つける距離
-			float foundDistance = 1500.0f;
-
-			// 敵の視点からプレイヤーが見えた場合かつ一定の距離以下なら
-			if (dot >= sight && fDistanceToPlayer <= foundDistance)
-			{
-				// プレイヤーを見つけた
-				m_foundPlayer = true;
-			}
-			else  // 一定の距離を離れたら目標座標に行くようにする
-			{
-				m_foundPlayer = false;
-			}
 
 
 
@@ -252,7 +155,7 @@ void Enemy3D::Move()
 					m_waitTimer++;
 
 					// 待機時間が待機するフレーム数以上の場合
-					if (m_waitTimer >= WaitFram)
+					if (m_waitTimer >= WaitFrame)
 					{
 						// 待機時間終了
 						m_isWait = false;
@@ -269,9 +172,9 @@ void Enemy3D::Move()
 					{
 					case 1:
 						// 目標座標の変数に設定
-						m_targetX = weipoint[m_currentPoint].pointX;
-						m_targetY = weipoint[m_currentPoint].pointY;
-						m_targetZ = weipoint[m_currentPoint].pointZ;
+						m_targetX = waypointsRouteA[m_currentPoint].pointX;
+						m_targetY = waypointsRouteA[m_currentPoint].pointY;
+						m_targetZ = waypointsRouteA[m_currentPoint].pointZ;
 
 						// 目標座標と敵の座標の距離を求める
 						m_distanceX = m_targetX - m_position.x;
@@ -282,9 +185,9 @@ void Enemy3D::Move()
 
 					case 2:
 						// 目標座標の変数に設定
-						m_targetX = weipointNex[m_currentPoint].pointX;
-						m_targetY = weipointNex[m_currentPoint].pointY;
-						m_targetZ = weipointNex[m_currentPoint].pointZ;
+						m_targetX = waypointsRouteB[m_currentPoint].pointX;
+						m_targetY = waypointsRouteB[m_currentPoint].pointY;
+						m_targetZ = waypointsRouteB[m_currentPoint].pointZ;
 
 						// 目標座標と敵の座標の距離を求める
 						m_distanceX = m_targetX - m_position.x;
@@ -337,11 +240,11 @@ void Enemy3D::Move()
 						}
 
 						// 目標地点の最後まで行ったら通ってきた座標を順番に戻るようにする
-						if (m_position.x == weipoint[27].pointX && m_position.y == weipoint[27].pointY && m_position.z == weipoint[27].pointZ)
+						if (m_position.x == waypointsRouteA[27].pointX && m_position.y == waypointsRouteA[27].pointY && m_position.z == waypointsRouteA[27].pointZ)
 						{
 							m_isback = true;
 						}
-						if (m_position.x == weipointNex[27].pointX && m_position.y == weipointNex[27].pointY && m_position.z == weipointNex[27].pointZ)
+						if (m_position.x == waypointsRouteB[27].pointX && m_position.y == waypointsRouteB[27].pointY && m_position.z == waypointsRouteB[27].pointZ)
 						{
 							m_isback = true;
 						}
@@ -493,6 +396,57 @@ void Enemy3D::Move()
 
 }
 
+bool Enemy3D::CanMove()
+{
+	if (m_isScare){
+		return false;
+	}
+	else if (m_isStopItem) {
+		m_model->ChangeAnimation(AnimationNeutral);
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+void Enemy3D::UpdatePlayerSearch()
+{
+	m_oldPosition = m_position;  // 前回の座標をいったん保持
+
+	Object3D* pPlayerObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D); 	// プレイヤーの情報を取得
+	if (pPlayerObj == nullptr) return;
+	Player3D* pPlayer = dynamic_cast<Player3D*>(pPlayerObj);
+	if (pPlayer == nullptr) return;
+
+	m_playerPosition = pPlayer->GetPosition();
+	float fDistanceToPlayer = VSize(VSub(m_playerPosition, m_position));
+	if (fDistanceToPlayer <= 80.0f)                                                 // プレイヤーが敵に近づいたらゲームオーバー処理を行う
+	{															                    
+		pPlayer->SetFreeze(true);                                                   
+		m_isRun = false;                      	                                    
+		m_isScare = true;             	                                             
+	}
+
+	float visionAngle = 45.0f;                                                      // 確認する角度
+	float sight = visionAngle * DX_PI_F / 180.0f;                                   // プレイヤーを確認する範囲
+	float heightDistance = (m_playerPosition.y + 80.0f) - (m_position.y + 80.0f); 	// プレイヤーと敵の高さの差を計算する
+
+	static float smoothHeight = 0.0f;                                               // スパイク防止のためのスムージング処理
+	smoothHeight = (smoothHeight * 0.8f) + (heightDistance * 0.2f);
+	if (fabs(smoothHeight) > 150.0f) m_foundPlayer = false;         	           // 高さの差が一定距離より大きいならプレイヤーを見つけていない
+
+	VECTOR forward = VGet(sinf(m_angle), 0.0f, cosf(m_angle));              	  // 敵の前方向を設定
+	VECTOR vDistanceToPlayer = VNorm(VSub(m_playerPosition, m_position));     	  // 距離を正規化
+	float dot = VDot(forward, vDistanceToPlayer);                                 // 視点と距離から内積を求める
+	float foundDistance = 1500.0f;            	                                  // プレイヤーを見つける距離
+
+	if (dot >= sight && fDistanceToPlayer <= foundDistance) {                 	  
+		m_foundPlayer = true;		// 敵の視点からプレイヤーが見えた場合かつ一定の距離以下ならプレイヤーを見つけた
+	} else {
+		m_foundPlayer = false;
+	}
+}
 
 void Enemy3D::RotationByMove()
 {

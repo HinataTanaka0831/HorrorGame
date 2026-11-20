@@ -12,7 +12,7 @@ public:
 	// カメラの視点変更に関するモード（プレイヤー操作/自動注視）
 	enum class CameraMode
 	{
-		PlayerControll,
+		PlayerControl,
 		AutoLook
 	};
 

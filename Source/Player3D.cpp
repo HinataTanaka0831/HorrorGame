@@ -71,7 +71,7 @@ Player3D::~Player3D()
 void Player3D::Update()
 {
 	// 移動処理
-	MoveEx();
+	Move();
 
 	// アイテムとの当たり判定処理
 	ItemCollision();
@@ -93,38 +93,9 @@ void Player3D::Draw()
 	// 懐中電灯のモデルを描画
 	MV1DrawModel(m_lightHandle);
 
-
 	// デバッグ表示
 	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %.2f, m_position.y : %.2f, m_position.z : %.2f", m_position.x, m_position.y, m_position.z);
 
-	//DrawFormatString(
-	//	0,
-	//	250,
-	//	GetColor(255, 255, 255),
-	//	"RecordSize = %d",
-	//	(int)m_footprintsRecord.size());
-
-	//DrawFormatString(
-	//	0, 350,
-	//	GetColor(255, 255, 255),
-	//	"Distance = %.2f",
-	//	m_distance);
-
-	//DrawFormatString(
-	//	0, 390,
-	//	GetColor(255, 255, 255),
-	//	"OldPos %.2f %.2f %.2f",
-	//	m_oldPosition.x,
-	//	m_oldPosition.y,
-	//	m_oldPosition.z);
-
-	DrawCube3D(
-		m_capsule.start,
-		m_capsule.end,
-		GetColor(0, 255, 0),
-		GetColor(0, 255, 0),
-		FALSE
-	);
 }
 
 
@@ -146,7 +117,7 @@ void Player3D::UpdateCapsule()
 	m_capsule.radius = 30.0f;
 }
 
-void Player3D::MoveEx()
+void Player3D::Move()
 {
 	// フリーズさせる
 	if (m_isFreeze)
@@ -873,14 +844,14 @@ void Player3D::DrawStamina()
 }
 
 
-bool Player3D::StaminaUpdate(bool isKeyProsses)
+bool Player3D::StaminaUpdate(bool isDashKeyPressed)
 {
 	// 現在値に応じたスタミナゲージの幅
 	m_gaugeWidth = (int)((float)m_stamina / MaxStamina * m_width);
 
 
 	// 走りキーを押して移動しているならならスタミナゲージを減らす
-	if (isKeyProsses && m_stamina > 0 && m_isMove)
+	if (isDashKeyPressed && m_stamina > 0 && m_isMove)
 	{
 		// 走り状態にする
 		m_state = MoveState::Run;

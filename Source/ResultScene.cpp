@@ -7,9 +7,9 @@
 ResultScene::ResultScene()
 	: Scene()     // 基底クラスのコンストラクタを呼び出す
 	, DrawX(Utility::SCREEN_WIDTH / 2 - 150)
-	, RetoryY(600)
+	, RetryY(600)
 	, TitleY(750)
-	, m_retoryButton(nullptr)
+	, m_retryButton(nullptr)
 	, m_titleButton(nullptr)
 	, m_textureAnimation(nullptr)
 
@@ -37,9 +37,9 @@ void ResultScene::Initialize()
 	}
 
 	// ボタンの生成
-	if (m_retoryButton == nullptr)
+	if (m_retryButton == nullptr)
 	{
-		m_retoryButton = std::make_unique<Button>(DrawX, RetoryY - 10, DrawX + 250, RetoryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
+		m_retryButton = std::make_unique<Button>(DrawX, RetryY - 10, DrawX + 250, RetryY + 60, "リトライ", GetColor(255, 126, 115), GetColor(250, 250, 250), m_fontSize20);
 	}
 
 	if (m_titleButton == nullptr)
@@ -62,11 +62,11 @@ void ResultScene::Update()
 	}
 
 	// ボタンの更新処理を呼ぶ
-	if (m_retoryButton)
+	if (m_retryButton)
 	{
-		m_retoryButton->Update();
+		m_retryButton->Update();
 
-		if (m_retoryButton->IsClick())
+		if (m_retryButton->IsClick())
 		{
 			// SE再生
 			Master::m_soundManager->PlaySE(SoundManager::SeDecide);
@@ -118,9 +118,9 @@ void ResultScene::Draw()
 
 
 	// ボタンの表示
-	if (m_retoryButton)
+	if (m_retryButton)
 	{
-		m_retoryButton->Draw();
+		m_retryButton->Draw();
 	}
 
 	if (m_titleButton)

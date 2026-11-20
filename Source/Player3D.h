@@ -40,7 +40,7 @@ public:
 					
 	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
 	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
-	void MoveEx();                                
+	void Move();                                
 
 	// しゃがみ/直立姿勢の切り替えおよび視線高・移動速度の補正
 	// 入力: なし / 出力: なし / 副作用: isCrouchingフラグおよびplayerHeight/playerSpeedの変更
@@ -75,8 +75,8 @@ public:
 	void DrawStamina();
 
 	// ダッシュ入力時のスタミナ消費および非ダッシュ時の自然回復処理
-	// 入力: isKeyProssese(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
-	bool StaminaUpdate(bool isKeyProssese);    
+	// 入力: isDashKeyPressed(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
+	bool StaminaUpdate(bool isDashKeyPressed);
 
 	 
 public:

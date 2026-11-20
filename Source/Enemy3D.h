@@ -28,6 +28,12 @@ public:
 	// 入力: なし / 出力: なし / 副作用: mvPositionの更新およびアニメーション切り替え
 	void Move();             
 
+	// 敵が動けるかどうかを判定
+	// 入力: なし / 出力: スケア中や時間停止中ならfalse / 副作用: 敵の移動の可否
+	bool CanMove();
+
+	void UpdatePlayerSearch();
+
 	// 進行方向ベクトルに向けた滑らかなY軸旋回補間
 	// 入力: なし / 出力: なし / 副作用: 敵モデルの回転角度更新
 	void RotationByMove();   
@@ -52,7 +58,7 @@ private:
 	// 定数
 	const float RotateSpeed;                             // 回転速度
 	const float Speed;                                   // 敵の移動スピード
-	const int WaitFram;                                  // 待機するフレーム数
+	const int WaitFrame;                                  // 待機するフレーム数
 	const int MaxPointCount;                             // 目標座標の最大数を表す変数
 
 

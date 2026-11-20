@@ -36,11 +36,11 @@ public:
 private:
 	// 定数
 	const int DrawX;                                           // ボタン配置基準X座標
-	const int RetoryY;                                         // リトライボタンY座標
+	const int RetryY;                                         // リトライボタンY座標
 	const int TitleY;                                          // タイトルボタンY座標
 
 	// ボタン関係
-	std::unique_ptr<Button> m_retoryButton;                    // 再プレイボタン
+	std::unique_ptr<Button> m_retryButton;                    // 再プレイボタン
 	std::unique_ptr<Button> m_titleButton;                     // タイトル画面へ戻るボタン
 	std::unique_ptr<TextureAnimation> m_textureAnimation;      // 砂嵐アニメーション
 };
