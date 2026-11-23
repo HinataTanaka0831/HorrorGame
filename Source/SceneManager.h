@@ -30,7 +30,9 @@ public:  // enum, struct の定義
 public:  // メンバ関数の定義
 	// コンストラクタ
 	SceneManager();
-	// デストラクタ
+
+	// ポインタを解放
+	// 入力: なし / 出力: なし / 副作用: 生成したSceneのポインタを解放
 	~SceneManager();
 
 

@@ -16,9 +16,6 @@ Scene3D::Scene3D()
 	, m_playerCrouchingHandle(-1)
 	, m_playerMoveHandle(-1)
 	, m_player(nullptr)
-	, m_enemy(nullptr)
-	, m_enemy2(nullptr)
-	, m_timeItem(nullptr)
 	, m_skybox(nullptr)
 
 {
@@ -33,18 +30,15 @@ Scene3D::~Scene3D()
 	}
 
 	m_player = nullptr;
-	m_enemy = nullptr;
-	m_enemy2 = nullptr;
-	m_timeItem = nullptr;
+	m_enemies.clear();
+	m_timeItems.clear();
 	m_skybox = nullptr;
 }
 
 void Scene3D::Initialize()
 {
-
 	// ローディングマネージャーの作成
 	LoadingManager loader;
-
 	// タスクを追加
 	loader.AddTask(std::make_unique<InitializePlayerTask>());
 	loader.AddTask(std::make_unique<InitializeEnemyTask>());
@@ -52,29 +46,16 @@ void Scene3D::Initialize()
 	loader.AddTask(std::make_unique<InitializeSkyBoxTask>());
 	loader.AddTask(std::make_unique<InitializeStageTask>());
 	loader.AddTask(std::make_unique<InitializeExitDoorTask>());
-
 	// カメラの初期化
 	delete Master::m_camera;
 	Master::m_camera = new Camera();
-
 	// FPS シーンでロック有効化
 	InputManager::GetInstance().EnableMouseLock(true);
-
 	// ローディング実行
 	loader.ExecuteScene3D();
-
 	// 画像の生成
-	if (m_playerCrouchingHandle == -1)
-	{
-		m_playerCrouchingHandle = LoadGraph("Resource/UI/ui_playerCrouching.png");
-	}
-
-	// 画像の生成
-	if (m_playerMoveHandle == -1)
-	{
-		m_playerMoveHandle = LoadGraph("Resource/UI/ui_playerMove.png");
-	}
-
+	if (m_playerCrouchingHandle == -1) m_playerCrouchingHandle = LoadGraph("Resource/UI/ui_playercrouching.png");
+	if (m_playerMoveHandle == -1) m_playerMoveHandle = LoadGraph("Resource/UI/ui_playermove.png");
 	// 脱出のために必要なアイテム数を初期化
 	EscapeItem::m_nowNeedItem = 0;
 }
@@ -88,27 +69,28 @@ void Scene3D::InitializePlayerData()
 void Scene3D::InitializeEnemyData()
 {
 	// 敵の生成
-	m_enemy = new Enemy3D(
+	Enemy3D* m_enemyA = new Enemy3D(
 		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(-50.0f, 70.0f, 1700.0f),
 		1,
 		true
 	);
-	m_enemy->AddAnimation(AnimationNeutral, "Resource/Object/Mixamo3DModel/animation_idle.mv1");
-	m_enemy->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
-	m_enemy->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
+	m_enemyA->AddAnimation(AnimationNeutral, "Resource/Object/Mixamo3DModel/animation_idle.mv1");
+	m_enemyA->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
+	m_enemyA->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
+	m_enemies.push_back(m_enemyA);
 
 	// 敵の生成
-	m_enemy2 = new Enemy3D(
+	Enemy3D* m_enemyB = new Enemy3D(
 		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(1000.0f, 70.0f, -1700.0f),
 		2,
 		true
 	);
-	m_enemy2->AddAnimation(AnimationNeutral, "Resource/Object/Mixamo3DModel/animation_idle.mv1");
-	m_enemy2->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
-	m_enemy2->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
-
+	m_enemyB->AddAnimation(AnimationNeutral, "Resource/Object/Mixamo3DModel/animation_idle.mv1");
+	m_enemyB->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
+	m_enemyB->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
+	m_enemies.push_back(m_enemyB);
 }
 
 void Scene3D::InitializeItemData()
@@ -122,22 +104,19 @@ void Scene3D::InitializeItemData()
 	Point RandomPoint2[] = { VGet(3920.0f, 1228.0f, 2800.0f), VGet(999.0f, 836.0f, 2426.0f), VGet(-2029.0f, 833.0f, 2933.0f), VGet(539.0f, 1228.0f, 2536.0f), VGet(-1853.0f, 839.0f, 2205.0f) };
 	Point RandomPoint3[] = { VGet(-570.0f, 120.0f, -2687.0f), VGet(1851.0f, 446.0f, -2155.0f), VGet(-2120.0f, 905.0f, -2895.0f), VGet(-37.0f, 1228.0f, -2715.0f), VGet(2160.0f, 975.0f, -2460.0f) };
 	Point RandomPoint4[] = { VGet(2050.0f, 510.0f, -2912.0f), VGet(-2132.0f, 831.0f, -2581.0f),  VGet(70.0f, 1224.0f, 2809.0f), VGet(3920.0f, 1228.0f, -2800.0f) };
-
 	VECTOR RandomPosition1 = RandomPoint1[currentPosition1].PointPosition;
 	VECTOR RandomPosition2 = RandomPoint2[currentPosition1].PointPosition;
 	VECTOR RandomPosition3 = RandomPoint3[currentPosition1].PointPosition;
 	VECTOR RandomPosition4 = RandomPoint4[currentPosition2].PointPosition;
-
+	// 脱出アイテムの生成
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition1, false);
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition2, false);
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3, false);
 	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4, false);
-
 	// 時間停止アイテムの生成
-	m_timeItem = new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false);
-	new TimeItem("Resource/Object/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false);
-	new TimeItem("Resource/Object/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false);
-
+	m_timeItems.push_back(new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false));
+	m_timeItems.push_back(new TimeItem("Resource/Object/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false));
+	m_timeItems.push_back(new TimeItem("Resource/Object/TimeItem.mv1", VGet(-1176.0f, 120.0f, 2351.0f), false));
 }
 
 void Scene3D::InitializeSkyBoxData()
@@ -169,43 +148,31 @@ void Scene3D::Update()
 void Scene3D::Draw()
 {
 	Scene::Draw();
-
 	// Zバッファを使用しない設定にする
 	SetUseZBufferFlag(FALSE);
-
 	// Zバッファへの書き込みはしない
 	SetWriteZBufferFlag(FALSE);
-
 	// 残りアイテム数の表示
 	DrawFormatStringToHandle(0, 10, GetColor(255, 255, 255), m_itemFontHandle, " 残りアイテム\n  %d / 4", EscapeItem::m_nowNeedItem);
-
-
 	// アイテムボックスの描画
 	m_player->ItemBox();
-
 	// スタミナゲージの描画
 	m_player->DrawStamina();
-
-	if (m_player->GetCrouching())
-	{
+	if (m_player->GetCrouching()) {
 		// プレイヤーのしゃがみ状態画像の表示
 		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, m_playerCrouchingHandle, true);
 	}
-	else
-	{
+	else {
 		// プレイヤーの歩き状態画像の表示
 		DrawGraph(200, Utility::SCREEN_HEIGHT / 2 + 350, m_playerMoveHandle, true);
 	}
-
-
-	if (m_timeItem != nullptr)
-	{
-		m_timeItem->DrawTimer();
+	// 時間止めアイテムタイマー表示
+	for (auto pTimeItem : m_timeItems) {
+		pTimeItem->DrawTimer();
 	}
 
 	// Zバッファを使用する設定にする
 	SetUseZBufferFlag(TRUE);
-
 	// Zバッファへの書き込みをする
 	SetWriteZBufferFlag(TRUE);
 
@@ -214,15 +181,12 @@ void Scene3D::Draw()
 void Scene3D::Finalize()
 {
 	// 画像の削除
-	if (m_playerCrouchingHandle != -1)
-	{
+	if (m_playerCrouchingHandle != -1) {
 		DeleteGraph(m_playerCrouchingHandle);
 		m_playerCrouchingHandle = -1;
 	}
-
 	// 画像の削除
-	if (m_playerMoveHandle != -1)
-	{
+	if (m_playerMoveHandle != -1) {
 		DeleteGraph(m_playerMoveHandle);
 		m_playerMoveHandle = -1;
 	}

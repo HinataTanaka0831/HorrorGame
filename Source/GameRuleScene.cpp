@@ -33,32 +33,32 @@ void GameRuleScene::Initialize()
 	// âÊëúÇê∂ê¨
 	if (m_keyHandle == -1)
 	{
-		m_keyHandle = LoadGraph("Resource/UI/ui_ruleMove.png");
+		m_keyHandle = LoadGraph("Resource/UI/ui_rulemove.png");
 	}
 
 	if (m_keyRHandle == -1)
 	{
-		m_keyRHandle = LoadGraph("Resource/UI/ui_ruleGet.png");
+		m_keyRHandle = LoadGraph("Resource/UI/ui_ruleget.png");
 	}
 
 	if (m_keyFHandle == -1)
 	{
-		m_keyFHandle = LoadGraph("Resource/UI/ui_ruleAttack.png");
+		m_keyFHandle = LoadGraph("Resource/UI/ui_ruleattack.png");
 	}
 
 	if (m_keyEHandle == -1)
 	{
-		m_keyEHandle = LoadGraph("Resource/UI/ui_ruleCrouching.png");
+		m_keyEHandle = LoadGraph("Resource/UI/ui_rulecrouching.png");
 	}
 
 	if (m_mouseHandle == -1)
 	{
-		m_mouseHandle = LoadGraph("Resource/UI/ui_ruleMouseInputLeft.png");
+		m_mouseHandle = LoadGraph("Resource/UI/ui_rulemouseinputleft.png");
 	}
 
 	if (m_mouseMoveHandle == -1)
 	{
-		m_mouseMoveHandle = LoadGraph("Resource/UI/ui_ruleMouseMove.png");
+		m_mouseMoveHandle = LoadGraph("Resource/UI/ui_rulemousemove.png");
 	}
 
 

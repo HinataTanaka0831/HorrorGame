@@ -3,9 +3,7 @@
 #include "Master.h"
 #include "ObjectManager.h"
 #include "Scene.h"
-#include <fstream>
-#include <sstream>
-#include <algorithm>
+#include "CsvLoader.h"
 
 
 Stage::Stage(std::string stageModelName)
@@ -20,7 +18,7 @@ Stage::Stage(std::string stageModelName)
 	m_modelHandle = MV1LoadModel(stageModelName.c_str());
 	
 	// ステージの当たり判定情報を取得
-	LoadAABBCollisionCSV("Resource/Data/collisionData_stage.csv");
+	m_aabbCsv= CsvLoader::Load("Resource/Data/data_stagecollision.csv");
 }
 
 Stage::~Stage()
@@ -28,7 +26,6 @@ Stage::~Stage()
 	// 読み込んだモデルデータの破棄
 	MV1DeleteModel(m_modelHandle);
 }
-
 
 void Stage::Draw()
 {
@@ -38,91 +35,43 @@ void Stage::Draw()
 	Draw3DLine();
 }
 
-void Stage::LoadAABBCollisionCSV(const char* fileName)
+void Stage::AABBCollision()
 {
-	// CSVファイルを読み込む
-	std::ifstream file(fileName);
-
-	// CSVファイルが読み込めないなら終了
-	if (!file.is_open())
-	{
-		return;
-	}
-
-	std::string line;
-
-	// 1行目を捨てる
-	std::getline(file, line);
-
-	// CSVファイルを1行ずつ読み込む
-	while (std::getline(file, line))
-	{
-		// 1行のCSVデータを解析するためのストリームを生成
-		std::stringstream ss(line);
-
-		std::string token;
-
-		// CSVから読み込んだ当たり判定情報を一時的に保持するための構造体
-		ColliderInfo info;
-
-		// 当たり判定の種類を取得
-		std::getline(ss, info.type, ',');
-
+	for (auto aabb : m_aabbCsv) {
+		ColliderInfo info;              // CSVから読み込んだ当たり判定情報を一時的に保持するための構造体
+		info.type = aabb[0];             // 当たり判定の種類を取得
 		// AABBの最小座標を取得
-		std::getline(ss, token, ',');
-		info.minX = std::stof(token);
-		std::getline(ss, token, ',');
-		info.minY = std::stof(token);
-		std::getline(ss, token, ',');
-		info.minZ = std::stof(token);
-
+		info.minX = std::stof(aabb[1]);
+		info.minY = std::stof(aabb[2]);
+		info.minZ = std::stof(aabb[3]);
 		// AABBの最大座標を取得
-		std::getline(ss, token, ',');
-		info.maxX = std::stof(token);
-		std::getline(ss, token, ',');
-		info.maxY = std::stof(token);
-		std::getline(ss, token, ',');
-		info.maxZ = std::stof(token);
-
+		info.maxX = std::stof(aabb[4]);
+		info.maxY = std::stof(aabb[5]);
+		info.maxZ = std::stof(aabb[6]);
 		// CSVに記入されている「＋」か「－」のどちらかを取得
-		std::getline(ss, info.direction, ',');
-
-		// 当たり判定用のAABBを作成
-		AABB box;
+		info.direction = aabb[7];
+		AABB box;  // 当たり判定用のAABBを作成
 		box.min = { info.minX, info.minY, info.minZ };
 		box.max = { info.maxX, info.maxY, info.maxZ };
 		box.direction = info.direction;
-
-		// 当たり判定の種類ごとにコンテナに情報を格納
-		if (info.type == "Wall")
-		{
-			// 壁の当たり判定情報を追加
-			m_walls.push_back(box);
+		if (info.type == "Wall") {
+			m_walls.push_back(box);      	// 壁の当たり判定情報をコンテナに追加
 		}
-		else if (info.type == "Floor")
-		{
-			// 床の当たり判定情報を追加
-			m_floors.push_back(box);
+		else if (info.type == "Floor") {
+			m_floors.push_back(box); 		// 床の当たり判定情報をコンテナに追加
 		}
-		else if (info.type == "ExitDoor")
-		{
-			// 脱出口の当たり判定情報を追加
-			m_exitDoor.push_back(box);
+		else if (info.type == "ExitDoor") {
+			m_exitDoor.push_back(box); 		// 脱出口の当たり判定情報をコンテナに追加
 		}
-		else if (info.type == "Stairs")
-		{
-			// 階段（坂）の当たり判定情報を追加
-			m_stairs.push_back(box);
+		else if (info.type == "Stairs") {
+			m_stairs.push_back(box); 		// 階段（坂）の当たり判定情報をコンテナに追加
 		}
 	}
-	// ファイルを閉じる
-	file.close();
-
 }
-
 
 void Stage::Draw3DLine()
 {
+	
 	for (const auto& walls : m_walls)
 	{
 		DrawCube3D(walls.min, walls.max, GetColor(255, 0, 0), GetColor(255, 0, 0), false);

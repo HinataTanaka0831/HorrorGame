@@ -2,7 +2,9 @@
 
 #include "DxLib.h"
 #include "Scene.h"
+#include <vector>
 
+// 前方宣言
 class Player3D;
 class Enemy3D;
 class TimeItem;
@@ -14,8 +16,8 @@ class Scene3D : public Scene
 public:
 	Scene3D();
 
-	// カメラのリセット
-	// 入力: なし / 出力: なし / 副作用: ResetTarget()の呼び出し
+	// カメラのリセット、各ポインタやコンテナの初期化
+	// 入力: なし / 出力: なし / 副作用: ResetTarget()の呼び出し、PlayerやEnemy、TimeItem、SkyBoxのポインタとコンテナを初期化
 	~Scene3D() override;
 
 	// ステージ・敵・アイテム生成タスクの実行およびFPSマウス拘束の有効化
@@ -51,16 +53,17 @@ private:
 	};
 
 	// プレイヤー関係
-	int m_playerCrouchingHandle;      // プレイヤーしゃがみハンドル
-	int m_playerMoveHandle;           // プレイヤー移動ハンドル
+	Player3D* m_player;                  // プレイヤーのポインタ
+	int m_playerCrouchingHandle;         // プレイヤーしゃがみハンドル
+	int m_playerMoveHandle;              // プレイヤー移動ハンドル
 
 	// 敵関係
-	Player3D* m_player;               // プレイヤーのポインタ
-	Enemy3D* m_enemy;                 // 敵キャラクターアニメーションを追加するためのポインタ
-	Enemy3D* m_enemy2;                // 2対目の敵キャラクターアニメーションを追加するためのポインタ
-	TimeItem* m_timeItem;             // 時間止めアイテムのポインタ
+	std::vector<Enemy3D*> m_enemies;     // 敵のポインタを管理する変数
+
+	// 時間止めアイテム関係
+	std::vector<TimeItem*> m_timeItems;  // 時間止めアイテムのポインタを管理する変数
 
 	// スカイボックス関係
-	SkyBox* m_skybox;                 // スカイボックスのテクスチャと大きさを変更するためのポインタ
+	SkyBox* m_skybox;                    // スカイボックスのテクスチャと大きさを変更するためのポインタ
 
 };

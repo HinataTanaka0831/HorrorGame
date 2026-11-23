@@ -8,7 +8,7 @@
 #include "InputManager.h"
 #include "Collision.h"
 
-
+// 前方宣言
 class Item;
 class EscapeItem;
 class TimeItem;
@@ -19,7 +19,10 @@ class Player3D : public Object3D
 public:
 	// プレイヤー初期化および懐中電灯モデルのロード
 	// 入力: initPosition(初期スポーンワールド座標) / 出力: なし / 副作用: TagPlayer3D設定、MV1LoadModel実行
-	Player3D(VECTOR initPosition);                     
+	Player3D(VECTOR initPosition);      
+
+	// 懐中電灯モデルを解放
+	// 入力: なし / 出力: なし / 副作用: 生成したモデルハンドルを解放
 	~Player3D() override;                         
 			
 	// 入力・移動・壁衝突押し出し・ライト同期・足音・スタミナ更新の一括実行

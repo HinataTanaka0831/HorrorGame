@@ -11,7 +11,6 @@ Exitdoor::Exitdoor(std::string fileName,VECTOR initPosition)
 {
 	// ƒ^ƒOİ’è
 	SetTag(Object3D::TagExitdoor);
-
 	// ƒ‚ƒfƒ‹‚Ìì¬
 	m_model = new Model(fileName, initPosition);
 }

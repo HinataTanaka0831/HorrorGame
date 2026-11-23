@@ -18,9 +18,9 @@ public:
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw() override;
 
-	// CSVファイルを読み取り判定を行う
-    // 入力: fileName(CSVファイルの名前) / 出力: なし / 副作用: 読み込んだCSVファイルのデータを構造体(ColliderInfo)に格納
-	void LoadAABBCollisionCSV(const char* fileName);
+	// CSVファイル情報の追加を行う
+    // 入力: なし / 出力: なし / 副作用: CsvLoaderで読み込んだCSVファイルのデータを構造体(ColliderInfo)に格納
+	void AABBCollision();
 
 
 	void Draw3DLine();
@@ -58,9 +58,10 @@ private:
 	};
 
 	// コンテナ関係
-	std::vector<AABB> m_walls;    // ステージの壁のAABB情報
-	std::vector<AABB> m_floors;   // ステージの床のAABB情報
-	std::vector<AABB> m_exitDoor; // 脱出口のAABB情報
-	std::vector<AABB> m_stairs;   // 階段のAABB情報
+	std::vector<std::vector<std::string>> m_aabbCsv;  // ステージ当たり判定のcsv情報
+	std::vector<AABB> m_walls;                  // ステージの壁のAABB情報
+	std::vector<AABB> m_floors;                 // ステージの床のAABB情報
+	std::vector<AABB> m_exitDoor;               // 脱出口のAABB情報
+	std::vector<AABB> m_stairs;                 // 階段のAABB情報
 
 };

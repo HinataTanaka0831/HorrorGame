@@ -11,7 +11,9 @@ class ObjectManager
 public:
 	// コンストラクタ
 	ObjectManager();
-	// デストラクタ
+
+	// 全3Dオブジェクトの削除
+	// 入力: なし / 出力: なし / 副作用: 生成された全3Dオブジェクトを削除・解放（DeleteAll3D()の呼び出し）
 	~ObjectManager();
 
 	// 管理下の全2D/3Dオブジェクトの一括更新
