@@ -31,27 +31,33 @@ public:
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
 	void Draw() override;
 
-	// パトロールウェイポイント巡回またはプレイヤー追跡による移動ベクトル算出
-	// 入力: なし / 出力: なし / 副作用: mvPositionの更新およびアニメーション切り替え
-	void Move();
-
 	// 敵が動けるかどうかを判定
-	// 入力: なし / 出力: スケア中や時間停止中ならfalse / 副作用: 敵の移動の可否
+    // 入力: なし / 出力: スケア中や時間停止中ならfalse / 副作用: 敵の移動の可否
 	bool CanMove();
 
 	// 高低差と視界判定でプレイヤーを捜索
 	// 入力: なし / 出力: なし / 副作用: m_foundPlayer を更新
 	void UpdatePlayerSearch();
 
+	// プレイヤーの追跡
+	// 入力: なし / 出力: なし / 副作用: 近ければ直接追跡、遠ければ足跡をたどるようにして移動方向と速度を更新
 	void ChasePlayer();
 
 	// CSVファイル情報の追加を行う
-    // 入力: なし / 出力: なし / 副作用: CsvLoaderで読み込んだCSVファイルのデータを構造体(WayPoint)に格納
+	// 入力: なし / 出力: なし / 副作用: CsvLoader で読み込んだCSVファイルのデータを構造体(WayPoint)に格納
 	void WayPoint();
 
+	// ステージの目標地点を巡回する
+	// 入力: なし / 出力: なし / 副作用: WayPoint() の情報を用いて目標地点まで m_moveVec 、m_position を更新
 	void Patrol();
 
-	void UpdateAnimationByMove();
+	// 移動による更新
+    // 入力: なし / 出力: なし / 副作用: 移動状態に応じて m_moveVec の正規化、m_targetAngle とアニメーションの更新
+	void UpdateByMove();
+
+	// パトロールウェイポイント巡回またはプレイヤー追跡による移動ベクトル算出
+	// 入力: なし / 出力: なし / 副作用: mvPositionの更新およびアニメーション切り替え
+	void Move();
 
 	// 進行方向ベクトルに向けた滑らかなY軸旋回補間
 	// 入力: なし / 出力: なし / 副作用: 敵モデルの回転角度更新
@@ -64,7 +70,7 @@ public:
 public:
 	// プレイヤークラスのポインタを設定
 	Player3D* SetPlayer(Player3D* pPlayer) { m_player = pPlayer; }
-	// ジャンプすケアのフラグを取得
+	// ジャンプスケアのフラグを取得
 	bool GetScare() const { return m_isScare; }              
 	// プレイヤーの発見フラグを取得
 	bool GetfoundPlayer() const { return m_foundPlayer; }

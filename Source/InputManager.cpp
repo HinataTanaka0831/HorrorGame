@@ -1,19 +1,12 @@
 ﻿/*
 
-キー入力に関する補助関数
+キー・マウス入力に関する補助関数
 DXLibに存在しないので自作
 
 */
 
 #include "InputManager.h"
 #include "DxLib.h"
-
-
-InputManager& InputManager::GetInstance()
-{
-	static InputManager instance;
-	return instance;
-}
 
 
 InputManager::InputManager()
@@ -31,6 +24,7 @@ InputManager::InputManager()
 	, m_previousMouseInput(0)
 
 {
+
 }
 
 InputManager::~InputManager()
@@ -38,24 +32,13 @@ InputManager::~InputManager()
 
 }
 
-
 int InputManager::CheckDownKey(int keyCode)
 {
-	// 戻り値用の変数を用意
-	int result = 0;
-
-	// 指定キーの現在の状態を取得
-	int keyState = CheckHitKey(keyCode);
-
+	int result = 0;  	                    // 戻り値用の変数を用意
+	int keyState = CheckHitKey(keyCode);  	// 指定キーの現在の状態を取得
 	// 前回キーが押されておらず、かつ、現在キーが押されていたら「キーを押した瞬間」とする
-	if(m_downBuffer[keyCode] == 0 && keyState == 1)
-	{
-		result = 1;
-	}
-
-	// 現在のキー状態をバッファに格納
-	m_downBuffer[keyCode] = keyState;
-
+	if(m_downBuffer[keyCode] == 0 && keyState == 1) result = 1;
+	m_downBuffer[keyCode] = keyState; 	   // 現在のキー状態をバッファに格納
 	return result;
 }
 
@@ -63,19 +46,12 @@ int InputManager::CheckUpKey(int keyCode)
 {
 	// 戻り値用の変数を用意
 	int result = 0;
-
 	// 指定キーの現在の状態を取得
 	int keyState = CheckHitKey(keyCode);
-
 	// 前回キーが押されており、かつ、現在キーが押されていなかったら「キーを離した瞬間」とする
-	if(m_upBuffer[keyCode] == 1 && keyState == 0)
-	{
-		result = 1;
-	}
-
+	if(m_upBuffer[keyCode] == 1 && keyState == 0) result = 1;
 	// 現在のキー状態をバッファに格納
 	m_upBuffer[keyCode] = keyState;
-
 	return result;
 }
 
@@ -83,7 +59,6 @@ int InputManager::CheckPressKey(int keyCode)
 {
 	return CheckHitKey(keyCode);
 }
-
 
 
 // ----FPS視点操作用のマウスカーソル固定および表示状態の切り替え----
@@ -101,17 +76,12 @@ void InputManager::EnableMouseLock(bool enable)
 	}
 }
 
-void InputManager::RecenterCursor()
+int InputManager::RecenterCursor() const
 {
-	if (!m_isLocked)
-	{
-		return;
-	}
-
+	if (!m_isLocked) return -1;
 	// 画面中心へ強制移動 (DXLib の SetMousePoint が即座に反映される)
-	SetMousePoint(CenterX, CenterY);
+	return SetMousePoint(CenterX, CenterY);
 }
-
 
 void InputManager::MouseUpdate()
 {

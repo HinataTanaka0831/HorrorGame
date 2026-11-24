@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "SoundManagerh.h"
 #include "Camera.h"
+#include "InputManager.h"
 
 //
 // ゲーム内で1つだけしか存在しないものを管理するクラス
@@ -19,4 +20,5 @@ public:
 	static SceneManager* m_sceneManager;        // シーンマネージャーのポインタ
 	static SoundManager* m_soundManager;        // サウンドマネージャーのポインタ
 	static Camera* m_camera;                    // カメラポインタ
+	static InputManager* m_input;               // インプットマネージャーのポインタ
 };

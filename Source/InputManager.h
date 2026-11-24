@@ -6,11 +6,13 @@
 class InputManager
 {
 public:
-	// シングルトンインスタンスの取得
-	// 入力: なし / 出力: InputManager参照 / 副作用: 初回呼び出し時に静的インスタンス生成
-	static InputManager& GetInstance();
+	// コンストラクタ
+	InputManager();
 
-	//---- キーボードに関係する関数 ----//
+	// デストラクタ
+	~InputManager();
+
+	//---- キーボードに関係する関数 ----
 
 	// キーが押された瞬間（立ち上がりエッジ）の検知
 	// 入力: keyCode(DXライブラリのキーコード) / 出力: 押下瞬間なら1、それ以外は0 / 副作用: 前フレーム状態バッファを更新
@@ -25,7 +27,7 @@ public:
 	int CheckPressKey(int keyCode);
 
 
-	//---- マウスに関係する関数 ----//
+	//---- マウスに関係する関数 ----
 
 	// FPS視点操作用のマウスカーソル固定および表示状態の切り替え
 	// 入力: enable(trueで固定/非表示、falseで解除/表示) / 出力: なし / 副作用: OSカーソル表示設定および画面中央への強制移動
@@ -52,27 +54,21 @@ public:
 	bool CheckReleaseMouseClick(int mouseCode);
 
 public:
-	bool IsMouseLocked() const { return m_isLocked; } // マウスカーソルの固定状態を取得
-	float GetMouseX() const { return m_mouseX; }      // マウスカーソルX移動量を取得
-	float GetMouseY() const { return m_mouseY; }      // マウスカーソルY移動量を取得
-	float GetDeltaX() const { return m_deltaX; }      // マウスカーソルのX軸移動差分の取得
-	float GetDeltaY() const { return m_deltaY; }      // マウスカーソルのY軸移動差分の取得
+	// マウスカーソルの固定状態を取得
+	bool IsMouseLocked() const { return m_isLocked; }
+	// マウスカーソルX移動量を取得
+	float GetMouseX() const { return m_mouseX; } 
+	// マウスカーソルY移動量を取得
+	float GetMouseY() const { return m_mouseY; }
+	// マウスカーソルのX軸移動差分の取得
+	float GetDeltaX() const { return m_deltaX; }
+	// マウスカーソルのY軸移動差分の取得
+	float GetDeltaY() const { return m_deltaY; }
 
 private:
-	// コンストラクタ
-	InputManager();
-	// デストラクタ
-	~InputManager();
-
-	InputManager(const InputManager&) = delete;              // コピー生成の禁止
-	InputManager& operator=(const InputManager&) = delete;   // コピー代入の禁止
-
-	InputManager(InputManager&&) = delete;                   // ムーブ生成の禁止
-	InputManager&& operator=(InputManager&&) = delete;       // ムーブ代入の禁止
-
 	// 画面外へのカーソル脱出を防ぎ連続回転を可能にするため中央へ再配置
    // 入力: なし / 出力: なし / 副作用: OSマウスカーソル座標の変更
-	void RecenterCursor();
+	int RecenterCursor() const;
 
 private:
 	// 定数

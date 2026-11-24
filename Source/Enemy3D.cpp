@@ -98,57 +98,9 @@ void Enemy3D::Draw()
 	}
 }
 
-
-
-void Enemy3D::Move()
-{
-	if (m_player == nullptr) return;
-	if (!CanMove()) return;  // スケア中・時間停止中なら動かない
-
-	UpdatePlayerSearch();    // 高低差、視界判定でプレイヤーを捜索
-	// プレイヤーを見つけた場合(追尾処理～プレイヤーの座標を通る～)
-	if (m_foundPlayer){
-		ChasePlayer();
-    }
-	else  {   // プレイヤーを見つけていない場合(目標座標に向かう処理)
-		Patrol();
-    }
-
-		// 移動している状態であれば
-		bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
-		if (isMove)
-		{
-			// 移動方向を正規化しておく
-			m_moveVec = VNorm(m_moveVec);
-
-			// 新しい回転をセット
-			m_targetAngle = atan2f(m_moveVec.x, m_moveVec.z);
-		}
-
-
-		// 移動している状態であれば
-		if (isMove)
-		{
-			if (m_isRun)
-			{
-				m_model->ChangeAnimation(AnimationRun);
-			}
-			else
-			{
-				m_model->ChangeAnimation(AnimationWalking);
-			}
-		}
-		else
-		{
-			m_model->ChangeAnimation(AnimationNeutral);
-		}
-
-		m_position = VAdd(m_position, VScale(m_moveVec, m_speed));   // 敵の座標を更新（移動させる）
-}
-
 bool Enemy3D::CanMove()
 {
-	if (m_isScare){
+	if (m_isScare) {
 		return false;
 	}
 	else if (m_isStopItem) {
@@ -177,12 +129,13 @@ void Enemy3D::UpdatePlayerSearch()
 	float viewAngle = 45.0f;                                           // 視野角度
 	float cosAngle = cosf(viewAngle * DX_PI_F / 180.0f);               // プレイヤーを確認する視野範囲
 	// 高低差と視野角を判定し、条件を満たしたらプレイヤーを発見。それ以外は未発見
-	if (fabs(m_smoothHeight) <= 150.0f && 				              
-		dot >= cosAngle &&                                             
-		distanceToPlayer <= foundPlayerDistance) 
+	if (fabs(m_smoothHeight) <= 150.0f &&
+		dot >= cosAngle &&
+		distanceToPlayer <= foundPlayerDistance)
 	{
-		m_foundPlayer = true;		                                                
-	} else {
+		m_foundPlayer = true;
+	}
+	else {
 		m_foundPlayer = false;
 	}
 
@@ -210,8 +163,7 @@ void Enemy3D::ChasePlayer()
 		}
 	}
 	else {   // 遠い場合などは、ステージを避けるためにプレイヤーの足跡をたどる
-		const std::vector<VECTOR>& playerRecord = m_player->GetFootprintsRecord(); 	 // プレイヤーの足跡リストを取得
-		// 足跡リストが空の場合
+		const std::vector<VECTOR>& playerRecord = m_player->GetFootprintsRecord();
 		if (m_trackIndex >= playerRecord.size()) {
 			m_trackIndex = 0;       // 足跡のリストを初期化
 			return;                	// 追尾すべき足跡がないので終了
@@ -220,22 +172,21 @@ void Enemy3D::ChasePlayer()
 		VECTOR vec = VSub(playerRecordPosition, m_position);    		// 敵からプレイヤーの足跡へのベクトル
 		vec.y = 0.0f;                                                   // 高さは無視
 		float fDistanceToPlayerRecord = VSize(vec);          		    // 敵からプレイヤーの足跡までの距離
-		if (fDistanceToPlayerRecord <= 80.0f) {                         
+		if (fDistanceToPlayerRecord <= 80.0f) {
 			m_trackIndex++;         // ターゲットとの距離が一定以下（到着した）なら、次の足跡に向かうようにする
 		}
-		else {
-			// ゼロ除算を避けるためのチェック
-			if (fDistanceToPlayerRecord > 0.001f) {
-				vec = VNorm(vec);   				// 方向ベクトルを正規化
-				m_moveVec = vec;   				    // 敵を足跡の方向に移動させる
-				m_speed *= 1.8f;                    // 敵の移動速度を走る時の速度に変更
-			}
+		// ゼロ除算を避けるためのチェック
+		if (fDistanceToPlayerRecord > 0.001f) {
+			m_moveVec = vec;   				    // 敵を足跡の方向に移動させる
+			m_speed *= 1.8f;                    // 敵の移動速度を走る時の速度に変更
 		}
+
 	}
 }
 
 void Enemy3D::WayPoint()
 {
+	// CSVから読み取ったウェイポイントの情報を種類ごとコンテナに格納
 	for (auto wayPoints : m_wayPointCsv)
 	{
 		WayPoints point;
@@ -259,123 +210,106 @@ void Enemy3D::Patrol()
 	WayPoint();
 	m_isRun = false;
 	// 待機状態の場合
-	if (m_isWait)
-	{
-		// 待機時間増加
+	if (m_isWait) {
 		m_waitTimer++;
-
-		// 待機時間が待機するフレーム数以上の場合
-		if (m_waitTimer >= WaitFrame)
-		{
-			// 待機時間終了
+		// 待機時間終了
+		if (m_waitTimer >= WaitFrame) {
 			m_isWait = false;
-
-			// 待機時間の初期化
 			m_waitTimer = 0;
 		}
-
 	}
-	else
-	{
+	else {
 		// 敵のモデルによって目標地点を変更する
-		switch (m_enemyType)
-		{
+		switch (m_enemyType) {
 		case 1:
 			// 目標座標の変数に設定
 			m_targetX = m_wayPointA[m_currentPoint].x;
 			m_targetY = m_wayPointA[m_currentPoint].y;
 			m_targetZ = m_wayPointA[m_currentPoint].z;
-
 			// 目標座標と敵の座標の距離を求める
 			m_distanceX = m_targetX - m_position.x;
 			m_distanceY = m_targetY - m_position.y;
 			m_distanceZ = m_targetZ - m_position.z;
-
 			break;
-
 		case 2:
-			// 目標座標の変数に設定
 			m_targetX = m_wayPointB[m_currentPoint].x;
 			m_targetY = m_wayPointB[m_currentPoint].y;
 			m_targetZ = m_wayPointB[m_currentPoint].z;
-
-			// 目標座標と敵の座標の距離を求める
 			m_distanceX = m_targetX - m_position.x;
 			m_distanceY = m_targetY - m_position.y;
 			m_distanceZ = m_targetZ - m_position.z;
-
 			break;
 		}
-		// 距離を計算
-		float fDistanceToTarget = sqrtf(m_distanceX * m_distanceX + m_distanceY * m_distanceY + m_distanceZ * m_distanceZ);
-		// 距離が速さより大きいなら
-		if (fDistanceToTarget > m_speed)
-		{
-			//求めた距離を設定
-			VECTOR d = VGet(m_distanceX, m_distanceY, m_distanceZ);
-			// 目標座標を正規化
-			d = VNorm(d);
-
-			// 移動ベクトルに目標座標を加えて移動させる
-			m_moveVec = VAdd(m_moveVec, d);
-			m_position = VAdd(m_position, VScale(m_moveVec, m_speed));
-
+		float fDistanceToTarget = sqrtf(m_distanceX * m_distanceX + m_distanceY * m_distanceY + m_distanceZ * m_distanceZ); // 距離を計算
+		if (fDistanceToTarget > m_speed) {
+			VECTOR d = VGet(m_distanceX, m_distanceY, m_distanceZ); //求めた距離を設定
+			m_moveVec = VAdd(m_moveVec, d);                         // 移動ベクトルに目標座標を加える
 		}
-		else
-		{
+		else {
 			// 目標座標をモデルに設定
 			m_position.x = m_targetX;
-
 			m_position.y = m_targetY;
-
 			m_position.z = m_targetZ;
-
-			// 移動方向を初期化
-			m_moveVec = VGet(0.0f, 0.0f, 0.0f);
-
+			m_moveVec = VGet(0.0f, 0.0f, 0.0f);  // 移動方向を初期化
 			// 階段の上り下りの際には待機状態を無くす
 			if (m_currentPoint == 2 || m_currentPoint == 3 || m_currentPoint == 6 || m_currentPoint == 7
 				|| m_currentPoint == 12 || m_currentPoint == 13 || m_currentPoint == 16 || m_currentPoint == 17
-				|| m_currentPoint == 20 || m_currentPoint == 21 || m_currentPoint == 24 || m_currentPoint == 25
-				)  {
+				|| m_currentPoint == 20 || m_currentPoint == 21 || m_currentPoint == 24 || m_currentPoint == 25) {
 				m_isWait = false;
 			}
 			else {
 				m_isWait = true;
 			}
-
 			// 目標地点の最後まで行ったら通ってきた座標を順番に戻るようにする
-			if (m_position.x == m_wayPointA[27].x && m_position.y == m_wayPointA[27].y && m_position.z == m_wayPointA[27].z) {
-				m_isback = true;
-			}
-			if (m_position.x == m_wayPointB[27].x && m_position.y == m_wayPointB[27].y && m_position.z == m_wayPointB[27].z) {
-				m_isback = true;
-			}
-
+			if (m_position.x == m_wayPointA[27].x && m_position.y == m_wayPointA[27].y && m_position.z == m_wayPointA[27].z) m_isback = true;
+			if (m_position.x == m_wayPointB[27].x && m_position.y == m_wayPointB[27].y && m_position.z == m_wayPointB[27].z) m_isback = true;
 			// 目標地点を全部通るまで設定した目標地点を通っていく
-			if (!m_isback) {
-				m_currentPoint = (m_currentPoint + 1) % MaxPointCount;
-			}
-			else  {    // 目標地点を全部通ったら通ってきた地点を戻る
-				// 現在の目標座標を示す変数を減らしていく
+			if (!m_isback) m_currentPoint = (m_currentPoint + 1) % MaxPointCount;
+			else {  // 目標地点を全部通ったら通ってきた地点を戻る
 				m_currentPoint--;
-				// 最大配列数が0になったら
 				if (m_currentPoint <= 0) {
 					m_isback = false;
 					m_currentPoint = 0;
 				}
 			}
-
 		}
-
 	}
-
-
 }
 
-void Enemy3D::UpdateAnimationByMove()
+void Enemy3D::UpdateByMove()
 {
+	bool isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);   // 移動状態フラグ
+	if (isMove) {
+		m_moveVec = VNorm(m_moveVec); 		                      // 移動方向を正規化しておく
+		m_targetAngle = atan2f(m_moveVec.x, m_moveVec.z);         // 新しい回転をセット
+		// 移動状態なら移動（走りまたは歩き）アニメーションを再生
+		if (m_isRun) {
+			m_model->ChangeAnimation(AnimationRun);
+		}
+		else {
+			m_model->ChangeAnimation(AnimationWalking);
+		}
+	}
+	else {
+		m_model->ChangeAnimation(AnimationNeutral);
+	}
+}
 
+void Enemy3D::Move()
+{
+	if (m_player == nullptr) return;
+	if (!CanMove()) return;           // スケア中・時間停止中なら動かない
+
+	UpdatePlayerSearch();
+	// プレイヤーを見つけた場合(追尾処理～プレイヤーの座標を通る～)
+	if (m_foundPlayer){
+		ChasePlayer();
+    }
+	else  {   // プレイヤーを見つけていない場合(目標座標に向かう処理)
+		Patrol();
+    }
+	UpdateByMove();        
+	m_position = VAdd(m_position, VScale(m_moveVec, m_speed));   // 敵の座標を更新（移動させる）
 }
 
 void Enemy3D::RotationByMove()

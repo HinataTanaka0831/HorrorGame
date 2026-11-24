@@ -10,7 +10,6 @@
 #include <memory>
 #include <math.h>
 #include "Button.h"
-#include "Collision.h"
 
 /* @note リファレンス https://dxlib.xsrv.jp/dxfunc.html
 */
@@ -19,8 +18,7 @@
 SceneManager* Master::m_sceneManager = new SceneManager();
 SoundManager* Master::m_soundManager = new SoundManager();
 Camera* Master::m_camera = new Camera();
-// InputManager クラスのシングルトンインスタンス取得
-InputManager& input = InputManager::GetInstance();
+InputManager* Master::m_input = new InputManager();
 
 /**
 * @fn WinMain
@@ -105,7 +103,7 @@ int WINAPI WinMain(
 		Master::m_sceneManager->Update();
 
 		// 毎フレームのクリック・リリース状態を検知するため入力状態を更新
-		input.MouseUpdate();
+		Master::m_input->MouseUpdate();
 
 		// 描画
 		Master::m_sceneManager->Draw();
@@ -117,7 +115,7 @@ int WINAPI WinMain(
 		}
 
 		// ゲーム画面のスクリーンショットを撮影する処理
-		if (input.CheckDownKey(KEY_INPUT_F1))
+		if (Master::m_input->CheckDownKey(KEY_INPUT_F1))
 		{
 			SaveDrawScreen(0, 0, Utility::SCREEN_WIDTH, Utility::SCREEN_HEIGHT, "screenshot.bmp");
 		}
@@ -155,7 +153,7 @@ int WINAPI WinMain(
 	Master::m_camera = nullptr;
 	Master::m_soundManager->Finalize();
 	delete Master::m_soundManager;
-
+	delete Master::m_input;
 
 	// DXライブラリ使用の終了
 	DxLib_End();

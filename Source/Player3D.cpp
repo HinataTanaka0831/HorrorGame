@@ -20,6 +20,7 @@ Player3D::Player3D(VECTOR initPosition)
 	, MaxSize(1)
 	, MaxStamina(100)
 	, SplitCount(4)
+	, m_moveVec(VGet(0.0f, 0.0f, 0.0f))
 	, m_oldPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_oldFootprintPosition(VGet(0.0f, 0.0f, 0.0f))
 	, m_playerHeight(80.0f)
@@ -47,7 +48,6 @@ Player3D::Player3D(VECTOR initPosition)
 	, m_itemBoxX(0)
 	, m_itemBoxY(0)
 	, m_addItemID(0)
-	, m_inputManagerInstance(InputManager::GetInstance())
 
 {
 	// タグ設定
@@ -117,76 +117,47 @@ void Player3D::UpdateCapsule()
 	m_capsule.radius = 30.0f;
 }
 
-void Player3D::Move()
+void Player3D::GetInputMoveDirection()
 {
-	// フリーズさせる
-	if (m_isFreeze)
-	{
-		return;
-	}
-
-	//  前回の座標を更新
-	m_oldPosition = m_position;
-
-	VECTOR moveVec = VGet(0.0f, 0.0f, 0.0f);         // 移動方向
+	m_moveVec = VGet(0.0f, 0.0f, 0.0f);
 	VECTOR upMoveVector = VGet(0.0f, 0.0f, 0.0f);    // カメラの上方向（奥方向）ベクトル
 	VECTOR leftMoveVector = VGet(0.0f, 0.0f, 0.0f);  // カメラの左方向ベクトル
 	VECTOR downMoveVector = VGet(0.0f, 0.0f, 0.0f);  // カメラの下方向ベクトル
 	VECTOR rightMoveVector = VGet(0.0f, 0.0f, 0.0f); // カメラの右方向ベクトル
-
-
-	// カメラの向きから移動ベクトルを求める
-	{
-		// 上方向への移動ベクトルは、カメラの視線方向からY成分を抜いたものとする
-		upMoveVector = VSub(Master::m_camera->GetLookAtPosition(), Master::m_camera->GetPosition());
-		upMoveVector.y = 0.0f;
-
-		// 左方向への移動ベクトルは、上方向への移動ベクトルと、Y軸のプラス方向へのベクトルに垂直な方向（外積）
-		leftMoveVector = VCross(upMoveVector, VGet(0.0f, 1.0f, 0.0f));
-		leftMoveVector.y = 0.0f;
-
-
-		// 移動ベクトルは移動量を加味しないので、正規化しておく（ベクトルの長さを１にすること）
-		upMoveVector = VNorm(upMoveVector);
-		leftMoveVector = VNorm(leftMoveVector);
-	}
-
-	// プレイヤーのしゃがみ状態の変更処理を更新
+	// カメラの向きから移動ベクトルを求める。上方向への移動ベクトルは、カメラの視線方向からY成分を抜いたものとする
+	upMoveVector = VSub(Master::m_camera->GetLookAtPosition(), Master::m_camera->GetPosition());
+	upMoveVector.y = 0.0f;
+	// 左方向への移動ベクトルは、上方向への移動ベクトルと、Y軸のプラス方向へのベクトルに垂直な方向（外積）
+	leftMoveVector = VCross(upMoveVector, VGet(0.0f, 1.0f, 0.0f));
+	leftMoveVector.y = 0.0f;
+	// 移動ベクトルは移動量を加味しないので、正規化しておく（ベクトルの長さを１にすること）
+	upMoveVector = VNorm(upMoveVector);
+	leftMoveVector = VNorm(leftMoveVector);
 	PlayerSquat();
-
-	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_A))  // 左方向
-	{
-		moveVec = VAdd(moveVec, leftMoveVector);
-	}
-
-	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_D))  // 右方向
-	{
-		moveVec = VAdd(moveVec, VScale(leftMoveVector, -1.0f)); // VScale...掛け算　-1.0fを掛けて反転している
-	}
-
-	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_W))  // 奥方向
-	{
-		moveVec = VAdd(moveVec, upMoveVector);
-	}
-
-	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_S))  // 手前方向
-	{
-		moveVec = VAdd(moveVec, VScale(upMoveVector, -1.0f));
-	}
-
-
+	// 左方向
+	if (Master::m_input->CheckPressKey(KEY_INPUT_A)) m_moveVec = VAdd(m_moveVec, leftMoveVector);
+	// 右方向
+	if (Master::m_input->CheckPressKey(KEY_INPUT_D)) m_moveVec = VAdd(m_moveVec, VScale(leftMoveVector, -1.0f)); // VScale...掛け算　-1.0fを掛けて反転している
+	// 奥方向
+	if (Master::m_input->CheckPressKey(KEY_INPUT_W)) m_moveVec = VAdd(m_moveVec, upMoveVector);
+	// 手前方向
+	if (Master::m_input->CheckPressKey(KEY_INPUT_S)) m_moveVec = VAdd(m_moveVec, VScale(upMoveVector, -1.0f));
 	// 移動している状態であれば
-	m_isMove = (moveVec.x != 0.0f || moveVec.z != 0.0f);
-	if (m_isMove)
-	{
-		// 移動方向を正規化しておく
-		moveVec = VNorm(moveVec);
-	}
+	m_isMove = (m_moveVec.x != 0.0f || m_moveVec.z != 0.0f);
+	if (m_isMove) m_moveVec = VNorm(m_moveVec);  // 移動方向を正規化しておく
+}
+
+void Player3D::Move()
+{
+	if (m_isFreeze) return;
+	m_oldPosition = m_position;  	//  前回の座標を更新
+
+
 
 	// ------------------------
 	// 走る処理
 	// ------------------------
-	if (StaminaUpdate(m_inputManagerInstance.CheckPressKey(KEY_INPUT_LSHIFT)))
+	if (StaminaUpdate(Master::m_input->CheckPressKey(KEY_INPUT_LSHIFT)))
 	{
 		// 走り状態かつ動いている状態なら
 		// プレイヤーの速度を*3.0fにして、走っているスピードに合わせるように足音を再生させる
@@ -248,7 +219,7 @@ void Player3D::Move()
 		for (int i = 0; i < SplitCount; i++)
 		{
 			// プレイヤーの座標を更新
-            m_position = VAdd(m_position, VScale(moveVec, m_speed / SplitCount));
+            m_position = VAdd(m_position, VScale(m_moveVec, m_speed / SplitCount));
 
 			// 移動処理の後にプレイヤーのAABB判定を更新させる
 			UpdateAABB();
@@ -282,18 +253,18 @@ void Player3D::Move()
 					// 最も少ない移動で壁の外に出られる方向を求めるために、X軸方向の侵入量とZ軸方向の侵入量を比較して、少ない方の法線を取得する
 					if (overlapX < overlapZ)
 					{
-						normal.x = (moveVec.x > 0.0f) ? 1.0f : -1.0f;
+						normal.x = (m_moveVec.x > 0.0f) ? 1.0f : -1.0f;
 					}
 					else
 					{
-						normal.z = (moveVec.z > 0.0f) ? 1.0f : -1.0f;
+						normal.z = (m_moveVec.z > 0.0f) ? 1.0f : -1.0f;
 					}
 
 					VECTOR wallSlider = VGet(0.0f, 0.0f, 0.0f);
 					// 移動方向ベクトルと取得した衝突法線との内積を求める
-					float dot = VDot(moveVec, normal);
+					float dot = VDot(m_moveVec, normal);
 					//　壁沿いベクトルの計算
-					wallSlider = VSub(moveVec, VScale(normal, dot));
+					wallSlider = VSub(m_moveVec, VScale(normal, dot));
 					// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
 					wallSlider = VNorm(wallSlider);
 					wallSlider.y = 0.0f;
@@ -370,19 +341,19 @@ void Player3D::Move()
 					VECTOR normal = VGet(0.0f, 0.0f, 0.0f);
 					if (overlapX < overlapZ)
 					{
-						normal.x = (moveVec.x > 0.0f) ? 1.0f : -1.0f;
+						normal.x = (m_moveVec.x > 0.0f) ? 1.0f : -1.0f;
 					}
 					else
 					{
-						normal.z = (moveVec.z > 0.0f) ? 1.0f : -1.0f;
+						normal.z = (m_moveVec.z > 0.0f) ? 1.0f : -1.0f;
 					}
 
 
 					VECTOR doorSlider = VGet(0.0f, 0.0f, 0.0f);
 					// 移動方向ベクトルと取得した衝突法線との内積を求める
-					float dot = VDot(moveVec, normal);
+					float dot = VDot(m_moveVec, normal);
 					//　壁沿いベクトルの計算
-					doorSlider = VSub(moveVec, VScale(normal, dot));
+					doorSlider = VSub(m_moveVec, VScale(normal, dot));
 					// 壁沿いベクトルを正規化する(ベクトルの長さを1にする)
 					doorSlider = VNorm(doorSlider);
 					doorSlider.y = 0.0f;
@@ -428,7 +399,7 @@ void Player3D::Move()
 void Player3D::PlayerSquat()
 {
 	// Eキーを押した場合
-	if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_E))
+	if (Master::m_input->CheckPressKey(KEY_INPUT_E))
 	{
 		// しゃがみ状態
 		m_isCrouching = true;
@@ -532,7 +503,7 @@ void Player3D::HaveLight()
 	}
 
 	//  左クリックした場合ライトを点ける
-	if (m_inputManagerInstance.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
+	if (Master::m_input->CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 	{
 		m_isActiveLight = true;
 	}
@@ -540,7 +511,7 @@ void Player3D::HaveLight()
 	// ライトが照らされており、左クリックした場合ライトを消す
 	if (GetLightEnable() == TRUE && !getScare)
 	{
-		if (m_inputManagerInstance.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
+		if (Master::m_input->CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 		{
 			m_isActiveLight = false;
 		}
@@ -580,7 +551,7 @@ void Player3D::ItemCollision()
 					}
 
 					// Rキーを押した場合
-					if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_R))
+					if (Master::m_input->CheckPressKey(KEY_INPUT_R))
 					{
 						m_isGetEscapeItem = true;
 
@@ -633,23 +604,17 @@ void Player3D::ItemCollision()
 				}
 
 				// もしRキーを押したら
-				if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_R))
+				if (Master::m_input->CheckPressKey(KEY_INPUT_R))
 				{
 					m_isGetTimeItem = true;
-
-
 					TimeItem* pTimeItem = dynamic_cast<TimeItem*>(StopTime);
-
 					if (pTimeItem == nullptr)
 					{
 						continue;
 					}
-
 					// 時間止めアイテムをインベントリに追加
 					AddItem(pTimeItem->stoptime);
-
 					pTimeItem->SetDeleteFlag(true);
-
 					// ItemIDを2にする
 					m_addItemID = 2;
 
@@ -693,7 +658,7 @@ void Player3D::UseItem()
 					}
 
 					// Fキーを押した場合
-					if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_F))
+					if (Master::m_input->CheckPressKey(KEY_INPUT_F))
 					{
 						LoseItem();
 
@@ -714,7 +679,7 @@ void Player3D::UseItem()
 	}
 	if (m_addItemID == 2)
 	{
-		if (m_inputManagerInstance.CheckPressKey(KEY_INPUT_F))
+		if (Master::m_input->CheckPressKey(KEY_INPUT_F))
 		{
 			if (!m_isUseStopItem)
 			{
