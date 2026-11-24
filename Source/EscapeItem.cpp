@@ -3,7 +3,7 @@
 
 int EscapeItem::m_nowNeedItem = 0;
 
-EscapeItem::EscapeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
+EscapeItem::EscapeItem(const std::string& fileName, VECTOR initPosition, bool isSeparateAnimation)
 	:Item(fileName, initPosition)
 	
 {

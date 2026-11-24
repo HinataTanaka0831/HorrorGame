@@ -184,7 +184,7 @@ void SeparateModelAnimation::SetAnimationBlend(bool isBlend)
     }
 }
 
-void SeparateModelAnimation::AddAnimation(AnimationState state, std::string filename)
+void SeparateModelAnimation::AddAnimation(AnimationState state, const std::string& filename)
 {
     // モーションモデル読み込み
     int handle = ModelCache::AcquireShared(filename);

@@ -95,11 +95,11 @@ void Camera::UpdateRotation()
 	if (m_cameraMode == CameraMode::PlayerControl)
 	{
 		// マウス移動による更新処理を呼ぶ
-		InputManager::GetInstance().MouseRotationUpdate();
+		Master::m_input->MouseRotationUpdate();
 
 		// マウスで上下左右に動かせるようにする
-		m_horizontalAngle += InputManager::GetInstance().GetDeltaX();
-		m_verticalAngle -= InputManager::GetInstance().GetDeltaY();
+		m_horizontalAngle += Master::m_input->GetDeltaX();
+		m_verticalAngle -= Master::m_input->GetDeltaY();
 
 
 

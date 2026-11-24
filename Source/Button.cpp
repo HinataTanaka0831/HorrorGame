@@ -1,6 +1,7 @@
 ﻿#include "Button.h"
+#include "Master.h"
 
-Button::Button(int x1, int y1, int x2, int y2, std::string name, int color, int changeColor, int fontHandle)
+Button::Button(int x1, int y1, int x2, int y2, const std::string& name, int color, int changeColor, int fontHandle)
 	: m_x1(x1)
 	, m_y1(y1)
 	, m_x2(x2)
@@ -13,7 +14,6 @@ Button::Button(int x1, int y1, int x2, int y2, std::string name, int color, int 
 	, m_isHover(false)
 	, m_isEnabled(true)
 	, m_fontHandle(fontHandle)
-	, m_input(InputManager::GetInstance())
 	, m_isClicked(false)
 
 {
@@ -29,8 +29,8 @@ void Button::Update()
 		return;
 	}
 
-	int mouseX = (int)m_input.GetMouseX();
-	int mouseY = (int)m_input.GetMouseY();
+	int mouseX = (int)Master::m_input->GetMouseX();
+	int mouseY = (int)Master::m_input->GetMouseY();
 
 	if (mouseX >= m_x1 && mouseX <= m_x2 && mouseY >= m_y1 && mouseY <= m_y2)
 	{
@@ -59,7 +59,7 @@ void Button::Draw()
 		m_scale = 1.1f;
 
 		// 左クリック押下時にクリック状態へ遷移し背景色を変更
-		if (m_input.CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
+		if (Master::m_input->CheckTriggerMouseClick(MOUSE_INPUT_LEFT))
 		{
 			m_isClicked = true;
 			drawColor = m_changeColor;

@@ -1,6 +1,6 @@
 #include "AttachmentModel.h"
 
-AttachmentModel::AttachmentModel(std::string fileName, int parentModelHandle, int parentFrameIndex)
+AttachmentModel::AttachmentModel(const std::string& fileName, int parentModelHandle, int parentFrameIndex)
 	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // 座標はアタッチ先によって変わるので初期値は(0,0,0)にしておく
 	, m_handle(-1)
 	, m_parentHandle(parentModelHandle)

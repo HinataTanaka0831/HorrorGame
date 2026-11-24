@@ -6,7 +6,7 @@
 #include "CsvLoader.h"
 
 
-Stage::Stage(std::string stageModelName)
+Stage::Stage(const std::string& stageModelName)
 	: Object3D(VGet(0.0f, 0.0f, 0.0f))  // 座標は原点としておく
 	, m_modelHandle(-1)
 
@@ -18,13 +18,18 @@ Stage::Stage(std::string stageModelName)
 	m_modelHandle = MV1LoadModel(stageModelName.c_str());
 	
 	// ステージの当たり判定情報を取得
-	m_aabbCsv= CsvLoader::Load("Resource/Data/data_stagecollision.csv");
+	m_aabbCsv = CsvLoader::Load("Resource/Data/data_stagecollision.csv");
 }
 
 Stage::~Stage()
 {
 	// 読み込んだモデルデータの破棄
 	MV1DeleteModel(m_modelHandle);
+}
+
+void Stage::Update()
+{
+	AABBCollision();
 }
 
 void Stage::Draw()

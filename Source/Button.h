@@ -9,7 +9,7 @@ class Button
 public:
 	// ボタンの矩形領域・ラベル・配色の初期化
 	// 入力: x1, y1, x2, y2(矩形座標), name(表示文字列), color, changeColor, fontHandle / 出力: なし / 副作用: 各種プロパティの設定
-	Button(int x1, int y1, int x2, int y2, std::string name, int color, int changeColor, int fontHandle);
+	Button(int x1, int y1, int x2, int y2, const std::string& name, int color, int changeColor, int fontHandle);
 
 	// マウスカーソルの包含判定とホバー状態の更新
 	// 入力: なし / 出力: なし / 副作用: mbIsHoverフラグの更新
@@ -42,6 +42,5 @@ private:
 	int m_fontHandle;             // ラベル描画用フォントハンドル
 
 	// 入力関係
-	InputManager& m_input;        // InputManagerのインスタンスを参照
 	bool m_isClicked;             // クリックされたか
 };

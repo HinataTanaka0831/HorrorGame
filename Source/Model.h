@@ -19,7 +19,7 @@ public:
 
 	// 3Dモデルのロードおよび通常/分割アニメーションコントローラの生成
 	// 入力: fileName(モデルファイルパス), initPosition(初期配置座標), isSeparateAnimation(外部分割アニメーションを使用するか) / 出力: なし / 副作用: MV1LoadModelおよびアニメーションクラス生成
-	Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
+	Model(const std::string& fileName, VECTOR initPosition, bool isSeparateAnimation = false);
 
 	// 3Dモデルおよび通常/分割アニメーション等の解放
 	// 入力: なし / 出力: なし / 副作用: 生成したモデルやテクスチャ、アニメーションを解放する
@@ -27,7 +27,7 @@ public:
 
 	// 外部モーションファイルの追加登録（Mixamo分割ファイル用）
     // 入力: state(紐づけるステート), fileName(アニメーションモデルパス) / 出力: なし / 副作用: SeparateModelAnimationへの登録
-	void AddAnimation(AnimationState state, std::string fileName);
+	void AddAnimation(AnimationState state, const std::string& fileName);
 
 	// アニメーション再生時間の進行および座標・回転の3Dモデルへの反映
 	// 入力: なし / 出力: なし / 副作用: DXライブラリモデル変換行列の更新
@@ -55,7 +55,7 @@ public:
 
 	// 親モデル特定ボーンへのアタッチメントモデル追加
 	// 入力: fileName(追加モデルパス), attachFrameName(ボーンフレーム名) / 出力: なし / 副作用: AttachmentModel生成	
-	void AddAttachment(std::string fileName, std::string attachFrameName);
+	void AddAttachment(const std::string& fileName, const std::string& attachFrameName);
 
 	// アタッチされたモデルのワールド座標を取得
 	// 入力: なし / 出力: ワールド座標 / 副作用: なし
@@ -63,14 +63,14 @@ public:
 
 	// モデルの指定フレームのワールド座標を取得
 	// 入力: frameName(フレーム名) / 出力: ワールド座標 / 副作用: なし
-	VECTOR GetModelFramePosition(std::string frameName);
+	VECTOR GetModelFramePosition(const std::string& frameName);
 
 	// スケール取得・設定
 	void SetScale(float scale);
 
 	// 読み込んだモデルのテクスチャを変更
 	// 入力: fileName(テクスチャパス), index(変更するテクスチャ番号) / 出力: なし / 副作用: MV1SetTextureGraphHandleの実行
-	void SetTexture(std::string fileName, int index = 0);
+	void SetTexture(const std::string& fileName, int index = 0);
 
 
 public:

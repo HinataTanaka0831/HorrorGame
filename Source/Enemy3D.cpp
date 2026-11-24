@@ -5,11 +5,10 @@
 #include "Scene.h"
 #include "Stage.h"
 #include "Player3D.h"
-#include <vector>
 
 
 
-Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation)
+Enemy3D::Enemy3D(const std::string& fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation)
 	: Object3D(initPosition)
 	, RotateSpeed(0.2f)
 	, WaitFrame(60)
@@ -22,6 +21,7 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	, m_playerPosition(VGet(0.0f, 0.0f, 0.0f))
 	, toPlayer(VGet(0.0f, 0.0f, 0.0f))
 	, m_smoothHeight(0.0f)
+	, distanceToPlayer(0.0f)
 	, m_targetX(0.0f)
 	, m_targetY(0.0f)
 	, m_targetZ(0.0f)
@@ -58,7 +58,7 @@ Enemy3D::Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool 
 	m_model = new Model(fileName, initPosition, isSeparateAnimation);
 }
 
-void Enemy3D::AddAnimation(AnimationState state, std::string fileName)
+void Enemy3D::AddAnimation(AnimationState state, const std::string& fileName)
 {
 	m_model->AddAnimation(state, fileName);
 }
@@ -72,6 +72,7 @@ Enemy3D::~Enemy3D()
 	{
 		delete m_model;
 	}
+	m_player = nullptr;
 }
 
 void Enemy3D::Update()
@@ -131,8 +132,7 @@ void Enemy3D::UpdatePlayerSearch()
 	// 高低差と視野角を判定し、条件を満たしたらプレイヤーを発見。それ以外は未発見
 	if (fabs(m_smoothHeight) <= 150.0f &&
 		dot >= cosAngle &&
-		distanceToPlayer <= foundPlayerDistance)
-	{
+		distanceToPlayer <= foundPlayerDistance) {
 		m_foundPlayer = true;
 	}
 	else {
@@ -361,18 +361,7 @@ void Enemy3D::RotationByMove()
 
 void Enemy3D::CollScare()
 {
-	Object3D* pObj = Master::m_sceneManager->GetCurrentScene()->GetObjectManager()->GetObject3DByTag(Object3D::TagPlayer3D);
-	if (pObj == nullptr)
-	{
-		return;
-	}
-
-	Player3D* pPlayer = dynamic_cast<Player3D*>(pObj);
-	if (pPlayer == nullptr)
-	{
-		return;
-	}
-
+	if (m_player == nullptr) return;
 	// ジャンプスケアなら
 	if (m_isScare)
 	{
@@ -421,7 +410,7 @@ void Enemy3D::CollScare()
 		if (m_scareTimer > 100)
 		{
 			// プレイヤーの移動処理を再開する
-			pPlayer->SetFreeze(false);
+			m_player->SetFreeze(false);
 
 			// リザルトの種類をゲームオーバーに設定
 			Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);

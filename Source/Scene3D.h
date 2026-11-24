@@ -7,7 +7,10 @@
 // 前方宣言
 class Player3D;
 class Enemy3D;
+class EscapeItem;
 class TimeItem;
+class Stage;
+class Exitdoor;
 class SkyBox;
 
 // 3Dホラーゲーム本編のステージ構築、ローディング、HUD描画を統括するシーンクラス
@@ -26,12 +29,13 @@ public:
 
 	// ステージ・敵・アイテム生成タスクの個別実行
 	// 入力: なし / 出力: なし / 副作用: 各種3Dオブジェクトの生成および配置
-	void InitializePlayerData();
-	void InitializeEnemyData();
+	void InitializeCharacterData();
 	void InitializeItemData();
 	void InitializeSkyBoxData();
 	void InitializeStageData();
 	void InitializeExitDoorData();
+
+	void SetPointer();
 
 	// シーン内オブジェクトの一括更新
 	// 入力: なし / 出力: なし / 副作用: ObjectManager内の全3Dオブジェクト更新
@@ -53,15 +57,22 @@ private:
 	};
 
 	// プレイヤー関係
-	Player3D* m_player;                  // プレイヤーのポインタ
 	int m_playerCrouchingHandle;         // プレイヤーしゃがみハンドル
 	int m_playerMoveHandle;              // プレイヤー移動ハンドル
+	Player3D* m_player;                  // プレイヤーのポインタ
 
 	// 敵関係
 	std::vector<Enemy3D*> m_enemies;     // 敵のポインタを管理する変数
 
-	// 時間止めアイテム関係
-	std::vector<TimeItem*> m_timeItems;  // 時間止めアイテムのポインタを管理する変数
+	// アイテム関係
+	std::vector<EscapeItem*> m_escapeItems; // 脱出アイテムのポインタを管理する変数
+	std::vector<TimeItem*> m_timeItems;     // 時間止めアイテムのポインタを管理する変数
+
+	// ステージ関係
+	Stage* m_stage;                      // ステージのポインタ
+
+	// 脱出口関係
+	Exitdoor* m_exitDoor;                // 脱出口のポインタ
 
 	// スカイボックス関係
 	SkyBox* m_skybox;                    // スカイボックスのテクスチャと大きさを変更するためのポインタ

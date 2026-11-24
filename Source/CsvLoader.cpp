@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
-std::vector<std::vector<std::string>> CsvLoader::Load(std::string fileName)
+std::vector<std::vector<std::string>> CsvLoader::Load(const std::string& fileName)
 {
 	std::vector<std::vector<std::string>> date;
 	std::ifstream file(fileName);       // CSVƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş

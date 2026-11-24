@@ -11,7 +11,7 @@ class Exitdoor : public Object3D
 public:
 	// ドア描画モデルおよび当たり判定専用コリジョンモデルのロード
     // 入力: fileName(描画モデルパス), exitdoorModelname(コリジョンモデルパス), initPosition(配置座標) / 出力: なし / 副作用: MV1SetupCollInfo実行
-	Exitdoor(std::string fileName, VECTOR initPosition);
+	Exitdoor(const std::string& fileName, VECTOR initPosition);
 
 	// ポインタを解放
 	// 入力: なし / 出力: なし / 副作用: 生成したモデルクラスのポインタを解放

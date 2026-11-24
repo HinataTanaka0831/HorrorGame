@@ -11,8 +11,10 @@ class Stage : public Object3D
 public:
 	// ステージモデルおよび当たり判定用コリジョンモデルのロードと情報構築
 	// 入力: filename(描画用モデルパス), collisionFilename(コリジョン用モデルパス) / 出力: なし / 副作用: MV1LoadModelおよびMV1SetupCollInfo実行
-	Stage(std::string stageModelName);
+	Stage(const std::string& stageModelName);
 	~Stage() override;
+
+	void Update() override;
 
 	// ステージ3Dモデルの描画
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画

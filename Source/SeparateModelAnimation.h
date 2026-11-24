@@ -27,7 +27,7 @@ public:
 
     // 外部モーションファイルのロードとステート登録
     // 入力: state(ステート), fileName(ファイルパス) / 出力: なし / 副作用: MV1LoadModel実行、mAnimationInfoListへの登録
-    void AddAnimation(AnimationState state, std::string fileName);
+    void AddAnimation(AnimationState state, const std::string& fileName);
 
     // 登録済みモーションハンドルの検索取得
     // 入力: state(ステート) / 出力: モーションモデルハンドル(-1で見つからない) / 副作用: なし

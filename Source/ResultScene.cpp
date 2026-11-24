@@ -1,6 +1,5 @@
 #include "ResultScene.h"
 #include "Master.h"
-#include "InputManager.h"
 #include "Button.h"
 #include "TextureAnimation.h"
 
@@ -48,7 +47,7 @@ void ResultScene::Initialize()
 	}
 
 	// Mouse‚ÌƒƒbƒN‚ð‰ðœ
-	InputManager::GetInstance().EnableMouseLock(false);
+	Master::m_input->EnableMouseLock(false);
 }
 
 void ResultScene::Update()

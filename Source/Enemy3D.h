@@ -17,7 +17,7 @@ class Enemy3D : public Object3D
 public:
 	// 敵AIモデルのロード、パトロールルート初期化、ジャンプスケア用光源の生成
 	// 入力: fileName(モデルパス), initPosition(初期座標), enemyType(巡回ルート番号), isSeparateAnimation(外部分割モーションフラグ) / 出力: なし / 副作用: Model生成、ScareLight生成
-	Enemy3D(std::string fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation = false);
+	Enemy3D(const std::string& fileName, VECTOR initPosition, int enemyType, bool isSeparateAnimation = false);
 
 	// ジャンプすケア用のライトやポインタを解放
 	// 入力: なし / 出力: なし / 副作用: 生成したライトハンドルやModelクラスのポインタを解放
@@ -69,7 +69,7 @@ public:
 
 public:
 	// プレイヤークラスのポインタを設定
-	Player3D* SetPlayer(Player3D* pPlayer) { m_player = pPlayer; }
+	void SetPlayer(Player3D* pPlayer) { m_player = pPlayer; }
 	// ジャンプスケアのフラグを取得
 	bool GetScare() const { return m_isScare; }              
 	// プレイヤーの発見フラグを取得
@@ -78,7 +78,7 @@ public:
 	void SetStopItem(bool stop) { m_isStopItem = stop; }
 	// モーションデータの追加登録
 	// 入力: state(ステート), fileName(モーションパス) / 出力: なし / 副作用: m_modelへのモーション追加
-	void AddAnimation(AnimationState state, std::string fileName);
+	void AddAnimation(AnimationState state, const std::string& fileName);
 
 
 private:

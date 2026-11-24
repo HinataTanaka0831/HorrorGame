@@ -4,7 +4,7 @@
 #include "ModelAnimation.h"
 #include "ModelCache.h"
 
-Model::Model(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
+Model::Model(const std::string& fileName, VECTOR initPosition, bool isSeparateAnimation)
 	: m_position(initPosition)
 	, m_rotation(VGet(0.0f, 0.0f, 0.0f))
 	, m_scale(1.0f)
@@ -71,7 +71,7 @@ Model::~Model()
 	m_handle = -1;
 }
 
-void Model::AddAnimation(AnimationState state, std::string fileName)
+void Model::AddAnimation(AnimationState state, const std::string& fileName)
 {
 	if (m_separateAnimation != nullptr)
 	{
@@ -203,7 +203,7 @@ bool Model::IsAnimationLoopFinish()
 }
 
 
-void Model::AddAttachment(std::string filename, std::string attachFrameName)
+void Model::AddAttachment(const std::string& filename, const std::string& attachFrameName)
 {
 	// アタッチ先のフレーム番号を取得
 	int frameIndex = MV1SearchFrame(m_handle, attachFrameName.c_str());
@@ -233,7 +233,7 @@ VECTOR Model::GetAttachmentPosition()
 	return VGet(0.0f, 0.0f, 0.0f);
 }
 
-VECTOR Model::GetModelFramePosition(std::string frameName)
+VECTOR Model::GetModelFramePosition(const std::string& frameName)
 {
 	// 指定フレームのワールド座標を取得
 	int frameIndex = MV1SearchFrame(m_handle, frameName.c_str());
@@ -246,7 +246,7 @@ void Model::SetScale(float scale)
 	MV1SetScale(m_handle, VGet(scale, scale, scale));
 }
 
-void Model::SetTexture(std::string filename, int index)
+void Model::SetTexture(const std::string& filename, int index)
 {
 	// テクスチャを切り替えているならそのテクスチャを破棄
 	if (m_changeTextureHandle != -1)

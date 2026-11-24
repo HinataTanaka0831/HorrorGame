@@ -107,26 +107,11 @@ public:
 
 // ========== 初期化Scene3Dタスク ==========
 
-// InitializePlayerTask はプレイヤーの初期化を行うタスクの実装
-class InitializePlayerTask : public ILoadTask {
+// InitializeCharacterTask はプレイヤーと敵の初期化を行うタスクの実装
+class InitializeCharacterTask : public ILoadTask {
 public:
 	// コンストラクタ
-    InitializePlayerTask();
-
-	// Execute はプレイヤーの初期化を行う
-	// 入力: なし / 出力: 成功時は0、失敗時は負の値 / 副作用: プレイヤーの初期化
-    int Execute() override;
-    
-	// GetTaskName はタスクの名前を取得する
-	// 入力: なし / 出力: タスクの名前 / 副作用: なし
-    const char* GetTaskName() const override;
-};
-
-// InitializeEnemyTask は敵の初期化を行うタスクの実装
-class InitializeEnemyTask : public ILoadTask {
-public:
-	// コンストラクタ
-    InitializeEnemyTask();
+    InitializeCharacterTask();
     
 	// Execute は敵の初期化を行う
 	// 入力: なし / 出力: 成功時は0、失敗時は負の値 / 副作用: 敵の初期化

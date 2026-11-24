@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "ObjectManager.h"
 
-Exitdoor::Exitdoor(std::string fileName,VECTOR initPosition)
+Exitdoor::Exitdoor(const std::string& fileName,VECTOR initPosition)
 	: Object3D(initPosition)
 	, m_model(nullptr)
 

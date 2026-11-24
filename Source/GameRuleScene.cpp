@@ -73,7 +73,7 @@ void GameRuleScene::Initialize()
 	}
 
 
-	InputManager::GetInstance().EnableMouseLock(false);
+	Master::m_input->EnableMouseLock(false);
 
 }
 

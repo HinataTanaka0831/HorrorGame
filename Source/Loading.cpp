@@ -94,51 +94,26 @@ const char* InitializeCameraTask::GetTaskName() const {
 }
 
 
-
-
 // ========================
-// InitializePlayerTask ŽÀ‘•
+// InitializeCharacterTask ŽÀ‘•
 // ========================
 
-InitializePlayerTask::InitializePlayerTask() {}
+InitializeCharacterTask::InitializeCharacterTask() {}
 
-int InitializePlayerTask::Execute(){
+int InitializeCharacterTask::Execute(){
 
     Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
 
     if (pScene3D != nullptr)
     {
-        pScene3D->InitializePlayerData();
+        pScene3D->InitializeCharacterData();
     }
 
     return 0;
 }
 
-const char* InitializePlayerTask::GetTaskName() const {
-    return "Initialize Player";
-}
-
-
-// ========================
-// InitializeEnemyTask ŽÀ‘•
-// ========================
-
-InitializeEnemyTask::InitializeEnemyTask() {}
-
-int InitializeEnemyTask::Execute(){
-
-    Scene3D* pScene3D = dynamic_cast<Scene3D*>(Master::m_sceneManager->GetCurrentScene());
-
-    if (pScene3D != nullptr)
-    {
-        pScene3D->InitializeEnemyData();
-    }
-
-    return 0;
-}
-
-const char* InitializeEnemyTask::GetTaskName() const {
-    return "Initialize Enemy";
+const char* InitializeCharacterTask::GetTaskName() const {
+    return "Initialize Character";
 }
 
 

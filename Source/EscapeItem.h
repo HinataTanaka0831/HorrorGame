@@ -15,7 +15,7 @@ public:
 public:
 	// 脱出アイテム3Dモデルのロードおよび配置
 	// 入力: fileName(モデルパス), initPosition(ワールド配置座標), isSeparateAnimation(分割モーションフラグ) / 出力: なし / 副作用: TagEscapeItem3D設定
-	EscapeItem(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
+	EscapeItem(const std::string& fileName, VECTOR initPosition, bool isSeparateAnimation = false);
 
 	// 生成したクラスの削除
 	// 入力: なし / 出力: なし / 副作用: m_modelの解放

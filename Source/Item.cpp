@@ -2,7 +2,7 @@
 #include "Model.h"
 
 
-Item::Item(std::string fileName, VECTOR initPosition, bool isSeparateAnimation)
+Item::Item(const std::string& fileName, VECTOR initPosition, bool isSeparateAnimation)
 	:Object3D(initPosition)
 	, m_model(nullptr)
 	,m_rotationZ(0.0f)

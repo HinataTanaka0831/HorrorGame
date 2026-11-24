@@ -13,7 +13,7 @@ class Item : public Object3D
 public:
 	// アイテムの配置座標初期化およびTagItem3D設定
 	// 入力: initPosition(ワールド配置座標) / 出力: なし / 副作用: Object3D初期化
-	Item(std::string fileName, VECTOR initPosition, bool isSeparateAnimation = false);
+	Item(const std::string& fileName, VECTOR initPosition, bool isSeparateAnimation = false);
 	virtual ~Item() override;
 
 	// アイテムの浮遊回転アニメーション設定、基底クラスの更新呼び出し

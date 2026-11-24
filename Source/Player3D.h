@@ -5,13 +5,15 @@
 #include <vector>
 #include "ItemData.h"
 #include "Object3D.h"
-#include "InputManager.h"
 #include "Collision.h"
 
 // 前方宣言
 class Item;
-class EscapeItem;
+class Enemy3D;
 class TimeItem;
+class EscapeItem;
+class Exitdoor;
+class Stage;
 
 // プレイヤーの移動、スタミナ消費、懐中電灯、しゃがみ、アイテムインベントリおよび敵AI追跡用ログを管理するクラス
 class Player3D : public Object3D
@@ -19,19 +21,19 @@ class Player3D : public Object3D
 public:
 	// プレイヤー初期化および懐中電灯モデルのロード
 	// 入力: initPosition(初期スポーンワールド座標) / 出力: なし / 副作用: TagPlayer3D設定、MV1LoadModel実行
-	Player3D(VECTOR initPosition);      
+	Player3D(VECTOR initPosition);
 
 	// 懐中電灯モデルを解放
 	// 入力: なし / 出力: なし / 副作用: 生成したモデルハンドルを解放
-	~Player3D() override;                         
-			
+	~Player3D() override;
+
 	// 入力・移動・壁衝突押し出し・ライト同期・足音・スタミナ更新の一括実行
 	// 入力: なし / 出力: なし / 副作用: 座標・スタミナ・ライト状態・SE再生の更新
-	void Update() override;                       
+	void Update() override;
 
 	// 懐中電灯3DモデルおよびアイテムHUD枠の描画
 	// 入力: なし / 出力: なし / 副作用: バックバッファへの描画
-	void Draw() override; 
+	void Draw() override;
 
 	// プレイヤーのAABBを更新する
 	// 入力: なし / 出力: なし / 副作用: m_aabbのmin/max座標をプレイヤーの現在座標に基づいて更新
@@ -40,24 +42,43 @@ public:
 	// プレイヤーのカプセル判定を更新する
 	// 入力: なし / 出力: なし / 副作用: m_capsuleのstart/end座標をプレイヤーの現在座標に基づいて更新
 	void UpdateCapsule();
-					
-	void GetInputMoveDirection();
 
-	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
-	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
-	void Move();                                
+	// プレイヤーの移動方向取得
+	// 入力: なし / 出力: なし / 副作用: WASD とカメラの向きから移動方向を出し、移動するなら m_moveVec を正規化
+	void GetInputMoveDirection();
 
 	// しゃがみ/直立姿勢の切り替えおよび視線高・移動速度の補正
 	// 入力: なし / 出力: なし / 副作用: isCrouchingフラグおよびplayerHeight/playerSpeedの変更
-	void PlayerSquat();                        
+	void PlayerSquat();
+
+	// しゃがみ・ダッシュ・足音を更新
+	// 入力: なし / 出力: なし / 副作用: PlayerSquat() の呼び出しと移動状態によって効果音と m_speed を更新
+	void UpdateSpeedAndFootsteps();
+
+	// 
+	void RecordFootprint();
+
+	void ResolveWalls(int& wallNum);
+
+	void ResolveStairs();
+
+	void ResolveFloors();
+
+	void ResolveExitDoor();
+
+	void MoveWithCollision();
+
+	// カメラ視線方向を基準とした前後左右移動ベクトルの算出およびステージ壁コリジョン押し出し
+	// 入力: なし / 出力: なし / 副作用: プレイヤー座標mvPositionの更新
+	void Move();
 
 	// 懐中電灯の点灯トグルおよびカメラ視線へのライトモデル・ディレクショナル光源同期
 	// 入力: なし / 出力: なし / 副作用: DXライブラリライト有効無効切り替え
-	void HaveLight();                          
+	void HaveLight();
 
 	// 周囲の脱出アイテムおよび時間延長アイテムとの近接インタラクション判定
 	// 入力: なし / 出力: なし / 副作用: Rキー押下時のアイテム取得
-	void ItemCollision();   	               
+	void ItemCollision();
 
 	// 保持中アイテムの消費実行（時間停止発動または脱出ドア解錠フラグセット）
 	// 入力: なし / 出力: なし / 副作用: インベントリからの消費および各ギミック状態の更新
@@ -65,15 +86,15 @@ public:
 
 	// アイテムスロット枠および所持アイテムアイコンのHUD描画
 	// 入力: なし / 出力: なし / 副作用: バックバッファへのUI描画
-	void ItemBox();                         	
+	void ItemBox();
 
 	// インベントリへのアイテム追加
 	// 入力: item(取得アイテムデータ) / 出力: 格納成功ならtrue / 副作用: items配列へのpush_back
-	bool AddItem(const ItemData item);   	   
+	bool AddItem(const ItemData& item);
 
 	// インベントリからの先頭アイテム削除
 	// 入力: なし / 出力: なし / 副作用: items配列のpop
-	void LoseItem();                           
+	void LoseItem();
 
 	// スタミナゲージバーの画面描画
 	// 入力: なし / 出力: なし / 副作用: バックバッファへのHUD描画
@@ -83,15 +104,32 @@ public:
 	// 入力: isDashKeyPressed(シフトキー押下中か) / 出力: 走行可能状態ならtrue / 副作用: stamina現在値の増減
 	bool StaminaUpdate(bool isDashKeyPressed);
 
-	 
+
 public:
+	// プレイヤーを降りずするフラグを設定
 	void SetFreeze(bool freeze) { m_isFreeze = freeze; }
+	// 時間止めアイテムの使用フラグを設定
 	void SetUseStopItem(bool stop) { m_isUseStopItem = stop; }
+	// しゃがみフラグを取得
 	bool GetCrouching() const { return m_isCrouching; }
-	float GetHeight() const { return m_playerHeight; } 
+	// プレイヤーの高さを取得
+	float GetHeight() const { return m_playerHeight; }
+	// 脱出アイテム所持フラグを取得
 	bool GetEscapeItem() const { return m_isGetEscapeItem; }
+	// 時間止めアイテム所持フラグを取得
 	bool GetTimeItem() const { return m_isGetTimeItem; }
+	// 時間止めアイテムの使用フラグを取得
 	bool GetIsUseStopItem() const { return m_isUseStopItem; }
+	// 敵クラスのポインタを設定
+	void SetEnemy3D(Enemy3D* pEnemy) { m_enemy = pEnemy; }
+	// 脱出アイテムクラスのポインタを設定
+	void SetEscapeItem(EscapeItem* pEscapeItem) { m_escapeItem = pEscapeItem; }
+	// 時間止めアイテムクラスのポインタを設定
+	void SetTimeItem(TimeItem* pTimeItem) { m_timeItem = pTimeItem; }
+	// 脱出口クラスのポインタを設定
+	void SetExitdoor(Exitdoor* pExitdoor) { m_exitDoor = pExitdoor; }
+	// ステージクラスのポインタを設定
+	void SetStage(Stage* pStage) { m_stage = pStage; }
 	// プレイヤーの足跡を保持するコンテナを取得
 	const std::vector<VECTOR>& GetFootprintsRecord() const { return m_footprintsRecord; } 
 
@@ -145,14 +183,25 @@ private:
 	bool m_isGetTimeItem;                                   // 時間止めアイテムを所持しているかどうか
 	bool m_isUseStopItem;                                   // 時間止めアイテムを使用するかどうか
 
-	// ハンドル関係の変数
+	// ハンドル関係
 	int m_lightHandle;                                      // ライトモデルハンドル
 	int m_fontHandle;                                       // 画面に表示するフォントのハンドル
 
-	// アイテム関係の変数
+	// アイテム関係
 	int m_itemBoxX;                                       // アイテムをボックスに表示するためのX座標
 	int m_itemBoxY;                                       // アイテムをボックスに表示するためのY座標
 	int m_addItemID;                                      // ID を背一定する変数
+	EscapeItem* m_escapeItem;                             // 脱出アイテムのポインタ
+	TimeItem* m_timeItem;                                 // 時間止めアイテムのポインタ
+
+	// 敵関係
+	Enemy3D* m_enemy;                                     // 敵のポインタ
+
+	// 脱出口関係
+	Exitdoor* m_exitDoor;                                 // 脱出口のポインタ
+
+	// ステージ関係
+	Stage* m_stage;                                       // ステージクラスのポインタ
 
 	//	コンテナ関係の変数
 	std::vector<ItemData>m_items;                          // アイテムデータを保持するコンテナ

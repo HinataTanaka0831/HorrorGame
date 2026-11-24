@@ -1,7 +1,7 @@
 #include "SkyBox.h"
 #include "Model.h"
 
-SkyBox::SkyBox(std::string fileName)
+SkyBox::SkyBox(const std::string& fileName)
     : Object3D(VGet(0.0f, 0.0f, 0.0f))
 	, m_model(nullptr)
 
@@ -50,7 +50,7 @@ void SkyBox::SetScale(float scale)
 	}
 }
 
-void SkyBox::SetModelTexture(std::string fileName, int index)
+void SkyBox::SetModelTexture(const std::string& fileName, int index)
 {
 	if (m_model != nullptr)
 	{

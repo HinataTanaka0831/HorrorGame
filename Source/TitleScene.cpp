@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "TitleScene.h"
 #include "Master.h"
-#include "InputManager.h"
-#include "Enemy3D.h"
 #include "TextureAnimation.h"
 #include "Loading.h"
 #include <memory>
@@ -58,7 +56,7 @@ void TitleScene::Initialize()
 	}
 
 	// Mouse‚ÌƒƒbƒN‚ð‰ðœ
-	InputManager::GetInstance().EnableMouseLock(false);
+	Master::m_input->EnableMouseLock(false);
 	
 }
 

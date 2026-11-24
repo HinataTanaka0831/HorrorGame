@@ -10,7 +10,7 @@ class SkyBox : public Object3D
 public:
 	// スカイボックスモデルの生成
 	// 入力: fileName(モデルパス) / 出力: なし / 副作用: Modelインスタンス生成
-	SkyBox(std::string fileName);
+	SkyBox(const std::string& fileName);
 	~SkyBox() override;					
 
 	// モデルクラスの更新処理を呼び出す
@@ -22,7 +22,7 @@ public:
 	void Draw() override;	
 
 	void SetScale(float scale);									// 拡大値（スケール値）の設定（Modelクラスへの橋渡し）
-	void SetModelTexture(std::string fileName, int index = 0);	// モデルのテクスチャ変更（Modelクラスへの橋渡し）
+	void SetModelTexture(const std::string& fileName, int index = 0);	// モデルのテクスチャ変更（Modelクラスへの橋渡し）
 
 private:
 	Model* m_model;			// モデルクラスのポインタ

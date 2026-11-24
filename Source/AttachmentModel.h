@@ -9,7 +9,7 @@ class AttachmentModel : public Object3D
 public:
     // 親モデルフレームに追従するアタッチメントモデルのロード
 	// 入力: fileName(モデルパス), parentModelHandle(くっつけたいモデル、親モデルハンドル), parentFrameIndex(くっつけたいモデル(追従先)のフレーム番号) / 出力: なし / 副作用: MV1LoadModel実行
-	AttachmentModel(std::string fileName, int parentModelHandle, int parentFrameIndex);
+	AttachmentModel(const std::string& fileName, int parentModelHandle, int parentFrameIndex);
 	~AttachmentModel() override;
 
 	// 親モデルボーンフレームのワールド変換行列を取得し自身に反映

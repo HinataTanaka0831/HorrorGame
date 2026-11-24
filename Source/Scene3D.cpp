@@ -16,6 +16,8 @@ Scene3D::Scene3D()
 	, m_playerCrouchingHandle(-1)
 	, m_playerMoveHandle(-1)
 	, m_player(nullptr)
+	, m_stage(nullptr)
+	, m_exitDoor(nullptr)
 	, m_skybox(nullptr)
 
 {
@@ -32,6 +34,7 @@ Scene3D::~Scene3D()
 	m_player = nullptr;
 	m_enemies.clear();
 	m_timeItems.clear();
+	m_stage = nullptr;
 	m_skybox = nullptr;
 }
 
@@ -40,8 +43,7 @@ void Scene3D::Initialize()
 	// ローディングマネージャーの作成
 	LoadingManager loader;
 	// タスクを追加
-	loader.AddTask(std::make_unique<InitializePlayerTask>());
-	loader.AddTask(std::make_unique<InitializeEnemyTask>());
+	loader.AddTask(std::make_unique<InitializeCharacterTask>());
 	loader.AddTask(std::make_unique<InitializeItemTask>());
 	loader.AddTask(std::make_unique<InitializeSkyBoxTask>());
 	loader.AddTask(std::make_unique<InitializeStageTask>());
@@ -50,7 +52,7 @@ void Scene3D::Initialize()
 	delete Master::m_camera;
 	Master::m_camera = new Camera();
 	// FPS シーンでロック有効化
-	InputManager::GetInstance().EnableMouseLock(true);
+	Master::m_input->EnableMouseLock(true);
 	// ローディング実行
 	loader.ExecuteScene3D();
 	// 画像の生成
@@ -60,14 +62,10 @@ void Scene3D::Initialize()
 	EscapeItem::m_nowNeedItem = 0;
 }
 
-void Scene3D::InitializePlayerData()
+void Scene3D::InitializeCharacterData()
 {
 	// プレイヤーの生成
 	m_player = new Player3D(VGet(-4000.0f, 0.0f, 1700.0f));
-}
-
-void Scene3D::InitializeEnemyData()
-{
 	// 敵の生成
 	Enemy3D* m_enemyA = new Enemy3D(
 		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
@@ -79,8 +77,6 @@ void Scene3D::InitializeEnemyData()
 	m_enemyA->AddAnimation(AnimationWalking, "Resource/Object/Mixamo3DModel/animation_walking.mv1");
 	m_enemyA->AddAnimation(AnimationRun, "Resource/Object/Mixamo3DModel/animation_running.mv1");
 	m_enemies.push_back(m_enemyA);
-
-	// 敵の生成
 	Enemy3D* m_enemyB = new Enemy3D(
 		"Resource/Object/Mixamo3DModel/object_enemy.mv1",
 		VGet(1000.0f, 70.0f, -1700.0f),
@@ -109,10 +105,10 @@ void Scene3D::InitializeItemData()
 	VECTOR RandomPosition3 = RandomPoint3[currentPosition1].PointPosition;
 	VECTOR RandomPosition4 = RandomPoint4[currentPosition2].PointPosition;
 	// 脱出アイテムの生成
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition1, false);
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition2, false);
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3, false);
-	new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4, false);
+	m_escapeItems.push_back(new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition1, false));
+	m_escapeItems.push_back(new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition2, false));
+	m_escapeItems.push_back(new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition3, false));
+	m_escapeItems.push_back(new EscapeItem("Resource/Object/EscapeItem.mv1", RandomPosition4, false));
 	// 時間停止アイテムの生成
 	m_timeItems.push_back(new TimeItem("Resource/Object/TimeItem.mv1", VGet(-542.0f, 438.0f, -2622.0f), false));
 	m_timeItems.push_back(new TimeItem("Resource/Object/TimeItem.mv1", VGet(416.0f, 440.0f, 2927.0f), false));
@@ -130,15 +126,33 @@ void Scene3D::InitializeSkyBoxData()
 void Scene3D::InitializeStageData()
 {
 	// ステージの生成
-	new Stage("Resource/Object/Stage/object_school.mv1");
+	m_stage = new Stage("Resource/Object/Stage/object_school.mv1");
 }
 
 void Scene3D::InitializeExitDoorData()
 {
 	// 脱出ドアの生成
-	new Exitdoor("Resource/Object/Door/object_door.mv1", VGet(500.0f, 0.0f, 1900.0f));
+	m_exitDoor = new Exitdoor("Resource/Object/Door/object_door.mv1", VGet(500.0f, 0.0f, 1900.0f));
 }
 
+void Scene3D::SetPointer()
+{
+	if (m_player == nullptr) return;
+	if (m_stage == nullptr) return;
+	if (m_exitDoor == nullptr) return;
+	m_player->SetExitdoor(m_exitDoor);
+	m_player->SetStage(m_stage);
+	for (auto* pEnemy : m_enemies) {
+		pEnemy->SetPlayer(m_player);
+		m_player->SetEnemy3D(pEnemy);
+	}
+	for (auto* pEscape : m_escapeItems) {
+		m_player->SetEscapeItem(pEscape);
+	}
+	for (auto* pTime : m_timeItems) {
+		m_player->SetTimeItem(pTime);
+	}
+}
 
 void Scene3D::Update()
 {
