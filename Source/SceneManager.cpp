@@ -30,7 +30,6 @@ void SceneManager::Initialize()
 {
 	 // 初期シーンの設定
 	m_nextSceneType = SceneType::SceneTitle;
-
 	// シーン遷移をさせる
 	ChangeSceneIfNeeded();
 }
@@ -58,25 +57,17 @@ void SceneManager::Finalize()
 void SceneManager::ChangeSceneIfNeeded()
 {
 	// 現在シーンと次シーンが一緒であれば何もしない
-	if (m_sceneType == m_nextSceneType)
-	{
-		return;
-	}	
+	if (m_sceneType == m_nextSceneType) return;
 
-	if (m_currentScene != nullptr)
-	{
+	if (m_currentScene != nullptr) {
 		// 現在シーンの終了処理をする
 		m_currentScene->Finalize();
-
 		// 一旦シーン自体も破棄しておく
 		delete m_currentScene;
 		m_currentScene = nullptr;
 	}
-
-
 	// 次シーンにするためシーンタイプを更新
 	m_sceneType = m_nextSceneType;
-
 	// m_sceneType に応じてシーンを生成する
 	switch (m_sceneType)
 	{
@@ -99,13 +90,7 @@ void SceneManager::ChangeSceneIfNeeded()
 	default:
 		break;
 	}
-
-
 	// シーンの生成がされているはずなので、初期化処理を読んでおく
-	if (m_currentScene != nullptr)
-	{
-		m_currentScene->Initialize();
-	}
-
+	if (m_currentScene != nullptr) m_currentScene->Initialize();
 }
 

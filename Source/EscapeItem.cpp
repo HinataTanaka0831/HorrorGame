@@ -7,8 +7,7 @@ EscapeItem::EscapeItem(const std::string& fileName, VECTOR initPosition, bool is
 	:Item(fileName, initPosition)
 	
 {
-	// タグの設定
-	SetTag(Object3D::TagEscapeItem);
+	SetTag(Object3D::TagEscapeItem);  	// タグの設定
 }
 
 EscapeItem::~EscapeItem()
@@ -29,14 +28,11 @@ void EscapeItem::Draw()
 
 void EscapeItem::Escape()
 {
-	// 残り必要なアイテムを減らす
-	m_nowNeedItem++;
-
+	m_nowNeedItem++;  	// 残り必要なアイテムを減らす
 	// もし残り必要なアイテム数が0になったらゲームクリアする
 	if (m_nowNeedItem == 4)
 	{
 		Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameClear);
 		Master::m_sceneManager->SetNextScene(SceneManager::SceneType::SceneResult);
 	}
-
 }

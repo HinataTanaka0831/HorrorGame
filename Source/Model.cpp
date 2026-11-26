@@ -16,18 +16,15 @@ Model::Model(const std::string& fileName, VECTOR initPosition, bool isSeparateAn
 	, m_attachment(nullptr)
 {
 	// モデルの読み込み
-	m_handle = ModelCache::AcquireInstance(fileName);
-
+	if (m_handle == -1) m_handle = ModelCache::AcquireInstance(fileName);
 	// Mixamo用の追加プログラム
 	// 条件分岐を追加
-	if (isSeparateAnimation)
-	{
+	if (isSeparateAnimation) {
 		// 分割アニメーションクラスの生成
 		m_separateAnimation = new SeparateModelAnimation(m_handle);
 		m_animation = nullptr;
 	}
-	else
-	{
+	else {
 		// 通常アニメーションクラスの生成
 		m_animation = new ModelAnimation(m_handle);
 		m_separateAnimation = nullptr;
@@ -38,33 +35,25 @@ Model::Model(const std::string& fileName, VECTOR initPosition, bool isSeparateAn
 Model::~Model()
 {
 	// アニメーションクラスの破棄
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		delete m_animation;
 		m_animation = nullptr;
 	}
-
 	// Mixamo用処理
 	// 分割アニメーションクラスの破棄
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		delete m_separateAnimation;
 		m_separateAnimation = nullptr;
 	}
-
 	// アタッチモデルクラスの破棄
-	if (m_attachment != nullptr)
-	{
+	if (m_attachment != nullptr) {
 		m_attachment->SetDeleteFlag(true);
 		m_attachment = nullptr;
 	}
-
 	// テクスチャを切り替えている場合はそのテクスチャを破棄
-	if (m_changeTextureHandle != -1)
-	{
+	if (m_changeTextureHandle != -1) {
 		DeleteGraph(m_changeTextureHandle);
 	}
-
 	// 読み込んだモデルの削除
 	// note : 読み込んだモデルは勝手に破棄してくれないので、必要なくなったら手動で破棄する
 	ModelCache::ReleaseInstance(m_fileName, m_handle);
@@ -73,8 +62,7 @@ Model::~Model()
 
 void Model::AddAnimation(AnimationState state, const std::string& fileName)
 {
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		m_separateAnimation->AddAnimation(state, fileName);
 	}
 }
@@ -82,21 +70,16 @@ void Model::AddAnimation(AnimationState state, const std::string& fileName)
 void Model::Update()
 {
 	// アニメーションの更新
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		m_animation->Update();
 	}
-
 	// Mixamo用処理
 	// 分割アニメーションの更新
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		m_separateAnimation->Update();
 	}
-
 	// 座標設定
 	MV1SetPosition(m_handle, m_position);
-
 	// 回転設定
 	MV1SetRotationXYZ(m_handle, m_rotation);
 }
@@ -111,12 +94,10 @@ void Model::ChangeAnimation(AnimationState state)
 {
 	// Mixamo用処理
 	// 通常 or 分割のどちらかを使っているかで分岐
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		m_animation->ChangeAnimation(state);
 	}
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		m_separateAnimation->ChangeAnimation(state);
 	}
 }
@@ -125,12 +106,10 @@ void Model::SetLoop(bool loop)
 {
 	// Mixamo用処理
 	// 通常 or 分割のどちらかを使っているかで分岐
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		m_animation->SetLoop(loop);
 	}
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		m_separateAnimation->SetLoop(loop);
 	}
 }
@@ -139,12 +118,10 @@ void Model::SetLoopFinishState(AnimationState state)
 {
 	// Mixamo用処理
 	// 通常 or 分割のどちらかを使っているかで分岐
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		m_animation->SetLoopFinishState(state);
 	}
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		m_separateAnimation->SetLoopFinishState(state);
 	}
 }
@@ -153,12 +130,10 @@ void Model::SetAnimationBlend(bool isBlend)
 {
 	// Mixamo用処理
 	// 通常 or 分割のどちらかを使っているかで分岐
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		m_animation->SetAnimationBlend(isBlend);
 	}
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		m_separateAnimation->SetAnimationBlend(isBlend);
 	}
 }
@@ -169,16 +144,12 @@ AnimationState Model::GetNowState()
 	// 通常 or 分割のどちらかを使っているかで分岐
     // note: （ほぼありえないが）もしどちらもなければ、特に設定のない最大値を返すようにする
 	AnimationState ret = AnimationState::AnimationMax;
-
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		ret = m_animation->GetNowState();
 	}
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		ret = m_separateAnimation->GetNowState();
 	}
-
 	return ret;
 }
 
@@ -187,18 +158,13 @@ bool Model::IsAnimationLoopFinish()
 	// Mixamo用処理
     // 通常 or 分割のどちらかを使っているかで分岐
     // note: （ほぼありえないが）もしどちらもなければ、false を返すようにしておく
-
 	bool ret = false;
-
-	if (m_animation != nullptr)
-	{
+	if (m_animation != nullptr) {
 		ret = m_animation->IsLoopFinish();
 	}
-	if (m_separateAnimation != nullptr)
-	{
+	if (m_separateAnimation != nullptr) {
 		ret = m_separateAnimation->IsLoopFinish();
 	}
-
 	return ret;
 }
 
@@ -207,28 +173,20 @@ void Model::AddAttachment(const std::string& filename, const std::string& attach
 {
 	// アタッチ先のフレーム番号を取得
 	int frameIndex = MV1SearchFrame(m_handle, attachFrameName.c_str());
-
 	// アタッチメントモデルの生成
 	m_attachment = new AttachmentModel(filename, m_handle, frameIndex);
 }
 
 VECTOR Model::GetAttachmentPosition()
 {
-	if (m_attachment != nullptr)
-	{
-		
+	if (m_attachment != nullptr) {
 		VECTOR vec = VGet(0.0f, -50.0f, 0.0f);
-
 		// 行列の取得
 		MATRIX matrix = MV1GetFrameLocalWorldMatrix(m_attachment->GetHandle(), 0);
-
 		// 行列情報をもとに座標変換する
 		vec = VTransform(vec, matrix);
-
 		return vec;
 	}
-
-
 	// アタッチメントが無い場合は原点を返しておく
 	return VGet(0.0f, 0.0f, 0.0f);
 }
@@ -249,14 +207,9 @@ void Model::SetScale(float scale)
 void Model::SetTexture(const std::string& filename, int index)
 {
 	// テクスチャを切り替えているならそのテクスチャを破棄
-	if (m_changeTextureHandle != -1)
-	{
-		DeleteGraph(m_changeTextureHandle);
-	}
-
+	if (m_changeTextureHandle != -1) DeleteGraph(m_changeTextureHandle);
 	// テクスチャの読み込み
 	m_changeTextureHandle = LoadGraph(filename.c_str());
-
 	// 読み込んだテクスチャを反映
 	MV1SetTextureGraphHandle(m_handle, index, m_changeTextureHandle, FALSE);
 }

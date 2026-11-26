@@ -11,14 +11,10 @@ Stage::Stage(const std::string& stageModelName)
 	, m_modelHandle(-1)
 
 {
-	// タグを設定
-	SetTag(Object3D::TagStage);
-
-	// ステージモデルの読み込み
-	m_modelHandle = MV1LoadModel(stageModelName.c_str());
-	
-	// ステージの当たり判定情報を取得
-	m_aabbCsv = CsvLoader::Load("Resource/Data/data_stagecollision.csv");
+	SetTag(Object3D::TagStage); 	// タグを設定
+	m_modelHandle = MV1LoadModel(stageModelName.c_str()); 	// ステージモデルの読み込み
+	m_aabbCsv = CsvLoader::Load("Resource/Data/data_stagecollision.csv");  	// ステージの当たり判定情報を取得
+	AABBCollision();
 }
 
 Stage::~Stage()
@@ -29,7 +25,7 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	AABBCollision();
+
 }
 
 void Stage::Draw()
@@ -42,7 +38,7 @@ void Stage::Draw()
 
 void Stage::AABBCollision()
 {
-	for (auto aabb : m_aabbCsv) {
+	for (auto& aabb : m_aabbCsv) {
 		ColliderInfo info;              // CSVから読み込んだ当たり判定情報を一時的に保持するための構造体
 		info.type = aabb[0];             // 当たり判定の種類を取得
 		// AABBの最小座標を取得
@@ -80,7 +76,6 @@ void Stage::Draw3DLine()
 	for (const auto& walls : m_walls)
 	{
 		DrawCube3D(walls.min, walls.max, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-
 	}
 
 	for (const auto& floors : m_floors)

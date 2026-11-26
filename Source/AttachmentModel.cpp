@@ -6,11 +6,8 @@ AttachmentModel::AttachmentModel(const std::string& fileName, int parentModelHan
 	, m_parentHandle(parentModelHandle)
 	, m_parentFrameIndex(parentFrameIndex)
 {
-	if (m_handle == -1)
-	{
-		// 3Dモデルの読み込み
-		m_handle = MV1LoadModel(fileName.c_str());
-	}
+	// 3Dモデルの読み込み
+	if (m_handle == -1) m_handle = MV1LoadModel(fileName.c_str());
 }
 
 AttachmentModel::~AttachmentModel()
@@ -23,7 +20,6 @@ void AttachmentModel::Update()
 {
 	// アタッチ先のモデルのフレームの行列情報を取得
 	MATRIX matrix = MV1GetFrameLocalWorldMatrix(m_parentHandle, m_parentFrameIndex);
-
 	// 上で取得した行列情報を自身に設定する
 	MV1SetMatrix(m_handle, matrix);
 }

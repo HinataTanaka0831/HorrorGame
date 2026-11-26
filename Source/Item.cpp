@@ -8,15 +8,13 @@ Item::Item(const std::string& fileName, VECTOR initPosition, bool isSeparateAnim
 	,m_rotationZ(0.0f)
 
 {
-	// モデルクラスの生成
-	m_model = new Model(fileName, initPosition, isSeparateAnimation);
+	m_model = new Model(fileName, initPosition, isSeparateAnimation);  	// モデルクラスの生成
 }
 
 Item::~Item()
 {
 	// モデルクラスの削除
-	if (m_model != nullptr)
-	{
+	if (m_model != nullptr) {
 		delete m_model;
 		m_model = nullptr;
 	}
@@ -25,22 +23,18 @@ Item::~Item()
 void Item::Update()
 {
 	// モデルの回転・座標更新
-	if (m_model != nullptr)
-	{
+	if (m_model != nullptr) {
 		m_model->SetRotation(VGet(0.0f, 0.0f, m_rotationZ));
 		m_model->SetPosition(m_position);
 		m_model->Update();
 	}
-
 }
 
 void Item::Draw()
 {
 	// モデルの描画
-	if (m_model != nullptr)
-	{
+	if (m_model != nullptr) {
 		m_model->Draw();
 	}
-
 }
 

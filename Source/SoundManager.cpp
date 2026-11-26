@@ -16,7 +16,6 @@ void SoundManager::Initialize()
 {
 	// BGM の読み込み
 	LoadBGM(SoundBgm::BgmNoise, "Resource/BGM/electrical_noise1.mp3");
-	
 	// SE の読み込み
 	LoadSE(SoundSe::SeDecide, "Resource/SE/maou_se_system49.mp3");
 	LoadSE(SoundSe::SeFootSteps, "Resource/SE/clear-bright-sound-of-step-in-shoes-on-the-floor.mp3");
@@ -30,7 +29,6 @@ void SoundManager::Finalize()
 	{
 		DeleteSoundMem(it->second);
 	}
-
 	// SEの破棄
 	for (auto it = m_seHandleList.begin(); it != m_seHandleList.end(); it++)
 	{
@@ -41,11 +39,7 @@ void SoundManager::Finalize()
 
 void SoundManager::PlayBGM(SoundBgm bgm, bool isTop)
 {
-	if (m_nowPlayingBgm == bgm && !isTop)
-	{
-		return;
-	}
-
+	if (m_nowPlayingBgm == bgm && !isTop) return;
 
 	for (auto it = m_bgmHandleList.begin(); it != m_bgmHandleList.end(); it++)
 	{
@@ -56,7 +50,6 @@ void SoundManager::PlayBGM(SoundBgm bgm, bool isTop)
 			PlaySoundMem(it->second, DX_PLAYTYPE_LOOP, isTop);
 			// 現在の再生種類を更新
 			m_nowPlayingBgm = bgm;
-
 			break;
 		}
 	}
@@ -73,7 +66,6 @@ void  SoundManager::PlaySE(SoundSe se)
 			PlaySoundMem(it->second, DX_PLAYTYPE_BACK);
 			// 現在の再生種類を更新
 			m_nowPlayingSe = se;
-
 			break;
 		}
 	}
@@ -91,22 +83,13 @@ void SoundManager::LoadBGM(SoundBgm bgm, std::string fileName)
 			check = true;
 			break;
 		}
-
 	}
-
 	// 重複して読み込まれていたら何もしない
-	if (check)
-	{
-		return;
-	}
-
+	if (check) return;
 	// ファイル読み込み
 	int handle = LoadSoundMem(fileName.c_str());
-	if (handle == -1)
-	{
-		return; // 読み込み失敗していたら何もしない
-	}
-
+	// 読み込み失敗していたら何もしない
+	if (handle == -1) return; 
 	// 読み込んだハンドルをリストに追加
 	m_bgmHandleList.push_back(std::pair <SoundBgm, int> (bgm, handle) );
 }
@@ -118,27 +101,17 @@ void SoundManager::LoadSE(SoundSe se, std::string fileName)
 	for (auto it = m_seHandleList.begin(); it != m_seHandleList.end(); it++)
 	{
 		// 一致した種類のBGMがあれば
-		if (it->first == se)
-		{
+		if (it->first == se) {
 			check = true;
 			break;
 		}
-
 	}
-
 	// 重複して読み込まれていたら何もしない
-	if (check)
-	{
-		return;
-	}
-
+	if (check) return;
 	// ファイル読み込み
 	int handle = LoadSoundMem(fileName.c_str());
-	if (handle == -1)
-	{
-		return; // 読み込み失敗していたら何もしない
-	}
-
+	// 読み込み失敗していたら何もしない
+	if (handle == -1) return;
 	// 読み込んだハンドルをリストに追加
 	m_seHandleList.push_back(std::pair <SoundSe, int>(se, handle));
 
@@ -148,30 +121,23 @@ void SoundManager::StopBGM()
 {
 	for (auto it = m_bgmHandleList.begin(); it != m_bgmHandleList.end(); it++)
 	{
-		
-		if (it->first == m_nowPlayingBgm)
-		{
+		if (it->first == m_nowPlayingBgm) {
 			// BGMが再生されているか
-			if (CheckSoundMem(it->second))
-			{
+			if (CheckSoundMem(it->second)) {
 				StopSoundMem(it->second);  // BGM停止
 				break;
 			}
 		}
-
 	}
-
 }
 
 void SoundManager::StopSE()
 {
 	for (auto it = m_seHandleList.begin(); it != m_seHandleList.end(); it++)
 	{
-		if (it->first == m_nowPlayingSe)
-		{
+		if (it->first == m_nowPlayingSe) {
 			// SEが再生されているか
-			if (CheckSoundMem(it->second))
-			{
+			if (CheckSoundMem(it->second)) {
 				StopSoundMem(it->second);  // SE停止
 				break;
 			}

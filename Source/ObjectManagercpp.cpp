@@ -24,19 +24,15 @@ void ObjectManager::Update()
 	{
 		(*itr)->Update();
 	}
-
-
 }
 
 void ObjectManager::Draw()
 {
-
 	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); itr++) 	// auto ... 型推論。 = より右側の型を推測してくれる便利なやつ
 	{
 		(*itr)->Draw();
 
 	}
-
 }
 
 
@@ -51,10 +47,8 @@ void ObjectManager::DeleteAll3D()
 	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); /*ここは空っぽなので注意*/)
 	{
 		Object3D* temp = *itr;
-
 		// リストから削除
 		itr = m_object3DList.erase(itr);
-
 		// オブジェクトそのものを削除
 		delete temp;
 		temp = nullptr;
@@ -67,20 +61,16 @@ void ObjectManager::DeleteAll3DIfNeeded()
 	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); /*ここは空っぽなので注意*/)
 	{
 		// 破棄フラグが立っていれば削除する
-		if ((*itr)->IsDeleteFlag())
-		{
+		if ((*itr)->IsDeleteFlag()) {
 			Object3D* temp = *itr;
-
 			// リストから削除
 			// erase() は、削除した itr の次の要素を返却してくれる
 			itr = m_object3DList.erase(itr);
-
 			// オブジェクトそのものを削除
 			delete temp;
 			temp = nullptr;
 		}
-		else
-		{
+		else {
 			// 次の要素へ進める
 			itr++;
 		}
@@ -100,14 +90,10 @@ Object3D* ObjectManager::GetObject3DByTag(Object3D::Tag3D tag)
 		// { ... } ... 処理内容（今回は条件式）
 		// [](){ ... } この形がラムダ式の基本
 	);
-
-
 	// 見つかったかどうか判定
-	if (itr != m_object3DList.end())
-	{
+	if (itr != m_object3DList.end()) {
 		return (*itr);    // オブジェクトが見つかった
 	}
-
 	return nullptr;      // オブジェクトが見つからなかった
 }
 
@@ -115,16 +101,10 @@ Object3D* ObjectManager::GetObject3DByTag(Object3D::Tag3D tag)
 std::vector<Object3D*> ObjectManager::GetObject3DListByTag(Object3D::Tag3D tag)
 {
 	std::vector<Object3D*> ret;
-
 	for (auto itr = m_object3DList.begin(); itr != m_object3DList.end(); itr++)
 	{
 		// tag と同じタグを持っているオブジェクトがあればvectorに入れる
-		if ((*itr)->GetTag() == tag)
-		{
-			ret.push_back((*itr));
-		}
+		if ((*itr)->GetTag() == tag) ret.push_back((*itr));
 	}
-
-
 	return ret;
 }

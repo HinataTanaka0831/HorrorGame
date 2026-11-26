@@ -99,21 +99,15 @@ void InputManager::MouseRotationUpdate()
 {
 	// 前フレームの差分をリセット
 	m_deltaX = m_deltaY = 0.0;
-
 	// マウス座標取得 (ロック中は常にセンター付近になるはず)
 	int mouseX, mouseY;
 	GetMousePoint(&mouseX, &mouseY);
-
 	// デルタ計算 (センターからのオフセット)
 	int dx = mouseX - CenterX;
 	int dy = mouseY - CenterY;
-
-
 	// 感度を掛けて格納 (ピクセル → ラジアン等は Camera 側で変換)
 	m_deltaX = dx * m_mouseSensitivity;
 	m_deltaY = dy * m_mouseSensitivity;
-
-
 	// FPS 方式なら毎フレームセンターへ戻す
 	if (m_isLocked) {
 		RecenterCursor();
@@ -123,35 +117,26 @@ void InputManager::MouseRotationUpdate()
 bool InputManager::CheckPressMouseClick(int mouseCode)
 {
 	bool result = false;
-
-	if (m_currentMouseInput & mouseCode)
-	{
+	if (m_currentMouseInput & mouseCode) {
 		result = true;
 	}
-
 	return result;
 }
 
 bool InputManager::CheckTriggerMouseClick(int mouseCode)
 {
 	bool result = false;
-
-	if ((m_currentMouseInput & mouseCode) && !(m_previousMouseInput & mouseCode))
-	{
+	if ((m_currentMouseInput & mouseCode) && !(m_previousMouseInput & mouseCode)) {
 		result = true;
 	}
-
 	return result;
 }
 
 bool InputManager::CheckReleaseMouseClick(int mouseCode)
 {
 	bool result = false;
-
-	if (!(m_currentMouseInput & mouseCode) && (m_previousMouseInput & mouseCode))
-	{
+	if (!(m_currentMouseInput & mouseCode) && (m_previousMouseInput & mouseCode)) {
 		result = true;
 	}
-
 	return result;
 }
