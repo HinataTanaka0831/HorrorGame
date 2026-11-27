@@ -44,8 +44,7 @@ Enemy3D::Enemy3D(const std::string& fileName, VECTOR initPosition, int enemyType
 	, m_enemyType(enemyType)
 
 {
-	// タグ設定
-	SetTag(Object3D::TagEnemy3D);
+	SetTag(Object3D::TagEnemy3D); 	// タグ設定
 	// カメラモードをプレイヤーが操作できるように設定
 	Master::m_camera->SetCameraMode(Camera::CameraMode::PlayerControl);
 	// ジャンプすケア用のライトを作成
@@ -53,9 +52,7 @@ Enemy3D::Enemy3D(const std::string& fileName, VECTOR initPosition, int enemyType
 	SetLightDifColorHandle(m_scareLightHandle , GetColorF(0.6f, 0.2f, 0.2f, 0.0f));
 	SetLightAmbColorHandle(m_scareLightHandle, GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
 	SetLightEnableHandle(m_scareLightHandle, false);
-	// Mixamo用処理
-	// モデルの生成
-	m_model = new Model(fileName, initPosition, isSeparateAnimation);
+	m_model = new Model(fileName, initPosition, isSeparateAnimation); 	//  Mixamo用処理 モデルの生成
 }
 
 void Enemy3D::AddAnimation(AnimationState state, const std::string& fileName)
@@ -68,21 +65,18 @@ Enemy3D::~Enemy3D()
 {
 	DeleteLightHandle(m_scareLightHandle);
 
-	if (m_model != nullptr)
-	{
+	if (m_model != nullptr) {
 		delete m_model;
+		m_model = nullptr;
 	}
 	m_player = nullptr;
 }
 
 void Enemy3D::Update()
 {
-	// 移動処理
-	Move();
+	Move(); 	// 移動処理
 	// 移動による回転処理
-	if (!m_isScare) {
-		RotationByMove();
-	}
+	if (!m_isScare) RotationByMove();
 	// プレイヤーが敵と当たった時の処理
 	CollScare();
 	// モデルの更新
@@ -180,7 +174,6 @@ void Enemy3D::ChasePlayer()
 			m_moveVec = vec;   				    // 敵を足跡の方向に移動させる
 			m_speed *= 1.8f;                    // 敵の移動速度を走る時の速度に変更
 		}
-
 	}
 }
 
@@ -208,6 +201,7 @@ void Enemy3D::WayPoint()
 void Enemy3D::Patrol()
 {
 	WayPoint();
+
 	m_isRun = false;
 	// 待機状態の場合
 	if (m_isWait) {
@@ -308,7 +302,8 @@ void Enemy3D::Move()
 	else  {   // プレイヤーを見つけていない場合(目標座標に向かう処理)
 		Patrol();
     }
-	UpdateByMove();        
+	UpdateByMove();
+
 	m_position = VAdd(m_position, VScale(m_moveVec, m_speed));   // 敵の座標を更新（移動させる）
 }
 
@@ -316,123 +311,60 @@ void Enemy3D::RotationByMove()
 {
 	// 現在の回転値から目標の回転値の差分を求める
 	float subAngle = m_targetAngle - m_angle;
-
 	// ある方向からある方向の差が180度以上（以下）になることがないはずなので、
 	// 差の値が180度以上（以下）になっていたら矯正する
-	if (subAngle < -DX_PI_F)
-	{
+	if (subAngle < -DX_PI_F) {
 		subAngle += DX_TWO_PI_F;
 	}
-	else if (subAngle > DX_PI_F)
-	{
+	else if (subAngle > DX_PI_F) {
 		subAngle -= DX_TWO_PI_F;
 	}
-
 	// 角度の差分を徐々に 0 に近づける
-	if (subAngle > 0.0f)
-	{
+	if (subAngle > 0.0f) {
 		subAngle -= RotateSpeed;
-
-		if (subAngle < 0.0f)
-		{
-			subAngle = 0.0f;
-		}
+		if (subAngle < 0.0f) subAngle = 0.0f;
 	}
-	else if (subAngle < 0.0f)
-	{
+	else if (subAngle < 0.0f) {
 		subAngle += RotateSpeed;
-
-		if (subAngle > 0.0f)
-		{
-			subAngle = 0.0f;
-		}
+		if (subAngle > 0.0f) subAngle = 0.0f;
 	}
 
-	// 今向いてほしい角度を算出
-	m_angle = m_targetAngle - subAngle;
-
-	// 回転値を設定
-	m_rotation.y = m_angle + DX_PI_F;
-
-	// モデルに伝える
-	m_model->SetRotation(m_rotation);
-
+	m_angle = m_targetAngle - subAngle;	// 今向いてほしい角度を算出
+	m_rotation.y = m_angle + DX_PI_F;	// 回転値を設定
+	m_model->SetRotation(m_rotation); 	// モデルに伝える
 }
 
 void Enemy3D::CollScare()
 {
 	if (m_player == nullptr) return;
-	// ジャンプスケアなら
-	if (m_isScare)
-	{
-		// カメラの注視点を敵の頭の位置に設定する
-		Master::m_camera->SetTargetPosition(m_model->GetModelFramePosition("mixamorig:Head"));
 
-		// カメラの視点を自動で敵の方に向けるようにする
-		Master::m_camera->SetCameraMode(Camera::CameraMode::AutoLook);
+	if (m_isScare) {
+		Master::m_camera->SetTargetPosition(m_model->GetModelFramePosition("mixamorig:Head")); 	// カメラの注視点を敵の頭の位置に設定する
+		Master::m_camera->SetCameraMode(Camera::CameraMode::AutoLook); 		// カメラの視点を自動で敵の方に向けるようにする
+		m_moveVec = VGet(0.0f, 0.0f, 0.0f);  // ジャンプスケア中は移動ベクトルをゼロにして敵を停止させる
+		m_model->ChangeAnimation(AnimationNeutral);  // ジャンプスケア中は敵のアニメーションをIdle（待機）状態にする
+		SetLightEnableHandle(m_scareLightHandle, true);  // ジャンプスケア用のライトを点灯させる
+		m_scareTimer++; 	// ジャンプスケアの時間を進める
+		Master::m_soundManager->PlaySE(SoundManager::SeJumpScare); 	// SE再生
 
-		// ジャンプスケア中は移動ベクトルをゼロにして敵を停止させる
-		m_moveVec = VGet(0.0f, 0.0f, 0.0f);
-
-		// ジャンプスケア中は敵のアニメーションをIdle（待機）状態にする
-		m_model->ChangeAnimation(AnimationNeutral);
-
-		// ジャンプスケア用のライトを点灯させる
-		SetLightEnableHandle(m_scareLightHandle, true);
-
-		// ジャンプスケアの時間を進める
-		m_scareTimer++;
-
-		// SE再生
-		Master::m_soundManager->PlaySE(SoundManager::SeJumpScare);
-
-		//// カメラの座標を取得
-		VECTOR camPos = Master::m_camera->GetPosition();		
-
-		// カメラと敵の位置から距離を計算
-		VECTOR Enemydir = VSub(camPos, m_position);
-
-		// 正規化する
-		Enemydir = VNorm(Enemydir);
-
-		// 敵のモデルが向く方向を計算
-		float angle = atan2f(Enemydir.x, Enemydir.z);
-
-		// 回転値を設定
-		m_rotation.y = angle + DX_PI_F;
-
-		// モデルに伝える
-		m_model->SetRotation(m_rotation);
+		VECTOR camPos = Master::m_camera->GetPosition();  // カメラの座標を取得
+		VECTOR Enemydir = VSub(camPos, m_position); 	  // カメラと敵の位置から距離を計算
+		Enemydir = VNorm(Enemydir);     		          // 正規化する
+		float angle = atan2f(Enemydir.x, Enemydir.z); 	  // 敵のモデルが向く方向を計算
+		m_rotation.y = angle + DX_PI_F;         		  // 回転値を設定
+		m_model->SetRotation(m_rotation);   		      // モデルに伝える
 
 		Master::m_camera->SetUpShake((float)m_scareTimer, (float)Utility::SCREEN_WIDTH / 500, 15.0f);
-
 		// ジャンプスケアが一定時間たった場合
-		if (m_scareTimer > 100)
-		{
-			// プレイヤーの移動処理を再開する
-			m_player->SetFreeze(false);
-
-			// リザルトの種類をゲームオーバーに設定
-			Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver);
-
-			// リザルトシーンを呼び出す
-			Master::m_sceneManager->SetNextScene(SceneManager::SceneResult);
-
-			// SEを止める
-			Master::m_soundManager->StopSE();
-
-			// 作成したジャンプすケア用のライトを消す
-			SetLightEnableHandle(m_scareLightHandle, false);
-
-			// 終了
-			m_isScare = false;
-
-			// タイマーを初期化
-			m_scareTimer = 0;
-
+		if (m_scareTimer > 100) {
+			m_player->SetFreeze(false); 	// プレイヤーの移動処理を再開する
+			Master::m_sceneManager->SetResultType(SceneManager::ResultType::ResultGameOver); // リザルトの種類をゲームオーバーに設定
+			Master::m_sceneManager->SetNextScene(SceneManager::SceneResult); // リザルトシーンを呼び出す
+			Master::m_soundManager->StopSE();  // SEを止める
+			SetLightEnableHandle(m_scareLightHandle, false); 	// 作成したジャンプすケア用のライトを消す
+			m_isScare = false;  // 終了
+			m_scareTimer = 0;  // タイマーを初期化
 		}
-
-
 	}
 }
 

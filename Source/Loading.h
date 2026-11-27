@@ -4,6 +4,7 @@
 #include <memory>
 #include "DxLib.h"
 
+class Texture;
 
 // ========== ILoadTaskインタフェース ==========
 // ILoadTask はタスクの基底クラス（例）
@@ -192,7 +193,7 @@ class LoadingManager {
 private:
 	std::vector<std::unique_ptr<ILoadTask>> tasks;          // ロードタスクのリスト
 	std::vector<std::unique_ptr<ILoadTask>> m_tasks;        // ロードタスクのリスト（ExecuteAll用）
-	int m_scene3DGameRuleHandle = -1;                       // 3Dシーン用のゲームルール画像ハンドル
+	std::unique_ptr<Texture> m_scene3DGameRuleHandle;                       // 3Dシーン用のゲームルール画像ハンドル
 	int m_fontSize = CreateFontToHandle(NULL, 30, -1, -1);  // フォントサイズのハンドル
 
 public:

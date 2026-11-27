@@ -65,13 +65,11 @@ Player3D::Player3D(VECTOR initPosition)
 	m_footprintsRecord.reserve(300);
 }
 
-
 Player3D::~Player3D()
 {
 	// 懐中電灯のモデルを削除
 	MV1DeleteModel(m_lightHandle);
 }
-
 
 void Player3D::Update()
 {
@@ -92,7 +90,6 @@ void Player3D::Update()
 
 }
 
-
 void Player3D::Draw()
 {
 	// 懐中電灯のモデルを描画
@@ -102,7 +99,6 @@ void Player3D::Draw()
 	DrawFormatStringToHandle(0, 80, GetColor(255, 255, 255), m_fontHandle, "m_position.x : %.2f, m_position.y : %.2f, m_position.z : %.2f", m_position.x, m_position.y, m_position.z);
 
 }
-
 
 void Player3D::UpdateAABB()
 {

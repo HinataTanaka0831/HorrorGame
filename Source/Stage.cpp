@@ -50,8 +50,10 @@ void Stage::AABBCollision()
 		info.maxY = std::stof(aabb[5]);
 		info.maxZ = std::stof(aabb[6]);
 		// CSVに記入されている「＋」か「－」のどちらかを取得
-		info.direction = aabb[7];
-		AABB box;  // 当たり判定用のAABBを作成
+		info.direction = "";
+		if (aabb.size() >= 8) info.direction = std::stof(aabb[7]);
+		// 当たり判定用のAABBを作成
+		AABB box;  
 		box.min = { info.minX, info.minY, info.minZ };
 		box.max = { info.maxX, info.maxY, info.maxZ };
 		box.direction = info.direction;

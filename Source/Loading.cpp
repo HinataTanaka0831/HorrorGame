@@ -5,6 +5,7 @@
 #include "Scene3D.h"
 #include "Scene.h"
 #include "ObjectManager.h"
+#include "Texture.h"
 
 
 
@@ -216,10 +217,7 @@ const char* InitializeExitDoorTask::GetTaskName() const {
 
 LoadingManager::~LoadingManager()
 {
-    if (m_scene3DGameRuleHandle != -1)
-    {
-        DeleteGraph(m_scene3DGameRuleHandle);
-    }
+
 }
 
 void LoadingManager::AddTask(std::unique_ptr<ILoadTask> task) {
@@ -273,13 +271,12 @@ void LoadingManager::ExecuteScene3D()
 {
     const int total = static_cast<int>(m_tasks.size());
 
+    m_scene3DGameRuleHandle = std::make_unique<Texture>("Resource/UI/ui_gameRulePicture.png", VGet(0.0f, 0.0f, 0.0f), false);
     for (int i = 0; i < total; ++i)
     {
         ClearDrawScreen();
 
-       if (m_scene3DGameRuleHandle == -1) m_scene3DGameRuleHandle = LoadGraph("Resource/UI/ui_gameRulePicture.png");
-
-        DrawGraph(0, 0, m_scene3DGameRuleHandle, false);
+        if (m_scene3DGameRuleHandle) m_scene3DGameRuleHandle->Draw();
 
         float progress = static_cast<float>(i) / total;
 
